@@ -1,0 +1,48 @@
+[
+    {
+        "header": "",
+        "items": [
+            {
+                "text": "Dashboard",
+                "icon": "bx bx-home",
+                "available": true,
+                "link": "/"
+            }
+        ]
+    },
+    {
+        "header": "Gestion",
+        "items": [ 
+            {
+                "text": "Exemple (Chauffeur)",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/chauffeur"
+            },
+            {
+                "text": "Commune",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/commune"
+            },
+            {
+                "text": "Fokontany",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/fokontany"
+            },
+            {
+                "text": "Service",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/service"
+            },
+            {
+                "text": "Chef de service",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/chef-service"
+            }
+        ]
+    }
+]
