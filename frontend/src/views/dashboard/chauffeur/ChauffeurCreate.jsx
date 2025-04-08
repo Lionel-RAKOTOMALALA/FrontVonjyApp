@@ -5,10 +5,10 @@ import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField'; 
 import 'dayjs/locale/fr';
 import DateField from '../../../components/ui/form/DateField';
-
 import InputQuantity from '../../../components/ui/InputQuantity';  
 
 const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
+  // État local pour stocker les données du formulaire
   const [chauffeur, setChauffeur] = useState({
     nom: '',
     prenom: '',
@@ -17,9 +17,13 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
     telephone: '',
   });
   
+  // Options pour le champ "Permis de conduire"
   const permisOptions = ['B', 'C', 'D', 'E'];
+
+  // Vérifie si le formulaire est valide avant de pouvoir le soumettre
   const isFormValid = chauffeur.nom !== '' && chauffeur.prenom !== '' && chauffeur.permis_conduire.length > 0 && chauffeur.telephone !== '';
 
+  // Gère les changements pour les champs texte du formulaire
   const handleChange = (event) => {
     const { name, value } = event.target;
     setChauffeur(prevState => ({
@@ -28,6 +32,7 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
     }));
   };
 
+  // Gère la sélection d'une option dans le champ "Permis de conduire"
   const handlePermisChange = (event) => {
     const { value } = event.target;
     setChauffeur(prevState => ({
@@ -35,12 +40,14 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
       permis_conduire: value,
     }));
   };
-  
 
+  // Gère la sauvegarde des données du formulaire (actuellement affichées en console)
   const handleSave = () => { 
     console.log('Données du chauffeur:', chauffeur); 
+    // onSave(chauffeur); // Peut être utilisé si on veut appeler une fonction parent
   };
 
+  // Réinitialise tous les champs du formulaire après soumission
   const resetForm = () => {
     setChauffeur({
       nom: '',
@@ -51,12 +58,14 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
     });
   };
 
+  // Gère le changement de la date (fonction encore vide, à compléter selon l'implémentation)
   const handleDateChange = (newDate) => {
-
+    // Exemple : setChauffeur(prev => ({ ...prev, date_naissance: newDate }));
   };
 
+  // Gère le changement de la quantité (fonction encore vide, à compléter selon l'implémentation)
   const handleQuantityChange = (event, newValue) => {
- 
+    
   };
   
   return (
@@ -70,6 +79,7 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
       resetForm={resetForm} 
       maxWidth="435px"
     >
+      {/* Champ Nom */}
       <div className="row">
         <div className="col mb-3 mt-2">
           <InputField
@@ -81,6 +91,8 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           />
         </div>
       </div>
+
+      {/* Champ Prénom */}
       <div className="row">
         <div className="col mb-0">
           <InputField
@@ -92,6 +104,8 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           />
         </div>
       </div>
+
+      {/* Champ Téléphone */}
       <div className="row mt-3">
         <div className="col mb-3">
           <InputField
@@ -105,6 +119,9 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           />
         </div>
       </div>
+
+      {/* Champ Permis de conduire */}
+      {/* Exemple usage composant SelectField */}
       <div className="row g-2 mt-3"> 
         <div className="col mb-3">
           <SelectField
@@ -116,6 +133,8 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           />  
         </div>
       </div>
+
+      {/* (Ce n'est q'une example usage composant DateField) */}
       <div className="row mt-3"> 
         <div className="col mb-3">
           <DateField
@@ -125,17 +144,19 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           /> 
         </div>
       </div>
+
+      {/*  (Ce n'est q'une example usage composant InputQuantity) */}
       <div className="col mb-1 m-0 d-flex flex-column align-items-center">
-          <label htmlFor="quantité" className="mb-2" style={{ fontWeight: '700', color: '#919EAB', fontSize: '0.75rem' }}>
-            Champ nombre
-          </label>
-          <InputQuantity 
-            aria-label="Nombre"
-            min={1}
-            max={1000} 
-            onChange={handleQuantityChange} 
-          />
-        </div> 
+        <label htmlFor="quantité" className="mb-2" style={{ fontWeight: '700', color: '#919EAB', fontSize: '0.75rem' }}>
+          Champ nombre
+        </label>
+        <InputQuantity 
+          aria-label="Nombre"
+          min={1}
+          max={1000} 
+          onChange={handleQuantityChange} 
+        />
+      </div> 
     </Modal>
   );
 };
