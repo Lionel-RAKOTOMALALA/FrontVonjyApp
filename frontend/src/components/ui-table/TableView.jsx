@@ -22,7 +22,7 @@ export function highlightText(text, query) {
   );
 }
  
-function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, showCheckboxes = true }) {
+function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, showCheckboxes = true , showDeleteIcon = true }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('id');
   const [page, setPage] = useState(0);
@@ -174,7 +174,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                <TableCell sx={{ color: '#637381', fontWeight: '800' }}>Actions</TableCell>
+                <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
   
@@ -207,9 +207,11 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                       <IconButton  onClick={() => onEdit(row)}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton onClick={() => onDelete(row)}>
-                        <DeleteIcon />
-                      </IconButton>
+                      {showDeleteIcon && (
+                        <IconButton onClick={() => onDelete(row)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
