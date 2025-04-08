@@ -1,18 +1,24 @@
-import React from 'react'
-import Navbar from '../../layouts/Navbar'
-import LayoutExample from "../../components/layouts-example/LayoutWrapper";
+
+import React from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Coordonnées centrées sur le district d'Ampanihy
+const center = [-23.6, 44.4];
 
 function MapViews() {
   return (
-    <div className="layout-demo-wrapper">
-        <Navbar /> 
-        <LayoutExample
-        img="/assets/img/layouts/layout-without-menu-light.png"
-        alt="Layout without menu"
-        title="Layout without Menu (Navigation)"
-        ></LayoutExample>
-    </div>
-  )
+    <MapContainer
+      center={center}
+      zoom={10}
+      style={{ width: '100vw', height: '100vh' }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+    </MapContainer>
+  );
 }
 
 export default MapViews
