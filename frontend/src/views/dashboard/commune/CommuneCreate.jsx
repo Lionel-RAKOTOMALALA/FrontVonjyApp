@@ -32,7 +32,7 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
 
   return (
     <Modal
-      title="Créer un chauffeur"
+      title="Créer un commune"
       btnLabel="Créer"
       isOpen={isOpen}
       onSave={handleSave}

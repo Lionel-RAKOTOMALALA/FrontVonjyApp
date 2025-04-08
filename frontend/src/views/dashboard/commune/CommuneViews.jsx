@@ -78,7 +78,7 @@ function CommuneViews() {
       {/* Fil d’Ariane avec bouton de création */}
       <Breadcrumb 
         mainText="Listes" 
-        subText="Chauffeur" 
+        subText="Commune" 
         showCreateButton={true} 
         onCreate={handleCreate} 
       /> 

@@ -34,7 +34,7 @@ function CommuneEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
   
   return (
     <Modal
-      title="Modifier un chauffeur"
+      title="Modifier un commune"
       btnLabel="Sauvegarder"
       isOpen={isOpen}
       onSave={() => onSave(validChauffeur)}
