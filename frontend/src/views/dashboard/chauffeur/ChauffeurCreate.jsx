@@ -37,8 +37,7 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
   };
   
 
-  const handleSave = () => {
-    onSave(chauffeur);    
+  const handleSave = () => { 
     console.log('Données du chauffeur:', chauffeur); 
   };
 
@@ -59,6 +58,7 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
   const handleQuantityChange = (event, newValue) => {
  
   };
+  
   return (
     <Modal
       title="Créer un chauffeur"
