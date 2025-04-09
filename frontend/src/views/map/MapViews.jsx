@@ -1,59 +1,143 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Breadcrumb from '../../components/ui/Breadcrumb';
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Snackbar, AccordionActions, Typography } from '@mui/material'; 
-import L from 'leaflet';
-import ImplementationMap from './ImplementationMap';
+import React, { useState } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  Grid,
+  Divider,
+} from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import 'leaflet/dist/leaflet.css';
 
-function MapViews() { 
-  const [center, setCenter] = useState([ -23.33162, 43.66559]); // Paris coordinates
-  const [selectedCity, setSelectedCity] = useState(null);
-  const ZOOM_LEVEL = 7;
-  const mapRef = useRef();  
-  const [markers, setMarkers] = useState([]);
-  const ICON_URL = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/";
-  const customIcon = new L.Icon({
-    iconUrl: `${ICON_URL}marker-icon.png`,
-    iconRetinaUrl: `${ICON_URL}marker-icon-2x.png`,
-    shadowUrl: `${ICON_URL}marker-shadow.png`,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [routeInfo, setRouteInfo] = useState(null);
+const center = [-23.6, 44.4];
 
-  const [routes, setRoutes] = useState([]);
-  const [routesLoading, setRoutesLoading] = useState(true);
-  const [routesError, setRoutesError] = useState(null);
-  const [allMarkers, setAllMarkers] = useState([]); 
-  const [isAnyAccordionExpanded, setIsAnyAccordionExpanded] = useState(false);
-  const [centers, setCenters] = useState([]);
- 
- 
+function MapViews() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <> 
-      <Box className="row">
-        <Box className="col-xl-6 col-md-6 col-12"> 
-          <Box sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
-            <Typography variant="h6">Contenu</Typography> 
-            <Typography variant="h6">Contenu</Typography> 
-            <Typography variant="h6">Contenu</Typography> 
-            <Typography variant="h6">Contenu</Typography> 
-          </Box> 
-        </Box>
-        <Box style={{height:'500px'}} className="col-xl-6 col-md-6 col-12 mb-md-0 mb-6 bg-label-secondary rounded"> 
-        <ImplementationMap 
-            center={center}
-            zoom={ZOOM_LEVEL}
-            allMarkers={isAnyAccordionExpanded ? [] : allMarkers}
-            selectedRoute={selectedRoute}
-            ref={mapRef}
-          />
-        </Box>
-      </Box>    
-    </>
+    <Box sx={{ flexGrow: 1, bgcolor: '#f9f9f9', minHeight: '100vh' }}>
+      {/* Top Bar */}
+      <AppBar position="static" sx={{ bgcolor: '#ffffff', color: '#000', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box display="flex" alignItems="center">
+            <img src="/logo.png" alt="Logo" style={{ height: 40, marginRight: 10 }} />
+            <Typography variant="h6" fontWeight="bold">
+              Centre Vonjy
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" sx={{ marginRight: 1 }}>
+              bryan@gmail.com
+            </Typography>
+            <IconButton onClick={handleMenuClick}>
+              <Avatar sx={{ bgcolor: '#fbc02d' }}>B</Avatar>
+              <ArrowDropDownIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem onClick={handleClose}>Paramètres</MenuItem>
+              <MenuItem onClick={handleClose}>Voir profil</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleClose}>Déconnexion</MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Main Content */}
+      <Box sx={{ padding: 4 }}>
+        <Typography variant="h5" textAlign="center" fontWeight="bold" mb={4}>
+          District d’Ampanihy
+        </Typography>
+
+        <Grid container spacing={4}>
+          {/* Carte du District */}
+          <Grid item xs={12} md={6}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                height: '100%',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Carte du District d’Ampanihy
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Cliquez sur une commune pour voir ses détails
+                </Typography>
+                <Box
+                  sx={{
+                    mt: 2,
+                    height: 350,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    border: '1px solid #ddd',
+                  }}
+                >
+                  <MapContainer
+                    center={center}
+                    zoom={10}
+                    style={{ width: '100%', height: '100%' }}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                  </MapContainer>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Statistiques Globales */}
+          <Grid item xs={12} md={6}>
+            <Card
+              sx={{
+                borderRadius: 4,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                height: '100%',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Statistiques Globales
+                </Typography>
+                <Typography variant="body2">
+                  Infrastructure dans tout le district
+                </Typography>
+                {/* Tu peux ajouter ici des stats, graphiques, icônes etc. */}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 }
 
-export default MapViews
+export default MapViews;
