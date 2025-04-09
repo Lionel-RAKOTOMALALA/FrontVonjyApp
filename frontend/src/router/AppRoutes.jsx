@@ -15,8 +15,6 @@ import Service from '../views/dashboard/service/ServiceViews';
 import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
 import Map from '../views/map/MapViews';
 
-import { WithoutMenuPage } from "../pages/layouts/WithoutMenuPage";
-
 const AppRoutes = ({user, isLoggedIn}) => { 
  
     return (
