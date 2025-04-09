@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField } from '@mui/material';
 
-const InputField = ({ label, name, value, onChange, required = true, fullWidth = true, ...props }) => {
+const InputField = ({ label, name, value, onChange, required = true, fullWidth = true, ...rest }) => {
   return (
     <TextField
       required={required}
@@ -9,7 +9,7 @@ const InputField = ({ label, name, value, onChange, required = true, fullWidth =
       name={name}
       fullWidth={fullWidth}
       value={value}
-      onChange={onChange}
+      onChange={onChange} 
       sx={{
         '& fieldset': {
         borderColor: 'rgba(145 158 171 / 0.2)',
@@ -25,6 +25,9 @@ const InputField = ({ label, name, value, onChange, required = true, fullWidth =
           '&.Mui-focused fieldset': {
             borderColor: '#1C252E',
           },
+          '&.Mui-error fieldset': {
+            borderColor: '#f44336',
+          },
         },
         '& .MuiInputLabel-root': {
           fontWeight: 'inherit',
@@ -33,9 +36,12 @@ const InputField = ({ label, name, value, onChange, required = true, fullWidth =
             fontWeight: 'bold',
             color: '#1C252E !important',
           },
+            '&.Mui-error': {
+              color: '#f44336 !important',
+            },
         },
       }}
-      {...props}
+      {...rest}
     />
   );
 };
