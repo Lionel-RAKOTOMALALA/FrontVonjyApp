@@ -20,12 +20,6 @@
                 "link": "/chauffeur"
             },
             {
-                "text": "Composant",
-                "icon": "bx bx-dock-top",
-                "available": true,
-                "link": "/composant"
-            },
-            {
                 "text": "Commune",
                 "icon": "bx bx-dock-top",
                 "available": true,
