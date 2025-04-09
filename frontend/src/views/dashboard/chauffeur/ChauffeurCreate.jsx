@@ -116,26 +116,6 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
           />  
         </div>
       </div>
-      <div className="row mt-3"> 
-        <div className="col mb-3">
-          <DateField
-            label="Champ date" 
-            onChange={handleDateChange}
-            required
-          /> 
-        </div>
-      </div>
-      <div className="col mb-1 m-0 d-flex flex-column align-items-center">
-          <label htmlFor="quantité" className="mb-2" style={{ fontWeight: '700', color: '#919EAB', fontSize: '0.75rem' }}>
-            Champ nombre
-          </label>
-          <InputQuantity 
-            aria-label="Nombre"
-            min={1}
-            max={1000} 
-            onChange={handleQuantityChange} 
-          />
-        </div> 
     </Modal>
   );
 };
