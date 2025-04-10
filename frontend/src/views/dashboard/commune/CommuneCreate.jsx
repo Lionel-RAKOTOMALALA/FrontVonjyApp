@@ -6,29 +6,36 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
   const [commune, setCommune] = useState({ nom: '' });
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
+  const [inputDisabled, setInputDisabled] = useState(false);
 
-  // Validation : lettres, chiffres, chiffres romains, espaces et tirets
+  // Regex autorise : lettres, chiffres, chiffres romains, espaces, tirets
   const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
 
-  // Validation du formulaire
-  const isFormValid = commune.nom.trim() !== '' && isValidName(commune.nom.trim());
+  const isFormValid = commune.nom.trim() !== '' && isValidName(commune.nom.trim()) && !inputDisabled;
 
   const resetForm = () => {
     setCommune({ nom: '' });
     setError('');
     setSubmitError('');
+    setInputDisabled(false);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    // Bloque la saisie dès qu’un caractère invalide est détecté
     if (!isValidName(value)) {
       setError("Seules les lettres, chiffres romains, espaces et tirets sont autorisés.");
-    } else {
-      setError('');
-      setCommune(prev => ({ ...prev, [name]: value }));
+      setInputDisabled(true);
+      return; 
     }
+
+    setError('');
+    setInputDisabled(false);
+    setCommune(prev => ({ ...prev, [name]: value }));
   };
 
+  // Enregistrement
   const handleSave = async () => {
     try {
       if (!isFormValid) {
@@ -37,7 +44,7 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
       }
 
       setSubmitError('');
-      await onSave(commune); // attendre si onSave est async
+      await onSave(commune);
       console.log('Données du commune:', commune);
     } catch (err) {
       console.error("Erreur lors de l'enregistrement du commune :", err);

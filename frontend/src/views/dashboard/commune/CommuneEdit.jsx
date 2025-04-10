@@ -1,63 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Modal from '../../../components/ui/Modal';
-import { TextField } from '@mui/material';
+import InputField from '../../../components/ui/form/InputField';
 
 function CommuneEdit({ isOpen, commune, onChange, onSave, onClose }) {
-  const validCommune = commune || {};
-  const [isFormValid, setIsFormValid] = useState(true);
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
+  const [inputDisabled, setInputDisabled] = useState(false);
+  const validCommune = commune || {};
 
-  // Regex : lettres, accents, chiffres, chiffres romains, espaces et tirets
+  // Regex : lettres, chiffres, chiffres romains, espaces, tirets
   const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
 
-  const checkFormValidity = () => {
-    const { nom = '' } = validCommune;
-    const trimmedNom = nom.trim();
-
-    if (trimmedNom === '') {
-      setError('Le nom est requis.');
-      setIsFormValid(false);
-    } else if (!isValidName(trimmedNom)) {
-      setError('Seules les lettres, chiffres, chiffres romains, espaces et tirets sont autorisés.');
-      setIsFormValid(false);
-    } else {
-      setError('');
-      setIsFormValid(true);
-    }
-  };
-
-  useEffect(() => {
-    checkFormValidity();
-  }, [validCommune]);
+  const isFormValid = validCommune.nom?.trim() !== '' && isValidName(validCommune.nom?.trim()) && !inputDisabled;
 
   const resetForm = () => {
     onChange({ nom: '' });
     setError('');
     setSubmitError('');
+    setInputDisabled(false);
   };
 
-  const handleInputChange = (e) => {
-    const { value } = e.target;
-    onChange({ ...validCommune, nom: value });
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    // Stoppe la saisie si caractère invalide
+    if (!isValidName(value)) {
+      setError("Seules les lettres, chiffres romains, espaces et tirets sont autorisés.");
+      setInputDisabled(true);
+      return;
+    }
+
+    setError('');
+    setInputDisabled(false);
+    onChange({ ...validCommune, [name]: value });
   };
 
+  // Sauvegarde
   const handleSave = async () => {
-    try {
-      if (!isFormValid) {
-        setSubmitError("Le formulaire contient des erreurs.");
-        return;
-      }
+    if (!isFormValid) {
+      setSubmitError("Veuillez corriger les erreurs du formulaire avant de soumettre.");
+      return;
+    }
 
+    try {
       setSubmitError('');
-      await onSave(validCommune); // attend que onSave s'exécute (si async)
+      await onSave(validCommune);
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement :", err);
-      setSubmitError("Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.");
+      console.error("Erreur lors de la mise à jour du commune :", err);
+      setSubmitError("Une erreur est survenue lors de la modification. Veuillez réessayer.");
     }
   };
-
-  const { nom = '' } = validCommune;
 
   return (
     <Modal
@@ -68,36 +60,18 @@ function CommuneEdit({ isOpen, commune, onChange, onSave, onClose }) {
       onClose={onClose}
       isFormValid={isFormValid}
       resetForm={resetForm}
+      maxWidth="435px"
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <TextField
-            label="Nom"
-            fullWidth
+          <InputField
             required
+            label="Nom"
+            name="nom"
+            value={validCommune.nom || ''}
+            onChange={handleInputChange}
             error={!!error}
             helperText={error || ' '}
-            value={nom}
-            onChange={handleInputChange}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px',
-                '&:hover fieldset': {
-                  borderColor: '#1C252E',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#1C252E',
-                },
-              },
-              '& .MuiInputLabel-root': {
-                fontWeight: 'bold',
-                color: '#637381',
-                '&.Mui-focused': {
-                  fontWeight: 'bold',
-                  color: '#1C252E',
-                },
-              },
-            }}
           />
           {submitError && (
             <p className="text-danger mt-2" style={{ fontSize: '0.9rem' }}>
