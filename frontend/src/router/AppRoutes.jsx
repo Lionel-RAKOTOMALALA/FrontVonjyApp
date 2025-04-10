@@ -39,7 +39,7 @@ const AppRoutes = ({user, isLoggedIn}) => {
             <Route path="/composant" element={<Layout user={user}><Composant user={user}/></Layout>}/>
 
             <Route path="/map" element={<Map />}/>
-            <Route path="/map-detail" element={<MapDetail />}/>
+            <Route path="/commune/:name" element={<MapDetail />}/>
 
 
             <Route path="/auth/login" element={isLoggedIn ? <Navigate to="/" />: <Login /> } />
