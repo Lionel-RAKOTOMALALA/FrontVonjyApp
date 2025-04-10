@@ -25,6 +25,8 @@ const Modal = ({ isOpen, onSave, onClose, children, isFormValid, resetForm, titl
     onClose();
   };
 
+  
+
   return (
     <Dialog
       open={isOpen}

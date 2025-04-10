@@ -7,70 +7,97 @@ import Breadcrumb from '../../../components/ui/Breadcrumb';
 import CommuneCreate from './CommuneCreate';
 
 function CommuneViews() {
-  const [selectedChauffeur, setSelectedChauffeur] = useState(null);
+  const [selectedCommune, setSelectedCommune] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [chauffeurToDelete, setChauffeurToDelete] = useState(null);
+  const [communeToDelete, setCommuneToDelete] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  
-
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   // Données fictives des chauffeurs
   const data = [
-    { id: 1, nom: 'Rasoanaivo', prenom: 'Hery', permis_conduire: ['B'], experience: 5, status: 'Disponible' },
-    { id: 2, nom: 'Rakotoarivelo', prenom: 'Naina', permis_conduire: ['C'], experience: 3, status: 'EnMission' },
-    { id: 3, nom: 'Andrianarivo', prenom: 'Mamy', permis_conduire: ['D'], experience: 8, status: 'Disponible' },
-    { id: 4, nom: 'Ravelojaona', prenom: 'Lova', permis_conduire: ['B'], experience: 10, status: 'EnMission' },
-    { id: 5, nom: 'Mihobisoa', prenom: 'Antsa Sarobidy Hardiot', permis_conduire: ['E', 'B'], experience: 2, status: 'Disponible' },
-    { id: 6, nom: 'Andriantsitohaina', prenom: 'Tiana', permis_conduire: ['E'], experience: 2, status: 'Disponible' },
+    { id: 1, nom: 'Rasoanaivo',  },
+    { id: 2, nom: 'Rakotoarivelo', },
+    { id: 3, nom: 'Andrianarivo',  },
+    { id: 4, nom: 'Ravelojaona', },
+    { id: 5, nom: 'Mihobisoa' },
+    { id: 6, nom: 'Andriantsitohaina', },
   ];
   
 
   // Colonnes du tableau avec formatage personnalisé
   const columns = [
     { id: 'id', label: 'Id' },
-    { id: 'nom', label: 'Nom', render: (row) => row.nom },
-    { id: 'prenom', label: 'Prénom', render: (row) => row.prenom },   
+    { id: 'nom', label: 'Nom', render: (row) => row.nom }, 
   ];
 
   // Ouvre le modal de création de chauffeur
   const handleCreate = () => {
-    setSelectedChauffeur(null);
+    setSelectedCommune(null);
     setOpenCreateModal(true);
   };
 
   // Gère l'enregistrement d'un nouveau chauffeur
-  const handleSaveCreate = (chauffeur) => {
-    console.log('Created:', chauffeur);
-    setOpenSnackbar(true);  
-    setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+  const handleSaveCreate = async (commune) => {
+    try {
+      console.log('Created:', commune);
+      setOpenSnackbar(true);  
+      setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+      setSnackbarMessage('Commune créée avec succès!');
+      setSnackbarSeverity('success');
+    } catch (error) {
+      console.error('Erreur lors de la création du commune:', error);
+      setOpenSnackbar(true);
+      setSnackbarMessage('Erreur lors de la création du commune. Veuillez réessayer.');
+      setSnackbarSeverity('error');
+    }
   };
 
-  // Ouvre le modal d'édition avec les infos du chauffeur sélectionné
+  // Ouvre le modal d'édition avec les infos du commune sélectionné
   const handleEdit = (row) => {
-    setSelectedChauffeur(row);
+    setSelectedCommune(row);
     setOpenEditModal(true);
   };
 
-  // Gère l'enregistrement des modifications d'un chauffeur
-  const handleSaveEdit = (updatedChauffeur) => {  
-    console.log('Edited:', updatedChauffeur);
-    setOpenEditModal(false);
-    setOpenSnackbar(true);
+  // Gère l'enregistrement des modifications d'un commune
+  const handleSaveEdit = async (updatedCommune) => {  
+    try {
+      console.log('Edited:', updatedCommune);
+      setOpenEditModal(false);
+      setOpenSnackbar(true);
+      setSnackbarMessage('Commune modifiée avec succès!');
+      setSnackbarSeverity('success');
+    } catch (error) {
+      console.error('Erreur lors de l\'édition du commune:', error);
+      setOpenSnackbar(true);
+      setSnackbarMessage('Erreur lors de la modification du commune. Veuillez réessayer.');
+      setSnackbarSeverity('error');
+    }
   };
 
   // Ouvre le dialogue de confirmation pour la suppression
   const handleDelete = (row) => {
-    setChauffeurToDelete(row);
+    setCommuneToDelete(row);
     setOpenDialog(true);
   };
 
   // Confirme la suppression d’un chauffeur
-  const confirmDelete = () => {
-    console.log('Deleted:', chauffeurToDelete);
-    setOpenDialog(false);
-    setOpenSnackbar(true);  
+  const confirmDelete = async () => {
+    try {
+      console.log('Deleted:', communeToDelete);
+      setOpenDialog(false);
+      setOpenSnackbar(true);  
+      setSnackbarMessage('Commune supprimée avec succès!');
+      setSnackbarSeverity('success');
+    } catch (error) {
+      console.error('Erreur lors de la suppression du commune:', error);
+      setOpenDialog(false);
+      setOpenSnackbar(true);
+      setSnackbarMessage('Erreur lors de la suppression du commune. Veuillez réessayer.');
+      setSnackbarSeverity('error');
+    }
   };
 
   return (
@@ -105,8 +132,8 @@ function CommuneViews() {
       {/* Modal d’édition */}
       <CommuneEdit
         isOpen={openEditModal}
-        chauffeur={selectedChauffeur}
-        onChange={(updatedChauffeur) => setSelectedChauffeur(updatedChauffeur)}
+        commune={selectedCommune}
+        onChange={(updatedCommune) => setSelectedCommune(updatedCommune)}
         onSave={handleSaveEdit}
         onClose={() => setOpenEditModal(false)} 
       />
@@ -127,8 +154,8 @@ function CommuneViews() {
         onClose={() => setOpenSnackbar(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-          Opération réalisée avec succès!
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>
