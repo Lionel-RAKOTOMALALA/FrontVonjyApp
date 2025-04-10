@@ -21,7 +21,7 @@ const colorPalette = {
   warning: {
     main: "rgba(254, 201, 31, 0.9)",
     hover: "rgba(254, 201, 31, 1)",
-    contrastText: "#000",
+    contrastText: "#fff",
   },
   danger: {
     main: "#D32F2F",

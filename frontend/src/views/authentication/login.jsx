@@ -1,194 +1,562 @@
-import { useState } from 'react';
-import * as React from 'react';
-import { CircularProgress, Button, Snackbar, Alert } from '@mui/material'; // Importation de Snackbar et Alert
-import { login } from '../../utils/auth';
-import { useNavigate } from 'react-router-dom';
-import { AuthWrapper } from "../authentication/AuthWrapper";  
-import IconButton from '@mui/material/IconButton'; 
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment'; 
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+"use client"
 
-const Login = () => {
-    const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null); // Nouvel état pour l'erreur
-    const [open, setOpen] = useState(false); // État pour contrôler la visibilité du toast
-    const [showPassword, setShowPassword] = React.useState(false);
+import { useState } from "react"
+import { Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Paper } from "@mui/material"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { H1, H3, Paragraphe } from "../../components/ui/TypographyVariants"
+import CustomButton from "../../components/ui/CustomButton"
+import InputField from "../../components/ui/form/InputField"
 
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-  
-    const handleMouseDownPassword = (event) => {
-      event.preventDefault();
-    };
-  
-    const handleMouseUpPassword = (event) => {
-      event.preventDefault();
-    };
-    const resetForm = () => {
-        setUsername('');
-        setPassword('');
-    };
+export default function Login() {
+  // États pour gérer les différentes vues
+  const [currentView, setCurrentView] = useState("login") // login, forgotPassword, verification, resetPassword
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const { error } = await login(username, password);
-        setLoading(false);
+  // États pour les formulaires
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  })
 
-        if (error) {
-            setError(error);
-            setOpen(true); // Affiche le toast d'erreur
-        } else {
-            navigate('/');
-            resetForm();
-        }
-    };
+  const [forgotPasswordData, setForgotPasswordData] = useState({
+    email: "",
+  })
 
-    const handleClose = () => {
-        setOpen(false); // Ferme le toast
-    };
+  const [verificationData, setVerificationData] = useState({
+    code: ["", "", "", "", "", ""],
+  })
 
-    return (
-        <AuthWrapper> 
-            <p className="mb-4">Please sign-in to your account and start the adventure</p> 
-            <form id="formAuthentication" className="mb-3" onSubmit={handleLogin}>
-                <div className="mb-3">
-                
-                <TextField
-                    label="Username"
-                    id="outlined-size-small"
-                    autoFocus 
-                    fullWidth
-                    required
-                    sx={{ 
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '8px', 
-                            '&:hover fieldset': {
-                                borderColor: '#1C252E',
-                            },
-                            '&.Mui-focused fieldset': {
-                                borderColor: '#1C252E',
-                            },
-                        },
-                        '& .MuiInputLabel-root': {
-                            '&.Mui-focused': {
-                                fontWeight: 'bold',                        
-                                color: '#1C252E',   
-                            },
-                        },
-                    }}
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                    
-                    {/* <label htmlFor="username" className="form-label">Username</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="email"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        name="email"
-                        placeholder="Enter your email or username"
-                        autoFocus /> */}
-                </div>  
-                <div className="mb-3  mt-4"> 
-                    
-                    <div className="input-group input-group-merge">
-                        <FormControl fullWidth  sx={{ 
-                            '& .MuiOutlinedInput-root': {
-                                borderRadius: '8px', 
-                                '&:hover fieldset': {
-                                    borderColor: '#1C252E',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#1C252E',
-                                },
-                            },
-                            '& .MuiInputLabel-root': {
-                                '&.Mui-focused': {
-                                    fontWeight: 'bold',                             
-                                    color: '#1C252E',   
-                                },
-                            },
-                        }}>
-                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                            <OutlinedInput
-                                placeholder='6+ characters'
-                                fullWidth
-                                id="outlined-adornment-password"
-                                type={showPassword ? 'text' : 'password'}
-                                endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    onMouseUp={handleMouseUpPassword}
-                                    edge="end"
-                                    >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                                }
-                                label="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </FormControl>
-                        {/* <input
-                            type="password"
-                            autoComplete="true"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="form-control"
-                            name="password"
-                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                            aria-describedby="password" />
-                        <span className="input-group-text cursor-pointer"></span> */}
-                    </div>
-                </div>
-                <div className="mb-3 mt-4">
-                    <Button
-                        variant="contained" 
-                        type="submit"
-                        sx={{
-                            bgcolor: "#1C252E",
-                            textTransform:"none",
-                            fontSize:"1rem",
-                            borderRadius:"8px",
-                            fontWeight:"800",
-                            "&:hover":{bgcolor:"#454F5B"}
-                        }}
-                        fullWidth
-                        disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} /> : null}
-                    >
-                        {loading ? '' : 'Sign in'}
-                    </Button>
-                </div>
-            </form>
+  const [resetPasswordData, setResetPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  })
+
+  // Gestionnaires d'événements pour les formulaires
+  const handleChange = (e) => {
+    const { name, value, checked } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "rememberMe" ? checked : value,
+    }))
+  }
+
+  const handleForgotPasswordChange = (e) => {
+    const { name, value } = e.target
+    setForgotPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleVerificationChange = (index, value) => {
+    // Limiter à un seul caractère
+    if (value.length > 1) value = value.charAt(0)
+
+    // Mettre à jour le code
+    const newCode = [...verificationData.code]
+    newCode[index] = value
+    setVerificationData({ code: newCode })
+
+    // Focus automatique sur le champ suivant
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`verification-${index + 1}`)
+      if (nextInput) nextInput.focus()
+    }
+  }
+
+  const handleResetPasswordChange = (e) => {
+    const { name, value } = e.target
+    setResetPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  // Gestionnaires de soumission
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log("Form submitted:", formData)
+    // Logique de connexion ici
+  }
+
+  const handleForgotPasswordSubmit = (e) => {
+    e.preventDefault()
+    console.log("Forgot password submitted:", forgotPasswordData)
+    // Simuler l'envoi d'un code de vérification
+    setCurrentView("verification")
+  }
+
+  const handleVerificationSubmit = (e) => {
+    e.preventDefault()
+    console.log("Verification submitted:", verificationData)
+    // Vérifier le code et passer à la réinitialisation du mot de passe
+    setCurrentView("resetPassword")
+  }
+
+  const handleResetPasswordSubmit = (e) => {
+    e.preventDefault()
+    console.log("Reset password submitted:", resetPasswordData)
+    // Réinitialiser le mot de passe et revenir à la page de connexion
+    if (resetPasswordData.newPassword === resetPasswordData.confirmPassword) {
+      alert("Mot de passe réinitialisé avec succès!")
+      setCurrentView("login")
+    } else {
+      alert("Les mots de passe ne correspondent pas.")
+    }
+  }
+
+  // Style commun pour le conteneur de formulaire pour maintenir une hauteur cohérente
+  const formContainerStyle = {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    justifyContent: "center",   
+  }/* Group 20 */
  
-            <Snackbar
-                open={open}
-                autoHideDuration={3000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
-            >
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                    {error}
-                </Alert>
-            </Snackbar>
-        </AuthWrapper>
-    );
-};
 
-export default Login;
+
+  // Fonction pour rendre la vue appropriée
+  const renderView = () => {
+    switch (currentView) {
+      case "forgotPassword":
+        return (
+          <Box component="form" onSubmit={handleForgotPasswordSubmit} sx={formContainerStyle}>
+            <Box sx={{ textAlign: "center", position: "relative", mb: 2 }}>
+              <IconButton
+                onClick={() => setCurrentView("login")}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <ArrowLeft size={18} />
+              </IconButton>
+              <H3>Mot de passe oublié ?</H3>
+            </Box>
+            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
+              Entrez votre adresse e-mail pour recevoir un code de réinitialisation
+            </Paragraphe>
+
+            <Box sx={{ mb: 4 }}>
+              <InputField
+                label="Email"
+                name="email"
+                placeholder="nom@email.com"
+                value={forgotPasswordData.email}
+                onChange={handleForgotPasswordChange}
+                fullWidth
+                required
+                type="email"
+                InputProps={{
+                  sx: { bgcolor: "white" },
+                }}
+              />
+            </Box>
+
+            <CustomButton
+              type="submit"
+              fullWidth
+              color="warning"
+              sx={{
+                py: 1.5,
+                bgcolor: "#FEC91F",
+                "&:hover": {
+                  bgcolor: "#FEC91F",
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Envoyer le code
+            </CustomButton>
+          </Box>
+        )
+
+      case "verification":
+        return (
+          <Box component="form" onSubmit={handleVerificationSubmit} sx={formContainerStyle}>
+            <Box sx={{ textAlign: "center", position: "relative", mb: 2 }}>
+              <IconButton
+                onClick={() => setCurrentView("forgotPassword")}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <ArrowLeft size={18} />
+              </IconButton>
+              <H3>Vérification</H3>
+            </Box>
+            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
+              Entrez le code de vérification que nous avons envoyé dans votre boîte email
+            </Paragraphe>
+
+            <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
+              {verificationData.code.map((digit, index) => (
+                <InputField
+                  key={index}
+                  id={`verification-${index}`}
+                  value={digit}
+                  onChange={(e) => handleVerificationChange(index, e.target.value)}
+                  inputProps={{
+                    maxLength: 1,
+                    style: { textAlign: "center", fontSize: "1.2rem", padding: "10px" },
+                  }}
+                  sx={{ width: "40px" }}
+                />
+              ))}
+            </Box>
+
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <Paragraphe
+                component="a"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  console.log("Renvoyer le code")
+                }}
+                sx={{
+                  fontSize: "0.75rem",
+                  color: "#1677FF",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                Renvoie code ?
+              </Paragraphe>
+            </Box>
+
+            <CustomButton
+              type="submit"
+              fullWidth
+              color="warning"
+              sx={{
+                py: 1.5,
+                bgcolor: "#FEC91F",
+                "&:hover": {
+                  bgcolor: "#FEC91F",
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Vérification code
+            </CustomButton>
+          </Box>
+        )
+
+      case "resetPassword":
+        return (
+          <Box component="form" onSubmit={handleResetPasswordSubmit} sx={formContainerStyle}>
+            <Box sx={{ textAlign: "center", position: "relative", mb: 2 }}>
+              <IconButton
+                onClick={() => setCurrentView("verification")}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <ArrowLeft size={18} />
+              </IconButton>
+              <H3>Réinitialiser votre mot de passe</H3>
+            </Box>
+            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
+              Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
+            </Paragraphe>
+
+            <Box sx={{ mb: 3 }}>
+              <InputField
+                label="Nouveau mot de passe"
+                name="newPassword"
+                placeholder="••••••••"
+                value={resetPasswordData.newPassword}
+                onChange={handleResetPasswordChange}
+                fullWidth
+                required
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  sx: { bgcolor: "white" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Box sx={{ mb: 4 }}>
+              <InputField
+                label="Confirmer mot de passe"
+                name="confirmPassword"
+                placeholder="••••••••"
+                value={resetPasswordData.confirmPassword}
+                onChange={handleResetPasswordChange}
+                fullWidth
+                required
+                type={showConfirmPassword ? "text" : "password"}
+                InputProps={{
+                  sx: { bgcolor: "white" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end" size="small">
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <CustomButton
+              type="submit"
+              fullWidth
+              color="warning"
+              sx={{
+                py: 1.5,
+                bgcolor: "#FEC91F",
+                "&:hover": {
+                  bgcolor: "#FEC91F",
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Réinitialiser mon mot de passe
+            </CustomButton>
+          </Box>
+        )
+
+      default: // login
+        return (
+          <Box component="form" onSubmit={handleSubmit} sx={{formContainerStyle}}>
+            <H3 sx={{ textAlign: "center", m: 1 }}>Connexion</H3>
+            <Paragraphe sx={{ textAlign: "center", mb: 2 }}>
+              Connectez-vous pour commencer votre mission de collecte
+            </Paragraphe>
+
+            <Box sx={{ mb: 3 }}>
+              <InputField
+                label="Email"
+                name="email"
+                placeholder="nom@email.com"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                required
+                type="email"
+                InputProps={{
+                  sx: { bgcolor: "white" },
+                }}
+                size="small"
+              />
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+              <InputField
+                label="Password"
+                name="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                fullWidth
+                required
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  sx: { bgcolor: "white" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                size="small"
+              />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                    size="small"
+                    sx={{
+                      color: "rgba(0,0,0,0.5)",
+                      "&.Mui-checked": {
+                        color: "#1677FF",
+                      },
+                    }}
+                  />
+                }
+                label={<Paragraphe sx={{ fontSize: "0.75rem" }}>Se souvenir de moi</Paragraphe>}
+              />
+              <Paragraphe
+                component="a"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  setCurrentView("forgotPassword")
+                }}
+                sx={{
+                  fontSize: "0.75rem",
+                  color: "#1677FF",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                Mot de passe oublié?
+              </Paragraphe>
+            </Box>
+
+            <CustomButton
+              type="submit"
+              fullWidth
+              color="warning"
+              sx={{
+                py: 1.5,
+                bgcolor: "#FEC91F",
+                "&:hover": {
+                  bgcolor: "#FEC91F",
+                  opacity: 0.9,
+                },
+              }}
+            >
+              Se Connecter
+            </CustomButton>
+          </Box>
+        )
+    }
+  }
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: 'linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)), url("/map-background.svg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Formes décoratives */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: -100,
+          right: -100,
+          width: 300,
+          height: 300,
+          borderRadius: "50%",
+          background: "linear-gradient(45deg, #FFC107, #FF9800)",
+          opacity: 0.7,
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: -50,
+          left: -50,
+          width: 200,
+          height: 200,
+          borderRadius: "50%",
+          background: "linear-gradient(45deg, #4CAF50, #8BC34A)",
+          opacity: 0.5,
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "20%",
+          right: "10%",
+          width: 150,
+          height: 150,
+          borderRadius: "50%",
+          background: "linear-gradient(45deg, #2196F3, #00BCD4)",
+          opacity: 0.4,
+          zIndex: 0,
+        }}
+      />
+
+      {/* Carte de connexion */}
+      <Paper
+        elevation={3} 
+        sx={{
+          width: "100%",
+          maxWidth: 800,
+          borderRadius: 4,
+          overflow: "hidden",
+          display: "flex",
+          zIndex: 1,
+          position: "relative",
+          height: { xs: "auto", md: "450px" }, 
+          boxShadow:'none !important',
+          // backgroundCOlor :'rgba(255,255,255, 10)'
+        }}
+      > 
+        {/* Partie gauche avec logo et titre */}
+        <Box
+          sx={{
+            width: "60%",
+            padding: 4,
+            display: { xs: "none", md: "flex" },
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRight: "1px solid rgba(0,0,0,0.05)",
+          }}
+        >
+          <Box
+            component="img"
+            src="../../assets/image.png"
+            alt="Centre Vonjy Logo"
+            sx={{ mb: 3, maxWidth: 150 }}
+          />
+          <H1 sx={{ textAlign: "center", mb: 1 }}>Projet Centre Vonjy</H1>
+          <Paragraphe sx={{ textAlign: "center" }}>Bienvenue dans la plateforme!</Paragraphe>
+        </Box>
+
+        {/* Partie droite avec formulaire */}
+        <Box
+          sx={{
+            width: { xs: "100%", md: "60%" },
+            padding: 8,
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+          }}
+        >
+          {renderView()}
+        </Box>
+      </Paper>
+    </Box>
+  )
+}
