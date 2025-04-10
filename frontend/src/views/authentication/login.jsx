@@ -123,21 +123,16 @@ export default function Login() {
       case "forgotPassword":
         return (
           <Box component="form" onSubmit={handleForgotPasswordSubmit} sx={formContainerStyle}>
-            <Box sx={{ textAlign: "center", position: "relative", mb: 2 }}>
+            <Box sx={{ textAlign: "center", position: "relative", mb: 1 }} className="d-flex align-items-center ">
               <IconButton
                 onClick={() => setCurrentView("login")}
-                sx={{
-                  position: "absolute",
-                  left: 0,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
+                sx={{position:'relative', left:'-6px'}}
               >
                 <ArrowLeft size={18} />
               </IconButton>
-              <H3>Mot de passe oublié ?</H3>
+              <H3 className="m-0 p-0">Mot de passe oublié ?</H3>
             </Box>
-            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
+            <Paragraphe sx={{ mb: 3, mt:2, textAlign: "center" }}>
               Entrez votre adresse e-mail pour recevoir un code de réinitialisation
             </Paragraphe>
 
@@ -145,7 +140,6 @@ export default function Login() {
               <InputField
                 label="Email"
                 name="email"
-                placeholder="nom@email.com"
                 value={forgotPasswordData.email}
                 onChange={handleForgotPasswordChange}
                 fullWidth
@@ -154,21 +148,16 @@ export default function Login() {
                 InputProps={{
                   sx: { bgcolor: "white" },
                 }}
+                size="medium"
+                InputLabelProps={{ shrink: true }}
               />
             </Box>
 
             <CustomButton
+              size="medium"
               type="submit"
               fullWidth
-              color="warning"
-              sx={{
-                py: 1.5,
-                bgcolor: "#FEC91F",
-                "&:hover": {
-                  bgcolor: "#FEC91F",
-                  opacity: 0.9,
-                },
-              }}
+              color="warning" 
             >
               Envoyer le code
             </CustomButton>
@@ -190,13 +179,13 @@ export default function Login() {
               >
                 <ArrowLeft size={18} />
               </IconButton>
-              <H3>Vérification</H3>
+              <H3 className="m-0 p-0">Vérification</H3>
             </Box>
-            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
-              Entrez le code de vérification que nous avons envoyé dans votre boîte email
+            <Paragraphe sx={{ mx: 1, textAlign: "center" }}>
+              Entrer le code de verification que nous avons envoier dans  email
             </Paragraphe>
 
-            <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 1, mt: 2 }}>
               {verificationData.code.map((digit, index) => (
                 <InputField
                   key={index}
@@ -207,12 +196,12 @@ export default function Login() {
                     maxLength: 1,
                     style: { textAlign: "center", fontSize: "1.2rem", padding: "10px" },
                   }}
-                  sx={{ width: "40px" }}
+                  sx={{ width: "50px" }}
                 />
               ))}
             </Box>
 
-            <Box sx={{ textAlign: "center", mb: 4 }}>
+            <Box sx={{ textAlign: "start", m: 2, ml: 0 }}>
               <Paragraphe
                 component="a"
                 href="#"
@@ -233,18 +222,11 @@ export default function Login() {
               </Paragraphe>
             </Box>
 
-            <CustomButton
+            <CustomButton 
+              size="medium"
               type="submit"
               fullWidth
-              color="warning"
-              sx={{
-                py: 1.5,
-                bgcolor: "#FEC91F",
-                "&:hover": {
-                  bgcolor: "#FEC91F",
-                  opacity: 0.9,
-                },
-              }}
+              color="warning"   
             >
               Vérification code
             </CustomButton>
@@ -253,34 +235,32 @@ export default function Login() {
 
       case "resetPassword":
         return (
-          <Box component="form" onSubmit={handleResetPasswordSubmit} sx={formContainerStyle}>
-            <Box sx={{ textAlign: "center", position: "relative", mb: 2 }}>
+          <Box component="form" onSubmit={handleResetPasswordSubmit} sx={formContainerStyle}> 
+            <Box sx={{ textAlign: "center", position: "relative", mb: 1 }} className="d-flex align-items-center justify-content-center">
               <IconButton
-                onClick={() => setCurrentView("verification")}
-                sx={{
-                  position: "absolute",
-                  left: 0,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
+                onClick={() => setCurrentView("login")}
+                sx={{position:'relative', left:'-6px'}}
               >
                 <ArrowLeft size={18} />
               </IconButton>
-              <H3>Réinitialiser votre mot de passe</H3>
+              <H3 className="m-0 mb-2 p-0">Réinitialiser votre  <br className="d-none d-lg-block" />   mot de passe</H3>
             </Box>
-            <Paragraphe sx={{ mb: 4, textAlign: "center" }}>
+            <Paragraphe sx={{ mb: 3, mt:1, textAlign: "center" }}>
               Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
             </Paragraphe>
 
             <Box sx={{ mb: 3 }}>
               <InputField
+                InputLabelProps={{ shrink: true }}
                 label="Nouveau mot de passe"
                 name="newPassword"
                 placeholder="••••••••"
                 value={resetPasswordData.newPassword}
                 onChange={handleResetPasswordChange}
                 fullWidth
+
                 required
+                size="small"
                 type={showPassword ? "text" : "password"}
                 InputProps={{
                   sx: { bgcolor: "white" },
@@ -292,11 +272,13 @@ export default function Login() {
                     </InputAdornment>
                   ),
                 }}
-              />
+              /> 
             </Box>
 
             <Box sx={{ mb: 4 }}>
               <InputField
+                InputLabelProps={{ shrink: true }}
+                size="small"
                 label="Confirmer mot de passe"
                 name="confirmPassword"
                 placeholder="••••••••"
@@ -319,6 +301,7 @@ export default function Login() {
             </Box>
 
             <CustomButton
+              size="small"
               type="submit"
               fullWidth
               color="warning"
@@ -339,119 +322,108 @@ export default function Login() {
       default: // login
         return (
           <Box component="form" onSubmit={handleSubmit} sx={{formContainerStyle}}>
-            <H3 sx={{ textAlign: "center", m: 1 }}>Connexion</H3>
-            <Paragraphe sx={{ textAlign: "center", mb: 2 }}>
-              Connectez-vous pour commencer votre mission de collecte
-            </Paragraphe>
-
-            <Box sx={{ mb: 3 }}>
-              <InputField
-                label="Email"
-                name="email"
-                placeholder="nom@email.com"
-                value={formData.email}
-                onChange={handleChange}
-                fullWidth
-                required
-                type="email"
-                InputProps={{
-                  sx: { bgcolor: "white" },
-                }}
-                size="small"
-              />
-            </Box>
-
-            <Box sx={{ mb: 3 }}>
-              <InputField
-                label="Password"
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                fullWidth
-                required
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  sx: { bgcolor: "white" },
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                size="small"
-              />
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                    size="small"
-                    sx={{
-                      color: "rgba(0,0,0,0.5)",
-                      "&.Mui-checked": {
-                        color: "#1677FF",
-                      },
-                    }}
-                  />
-                }
-                label={<Paragraphe sx={{ fontSize: "0.75rem" }}>Se souvenir de moi</Paragraphe>}
-              />
-              <Paragraphe
-                component="a"
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  setCurrentView("forgotPassword")
-                }}
+            <Box> 
+              <H3 sx={{ textAlign: "center", m: 1, mb:2  }}>Connexion</H3>
+              <Paragraphe sx={{ textAlign: "center", mb: 2 }}>
+                Connectez-vous pour commencer votre mission de collecte
+              </Paragraphe>
+              <Box sx={{ mb: 3 }}>
+                <InputField
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  type="email"  
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Box>
+              <Box sx={{ mb: 1 }}>
+                <InputField
+                  label="Password"
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  type={showPassword ? "text" : "password"}
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    sx: { bgcolor: "white" },
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  size="small"
+                />
+              </Box>
+              <Box
                 sx={{
-                  fontSize: "0.75rem",
-                  color: "#1677FF",
-                  textDecoration: "none",
-                  "&:hover": {
-                    textDecoration: "underline",
-                  },
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 1,
                 }}
               >
-                Mot de passe oublié?
-              </Paragraphe>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="rememberMe"
+                      checked={formData.rememberMe}
+                      onChange={handleChange}
+                      size="small"
+                      sx={{
+                        color: "rgba(0,0,0,0.5)",
+                        "&.Mui-checked": {
+                          color: "#1677FF",
+                        },
+                      }}
+                    />
+                  }
+                  label={<Paragraphe sx={{ fontSize: "0.75rem" }}>Se souvenir de moi</Paragraphe>}
+                />
+                <Paragraphe
+                  component="a"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCurrentView("forgotPassword")
+                  }}
+                  sx={{
+                    fontSize: "0.75rem",
+                    color: "#1677FF",
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Mot de passe oublié?
+                </Paragraphe>
+              </Box>
+              <CustomButton
+                type="submit"
+                fullWidth
+                color="warning" 
+                size="medium"
+              >
+                Se Connecter
+              </CustomButton>
             </Box>
-
-            <CustomButton
-              type="submit"
-              fullWidth
-              color="warning"
-              sx={{
-                py: 1.5,
-                bgcolor: "#FEC91F",
-                "&:hover": {
-                  bgcolor: "#FEC91F",
-                  opacity: 0.9,
-                },
-              }}
-            >
-              Se Connecter
-            </CustomButton>
           </Box>
         )
     }
   }
 
   return (
-    <Box
+    <Box 
       sx={{
         minHeight: "100vh",
         width: "100%",
@@ -462,40 +434,40 @@ export default function Login() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         position: "relative",
-        overflow: "hidden",
+        overflow: "hidden", 
       }}
     >
-      {/* Formes décoratives */}
       <Box
         sx={{
           position: "absolute",
           top: -100,
-          right: -100,
-          width: 300,
-          height: 300,
+          left: 0,
+          width: 378,
+          height: 511,
           borderRadius: "50%",
-          background: "linear-gradient(45deg, #FFC107, #FF9800)",
-          opacity: 0.7,
+          backgroundImage: 'url("../../assets/background/2.svg")',
           zIndex: 0,
+          backgroundSize: "contain",
+          backgroundRepeat:' no-repeat',
         }}
       />
+      <Box 
+        sx={{
+          position: "absolute",
+          bottom: 50,
+          left: -20,
+          width: 100,
+          height: 100, 
+          backgroundImage: 'url("../../assets/background/1.svg")',
+          zIndex: 0,
+          backgroundSize: "contain",
+          backgroundRepeat:' no-repeat',
+        }}
+      /> 
       <Box
         sx={{
           position: "absolute",
-          bottom: -50,
-          left: -50,
-          width: 200,
-          height: 200,
-          borderRadius: "50%",
-          background: "linear-gradient(45deg, #4CAF50, #8BC34A)",
-          opacity: 0.5,
-          zIndex: 0,
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: "20%",
+          bottom: "10%",
           right: "10%",
           width: 150,
           height: 150,
@@ -504,14 +476,18 @@ export default function Login() {
           opacity: 0.4,
           zIndex: 0,
         }}
-      />
+      /> 
 
       {/* Carte de connexion */}
       <Paper
         elevation={3} 
         sx={{
-          width: "100%",
-          maxWidth: 800,
+          width: {
+            xs: '100%',
+            sm: '500px',
+            md: '100%',
+          },
+          maxWidth: 800, 
           borderRadius: 4,
           overflow: "hidden",
           display: "flex",
@@ -525,7 +501,7 @@ export default function Login() {
         {/* Partie gauche avec logo et titre */}
         <Box
           sx={{
-            width: "60%",
+            width: "50%",
             padding: 4,
             display: { xs: "none", md: "flex" },
             flexDirection: "column",
@@ -547,11 +523,12 @@ export default function Login() {
         {/* Partie droite avec formulaire */}
         <Box
           sx={{
-            width: { xs: "100%", md: "60%" },
-            padding: 8,
+            width: { xs: "100%", md: "50%" },
+            padding: 7,
             display: "flex",
             flexDirection: "column",
             height: "100%",
+            justifyContent:'center'
           }}
         >
           {renderView()}
