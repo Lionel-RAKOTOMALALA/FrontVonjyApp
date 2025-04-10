@@ -18,12 +18,12 @@ function ChefServiceViews() {
 
   // Données fictives des chauffeurs
   const data = [
-    { id: 1, nom: 'Rasoanaivo', prenom: 'Hery', permis_conduire: ['B'], experience: 5, status: 'Disponible' },
-    { id: 2, nom: 'Rakotoarivelo', prenom: 'Naina', permis_conduire: ['C'], experience: 3, status: 'EnMission' },
-    { id: 3, nom: 'Andrianarivo', prenom: 'Mamy', permis_conduire: ['D'], experience: 8, status: 'Disponible' },
-    { id: 4, nom: 'Ravelojaona', prenom: 'Lova', permis_conduire: ['B'], experience: 10, status: 'EnMission' },
-    { id: 5, nom: 'Mihobisoa', prenom: 'Antsa Sarobidy Hardiot', permis_conduire: ['E', 'B'], experience: 2, status: 'Disponible' },
-    { id: 6, nom: 'Andriantsitohaina', prenom: 'Tiana', permis_conduire: ['E'], experience: 2, status: 'Disponible' },
+    { id: 1, nom: 'Rasoanaivo', prenom: 'Hery', permis_conduire: ['B'], experience: 5, status: 'Disponible', contact:'234565342' , adresse:'Betania' , sexe:'Femme' },
+    { id: 2, nom: 'Rakotoarivelo', prenom: 'Naina', permis_conduire: ['C'], experience: 3, status: 'EnMission', contact:'23342456' , adresse:'Ampasikibo' , sexe:'Homme' },
+    { id: 3, nom: 'Andrianarivo', prenom: 'Mamy', permis_conduire: ['D'], experience: 8, status: 'Disponible', contact:'2342356' , adresse:'Bazar' , sexe:'Femme' },
+    { id: 4, nom: 'Ravelojaona', prenom: 'Lova', permis_conduire: ['B'], experience: 10, status: 'EnMission', contact:'234234256' , adresse:'Andakoro' , sexe:'Homme' },
+    { id: 5, nom: 'Mihobisoa', prenom: 'Antsa Sarobidy Hardiot', permis_conduire: ['E', 'B'], experience: 2, status: 'Disponible', contact:'234562424' , adresse:'Andaboly' , sexe:'Femme' },
+    { id: 6, nom: 'Andriantsitohaina', prenom: 'Tiana', permis_conduire: ['E'], experience: 2, status: 'Disponible', contact:'23456452452' , adresse:'Mahavatsy' , sexe:'Homme' },
   ];
   
 
@@ -32,6 +32,9 @@ function ChefServiceViews() {
     { id: 'id', label: 'Id' },
     { id: 'nom', label: 'Nom', render: (row) => row.nom },
     { id: 'prenom', label: 'Prénom', render: (row) => row.prenom },   
+    { id: 'contact', label: 'Contact', render: (row) => row.contact },  
+    { id: 'adresse', label: 'Adresse', render: (row) => row.adresse },
+    { id: 'sexe', label: 'Sexe', render: (row) => row.sexe } 
   ];
 
   // Ouvre le modal de création de chauffeur
