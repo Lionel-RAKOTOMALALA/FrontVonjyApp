@@ -151,7 +151,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
             >
               <TableRow>
                 {showCheckboxes && (
-                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}>
+                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important', textAlign: 'center' }}>
                     <BpCheckbox
                       indeterminate={selected.length > 0 && selected.length < filteredData.length}
                       checked={selected.length === filteredData.length}
@@ -163,7 +163,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                   <TableCell
                     key={column.id}
                     sortDirection={orderBy === column.id ? order : false}
-                    sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}
+                    sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important', textAlign: 'center' }}
                     className={column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
                   >
                     <TableSortLabel
@@ -175,7 +175,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800', paddingRight:'30px' }}>Actions</TableCell>
+                <TableCell className='text-center' sx={{ color: '#637381', fontWeight: '800', paddingRight:'30px' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
   
@@ -192,7 +192,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     }}
                   >
                     {showCheckboxes && (
-                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important'}} padding="checkbox">
+                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important', textAlign: 'center'}} padding="checkbox">
                         <BpCheckbox
                           checked={isItemSelected}
                           onChange={(event) => handleCheckboxChange(event, row.id)}
@@ -200,12 +200,12 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                       </TableCell>
                     )}
                     {columns.map((column) => (
-                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important'}} key={column.id}>
+                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important', textAlign: 'center'}} key={column.id}>
                         {column.render ? column.render(row) : row[column.id]}
                       </TableCell>
                     ))}
-                    <TableCell align="right"  sx={{borderBottom: '1px dashed #e0e0e0 !important'}}>
-                      <IconButton  onClick={() => onEdit(row)}>
+                    <TableCell align="center" sx={{borderBottom: '1px dashed #e0e0e0 !important'}}>
+                      <IconButton onClick={() => onEdit(row)}>
                         <EditIcon />
                       </IconButton>
                       {showDeleteIcon && (
@@ -221,8 +221,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
           </Table>
   
         </div>
-      </TableContainer>
-      <PaginationComponent
+      </TableContainer>      <PaginationComponent
         count={Math.ceil(filteredData.length / rowsPerPage)}
         page={page + 1}
         onChange={handleChangePage}

@@ -1,47 +1,61 @@
 import React, { useState, useEffect } from 'react';
 
-import Modal from '../../../components/ui/Modal';
-
+import ModaleUpdate from '../../../components/ui/ModaleUpdate';
 function ServiceEdit({ isOpen, chauffeur, onChange, onSave, onClose }) { 
  
-  // Fallback si `chauffeur` est null/undefined
-  const validChauffeur = chauffeur || {};
+  const [formData, setFormData] = useState({
+    nom: '',
+    description: '',
+    offre: '',
+    nombreMembre: ''
+  });
  
-  // État local pour valider le formulaire
   const [isFormValid, setIsFormValid] = useState(true);
-  // Vérifie si tous les champs requis sont remplis correctement
+
+  useEffect(() => {
+    if (chauffeur) {
+      setFormData(chauffeur);
+    }
+  }, [chauffeur]);
+
   const checkFormValidity = () => {
-    const { nom = '', prenom = '', permis_conduire = [], experience = 1 } = validChauffeur;
-    const isValid = nom.trim() !== '' && prenom.trim() !== '' && permis_conduire.length > 0 && experience > 0;
+    const { nom = '', description = '', offre = '', nombreMembre = '' } = formData;
+    const isValid = nom.trim() !== '' && description.trim() !== '' && offre.trim() !== '' && nombreMembre !== '';
     setIsFormValid(isValid);
   };
   
-   // Fonction pour réinitialiser le formulaire
-   const resetForm = () => {
-     onChange({
-       nom: '',
-       prenom: '', 
-     });
-   };
+  const resetForm = () => {
+    setFormData({
+      nom: '',
+      description: '',
+      offre: '',
+      nombreMembre: ''
+    });
+  };
   
-  
-  // Chaque fois que le `chauffeur` change, on vérifie la validité du formulaire
   useEffect(() => {
     checkFormValidity();
-  }, [validChauffeur]);
+  }, [formData]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
   
   return (
-    <Modal
-      title="Modifier un commune"
+    <ModaleUpdate
+      title="Modifier une service"
       btnLabel="Sauvegarder"
       isOpen={isOpen}
-      onSave={() => onSave(validChauffeur)}
+      onSave={() => onSave(formData)}
       onClose={onClose}
       isFormValid={isFormValid}
       resetForm={resetForm}
+      initialData={chauffeur}
     >
- 
-    </Modal>
+    </ModaleUpdate>
   );
 }
 

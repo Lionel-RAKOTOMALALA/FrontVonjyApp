@@ -18,12 +18,12 @@ function ServiceViews() {
 
   // Données fictives des chauffeurs
   const data = [
-    { id: 1, nom: 'Rasoanaivo', prenom: 'Hery', permis_conduire: ['B'], experience: 5, status: 'Disponible' },
-    { id: 2, nom: 'Rakotoarivelo', prenom: 'Naina', permis_conduire: ['C'], experience: 3, status: 'EnMission' },
-    { id: 3, nom: 'Andrianarivo', prenom: 'Mamy', permis_conduire: ['D'], experience: 8, status: 'Disponible' },
-    { id: 4, nom: 'Ravelojaona', prenom: 'Lova', permis_conduire: ['B'], experience: 10, status: 'EnMission' },
-    { id: 5, nom: 'Mihobisoa', prenom: 'Antsa Sarobidy Hardiot', permis_conduire: ['E', 'B'], experience: 2, status: 'Disponible' },
-    { id: 6, nom: 'Andriantsitohaina', prenom: 'Tiana', permis_conduire: ['E'], experience: 2, status: 'Disponible' },
+    { id: 1, nom: 'Service 1', description: 'Description du service 1', offre: 'Offre standard', nombreMembre: 5 },
+    { id: 2, nom: 'Service 2', description: 'Description du service 2', offre: 'Offre premium', nombreMembre: 3 },
+    { id: 3, nom: 'Service 3', description: 'Description du service 3', offre: 'Offre basic', nombreMembre: 8 },
+    { id: 4, nom: 'Service 4', description: 'Description du service 4', offre: 'Offre standard', nombreMembre: 10 },
+    { id: 5, nom: 'Service 5', description: 'Description du service 5', offre: 'Offre premium', nombreMembre: 2 },
+    { id: 6, nom: 'Service 6', description: 'Description du service 6', offre: 'Offre basic', nombreMembre: 4 },
   ];
   
 
@@ -31,7 +31,9 @@ function ServiceViews() {
   const columns = [
     { id: 'id', label: 'Id' },
     { id: 'nom', label: 'Nom', render: (row) => row.nom },
-    { id: 'prenom', label: 'Prénom', render: (row) => row.prenom },   
+    { id: 'description', label: 'Description', render: (row) => row.description },
+    { id: 'offre', label: 'Offre', render: (row) => row.offre },
+    { id: 'nombreMembre', label: 'Nombre de membres', render: (row) => row.nombreMembre }   
   ];
 
   // Ouvre le modal de création de chauffeur
@@ -66,7 +68,7 @@ function ServiceViews() {
     setOpenDialog(true);
   };
 
-  // Confirme la suppression d’un chauffeur
+  // Confirme la suppression d'un chauffeur
   const confirmDelete = () => {
     console.log('Deleted:', chauffeurToDelete);
     setOpenDialog(false);
@@ -75,10 +77,10 @@ function ServiceViews() {
 
   return (
     <>
-      {/* Fil d’Ariane avec bouton de création */}
+      {/* Fil d'Ariane avec bouton de création */}
       <Breadcrumb 
         mainText="Listes" 
-        subText="Commune" 
+        subText="Service" 
         showCreateButton={true} 
         onCreate={handleCreate} 
       /> 
@@ -89,7 +91,8 @@ function ServiceViews() {
           data={data}
           columns={columns} 
           rowsPerPage={5}
-          onEdit={handleEdit} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
           showCheckboxes={true} 
           showDeleteIcon={false} 
         /> 
@@ -102,7 +105,7 @@ function ServiceViews() {
         onClose={() => setOpenCreateModal(false)} 
       /> 
 
-      {/* Modal d’édition */}
+      {/* Modal d'édition */}
       <ServiceEdit
         isOpen={openEditModal}
         chauffeur={selectedChauffeur}
@@ -117,7 +120,7 @@ function ServiceViews() {
         onClose={() => setOpenDialog(false)}
         onConfirm={confirmDelete}
         title="Suppression"
-        content="Êtes-vous sûr de vouloir supprimer ce chauffeur?"
+        content="Êtes-vous sûr de vouloir supprimer ce service?"
       />
 
       {/* Notification (snackbar) après une action réussie */}
