@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { H3, Paragraphe } from '../../../components/ui/TypographyVariants'
 import CustomButton from '../../../components/ui/CustomButton'
-import OTPInputs from './OTPInputs'
+import OTPInput from './OTPInput' // Assurez-vous que le chemin d'importation est correct
 
 function VerificationPage({ onNavigate }) {
   const [otp, setOtp] = useState('')
@@ -19,10 +19,29 @@ function VerificationPage({ onNavigate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Ajouter cette ligne pour afficher l'OTP dans la console
-    console.log("Code OTP saisi :", otp);
+    // Validation de base - vérifier que tous les champs sont remplis
+    if (otp.length !== 5) {
+      alert("Veuillez entrer un code à 6 chiffres complet");
+      return;
+    }
     
-    // onNavigate("resetPassword");
+    setIsSubmitting(true);
+    
+    try {
+      // Ajouter cette ligne pour afficher l'OTP dans la console
+      console.log("Code OTP saisi :", otp);
+      
+      // Simuler une requête API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Si la vérification réussit
+      onNavigate("resetPassword");
+    } catch (error) {
+      console.error("Erreur lors de la vérification:", error);
+      alert("Échec de la vérification. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const handleResendCode = async () => {
@@ -72,8 +91,24 @@ function VerificationPage({ onNavigate }) {
       </Paragraphe>
 
       <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 3 }}>
-        <OTPInputs value={otp} onChange={setOtp} length={6} />
-        <span>{otp}</span>
+        <OTPInput 
+          value={otp} 
+          onChange={setOtp} 
+          length={5} 
+          inputProps={{
+            style: {
+              width: '40px',
+              height: '40px',
+              margin: '0 4px',
+              fontSize: '16px',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 0, 0, 0.23)',
+              transition: 'border-color 0.3s'
+            }
+          }}
+          separator={<span style={{ margin: '0 2px' }}></span>}
+          inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
+        />
       </Box>
 
       <Box sx={{ textAlign: "start", m: 2, ml: 0 }}>
@@ -107,6 +142,7 @@ function VerificationPage({ onNavigate }) {
         type="submit"
         fullWidth
         color="warning"
+        disabled={isSubmitting || otp.length !== 5}
       >
         {isSubmitting ? "Vérification..." : "Vérifier le code"}
       </CustomButton>
