@@ -1,48 +1,61 @@
-import React, { useState, useEffect } from 'react';  
-import Modal from '../../../components/ui/Modal'; 
+import React, { useState, useEffect } from 'react';
+import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
 
 const ChefServiceCreate = ({ isOpen, onSave, onClose }) => {
   // État local pour stocker les données du formulaire
-  const [chauffeur, setChauffeur] = useState({
+  const [chefService, setchefService] = useState({
     nom: '',
-    prenom: '', 
+    prenom: '',
     contact: '',
     adresse: '',
     sexe: ''
   });
-   
-  // Vérifie si le formulaire est valide avant de pouvoir le soumettre
-  const isFormValid = chauffeur.nom !== '' && chauffeur.prenom !== '' && chauffeur.sexe.length > 0 && chauffeur.contact !== ''  && chauffeur.adresse !== '';
 
- 
-  // Réinitialise tous les champs du formulaire après soumission
+  const isFormValid = 
+  chefService.nom !== '' &&
+  chefService.prenom !== '' &&
+  chefService.contact !== '' &&
+  chefService.adresse !== '' &&
+  chefService.sexe !== '' &&
+  chefService.service !== '';
+
   const resetForm = () => {
-    setChauffeur({
+    setchefService({
       nom: '',
       prenom: '', 
       contact: '',
       adresse: '',
-      sexe: ''
-
+      sexe: '',
+      service: ''
     });
   }; 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setChauffeur(prevState => ({
+    setchefService(prevState => ({
       ...prevState,
       [name]: value
     }));
   };
 
-  const permisOptions = ['Homme', 'Femme'];
-  const handlePermisChange = (event) => {
+  const genre = ['Homme', 'Femme'];
+  const services = ['RH', 'Informatique', 'Logistique', 'Comptabilité'];
+
+  const handleSexeChange = (event) => {
     const { value } = event.target;
-    setChauffeur(prevState => ({
+    setchefService(prevState => ({
       ...prevState,
       sexe: value,
+    }));
+  };
+
+  const handleServiceChange = (event) => {
+    const { value } = event.target;
+    setchefService(prevState => ({
+      ...prevState,
+      service: value,
     }));
   };
 
@@ -50,10 +63,10 @@ const ChefServiceCreate = ({ isOpen, onSave, onClose }) => {
     setSnackConfig({ severity, message, anchorOrigin });
     setOpen(true);
   };
-  
+
   const handleSave = () => {
-    onSave(chauffeur);    
-    console.log('Données du Chef Service:', chauffeur);
+    onSave(chefService);
+    console.log('Données du Chef Service:', chefService);
   }
 
   return (
@@ -64,17 +77,28 @@ const ChefServiceCreate = ({ isOpen, onSave, onClose }) => {
       onSave={handleSave}
       onClose={onClose}
       isFormValid={isFormValid}
-      resetForm={resetForm} 
+      resetForm={resetForm}
       maxWidth="435px"
     >
       <div className="row">
+        <div className="row">
+          <div className="col mb-3 mt-2">
+            <SelectField
+              label="Service"
+              name="service"
+              value={chefService.service}
+              onChange={handleServiceChange}
+              options={services}
+            />
+          </div>
+        </div>
         <div className="col mb-3 mt-2">
           <InputField
             required
             label="Nom"
-            name="nom" 
-            value={chauffeur.nom} 
-            onChange={handleChange} 
+            name="nom"
+            value={chefService.nom}
+            onChange={handleChange}
           />
         </div>
         <div className="row">
@@ -82,23 +106,23 @@ const ChefServiceCreate = ({ isOpen, onSave, onClose }) => {
             <InputField
               required
               label="Prénom"
-              name="prenom" 
-              value={chauffeur.prenom} 
-              onChange={handleChange} 
+              name="prenom"
+              value={chefService.prenom}
+              onChange={handleChange}
             />
           </div>
         </div>
         <div className="row">
           <div className="col mb-3 mt-2">
-          <InputField
-            required
-            label="Numéro de téléphone"
-            name="contact"
-            value={chauffeur.contact}
-            onChange={handleChange}
-            type="number"
-            inputProps={{ min: 0 }}
-          />
+            <InputField
+              required
+              label="Numéro de téléphone"
+              name="contact"
+              value={chefService.contact}
+              onChange={handleChange}
+              type="number"
+              inputProps={{ min: 0 }}
+            />
           </div>
         </div>
         <div className="row">
@@ -106,24 +130,24 @@ const ChefServiceCreate = ({ isOpen, onSave, onClose }) => {
             <InputField
               required
               label="Adresse"
-              name="adresse" 
-              value={chauffeur.adresse} 
-              onChange={handleChange} 
+              name="adresse"
+              value={chefService.adresse}
+              onChange={handleChange}
             />
           </div>
         </div>
         <div className="row">
           <div className="col mb-3 mt-2">
-          <SelectField
-            label="Sexe"
-            name="sexe"
-            value={chauffeur.sexe}
-            onChange={handlePermisChange}
-            options={permisOptions} 
-          />  
+            <SelectField
+              label="Sexe"
+              name="sexe"
+              value={chefService.sexe}
+              onChange={handleSexeChange}
+              options={genre}
+            />
           </div>
         </div>
-        
+
       </div>
     </Modal>
   );

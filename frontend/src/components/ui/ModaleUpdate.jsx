@@ -1,20 +1,22 @@
-// Modal.js
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, TextField } from '@mui/material';
 import { Fade, Grow } from '@mui/material';
+import SelectField from "./form/SelectField"; // 💡 Assure-toi que le chemin est correct
 
 const CustomBackdrop = (props) => {
   return <Backdrop {...props} onClick={(event) => event.stopPropagation()} />;
 };
 
-const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetForm, title, btnLabel, initialData }) => {
-  const [localFormValid, setLocalFormValid] = useState(isFormValid);
+const ModaleUpdate = ({ isOpen, onSave, onClose, children, resetForm, title, btnLabel, initialData }) => {
   const [formData, setFormData] = useState(initialData || {
     nom: '',
     description: '',
     offre: '',
-    nombreMembre: ''
+    nombreMembre: '',
+    fokontany: ''
   });
+
+  const [localFormValid, setLocalFormValid] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -23,8 +25,13 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
   }, [initialData]);
 
   useEffect(() => {
-    setLocalFormValid(isFormValid);
-  }, [isFormValid]);
+    const isValid = formData.nom !== '' &&
+      formData.description !== '' &&
+      formData.offre !== '' &&
+      formData.nombreMembre !== '' &&
+      formData.fokontany !== '';
+    setLocalFormValid(isValid);
+  }, [formData]);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,7 +53,8 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
       nom: '',
       description: '',
       offre: '',
-      nombreMembre: ''
+      nombreMembre: '',
+      fokontany: ''
     });
     onClose();
   };
@@ -82,6 +90,7 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
       },
     }
   };
+
   return (
     <Dialog
       open={isOpen}
@@ -92,9 +101,7 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
         backdrop: CustomBackdrop,
       }}
       TransitionComponent={Fade}
-      TransitionProps={{
-        timeout: 500
-      }}
+      TransitionProps={{ timeout: 500 }}
       sx={{
         '& .MuiDialog-container': {
           '& .MuiPaper-root': {
@@ -107,8 +114,14 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
       <Grow in={isOpen} timeout={600}>
         <div>
           <DialogTitle className='fw-bold' sx={{ pb: 3, pt: 3 }}>{title}</DialogTitle>
-          <DialogContent sx={{ pb: '0', px: 3 }}>
-        
+          <DialogContent sx={{ pb: '0', px: 3 }} style={{ paddingTop: '12px' }}>
+            <SelectField
+              label="Fokontany"
+              name="fokontany"
+              value={formData.fokontany}
+              onChange={handleChange}
+              options={["Ampanihy", "Androka", "Ejeda"]}
+            />
             <TextField
               fullWidth
               margin="normal"
@@ -186,7 +199,7 @@ const ModaleUpdate = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
                 padding: '8px 22px',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 8px 16px 0 rgba(28,37,46,0.2)',
-                '&:hover': { 
+                '&:hover': {
                   bgcolor: '#454F5B',
                   transform: 'scale(1.05)',
                   boxShadow: '0 8px 20px 0 rgba(28,37,46,0.3)'

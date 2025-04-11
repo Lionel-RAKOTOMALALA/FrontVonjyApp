@@ -34,7 +34,7 @@ const AppRoutes = ({user, isLoggedIn}) => {
  
             <Route path="/chauffeur" element={<Layout user={user}><Chauffeur user={user}/></Layout>}/>
             <Route path="/commune" element={<Layout user={user}><Commune user={user}/></Layout>}/>
-            <Route path="/fokontany" element={<Layout user={user}><Fokontany user={user}/></Layout>}/>
+            <Route path="/responsable" element={<Layout user={user}><Fokontany user={user}/></Layout>}/>
             <Route path="/service" element={<Layout user={user}><Service user={user}/></Layout>}/>
             <Route path="/chef-service" element={<Layout user={user}><ChefService user={user}/></Layout>}/>
             <Route path="/composant" element={<Layout user={user}><Composant user={user}/></Layout>}/>

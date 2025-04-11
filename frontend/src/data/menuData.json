@@ -12,19 +12,7 @@
     },
     {
         "header": "Gestion",
-        "items": [ 
-            {
-                "text": "Exemple (Chauffeur)",
-                "icon": "bx bx-dock-top",
-                "available": true,
-                "link": "/chauffeur"
-            },
-            {
-                "text": "Composant",
-                "icon": "bx bx-dock-top",
-                "available": true,
-                "link": "/composant"
-            },
+        "items": [
             {
                 "text": "Commune",
                 "icon": "bx bx-dock-top",
@@ -32,10 +20,10 @@
                 "link": "/commune"
             },
             {
-                "text": "Fokontany",
+                "text": "Responsable",
                 "icon": "bx bx-dock-top",
                 "available": true,
-                "link": "/fokontany"
+                "link": "/responsable"
             },
             {
                 "text": "Service",

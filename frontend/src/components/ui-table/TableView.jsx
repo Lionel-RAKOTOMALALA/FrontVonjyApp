@@ -164,7 +164,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     key={column.id}
                     sortDirection={orderBy === column.id ? order : false}
                     sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}
-                    className={column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
+                    className={column.id === 'offre' ||column.id === 'nombreMembre' || column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
                   >
                     <TableSortLabel
                       active={orderBy === column.id}
@@ -175,7 +175,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800', paddingRight:'30px' }}>Actions</TableCell>
+                <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
   

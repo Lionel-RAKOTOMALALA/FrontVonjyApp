@@ -18,22 +18,31 @@ function ServiceViews() {
 
   // Données fictives des chauffeurs
   const data = [
-    { id: 1, nom: 'Service 1', description: 'Description du service 1', offre: 'Offre standard', nombreMembre: 5 },
-    { id: 2, nom: 'Service 2', description: 'Description du service 2', offre: 'Offre premium', nombreMembre: 3 },
-    { id: 3, nom: 'Service 3', description: 'Description du service 3', offre: 'Offre basic', nombreMembre: 8 },
-    { id: 4, nom: 'Service 4', description: 'Description du service 4', offre: 'Offre standard', nombreMembre: 10 },
-    { id: 5, nom: 'Service 5', description: 'Description du service 5', offre: 'Offre premium', nombreMembre: 2 },
-    { id: 6, nom: 'Service 6', description: 'Description du service 6', offre: 'Offre basic', nombreMembre: 4 },
+    { id: 1,fokontany:'Ampanihy', nom: 'Service 1', description: 'Description du service 1', offre: 'Offre standard', nombreMembre: 5 },
+    { id: 2,fokontany:'Androka', nom: 'Service 2', description: 'Description du service 2', offre: 'Offre premium', nombreMembre: 3 },
+    { id: 3,fokontany:'Ejeda', nom: 'Service 3', description: 'Description du service 3', offre: 'Offre basic', nombreMembre: 8 },
+    { id: 4,fokontany:'Gogogogo', nom: 'Service 4', description: 'Description du service 4', offre: 'Offre standard', nombreMembre: 10 },
   ];
   
 
   // Colonnes du tableau avec formatage personnalisé
   const columns = [
     { id: 'id', label: 'Id' },
+    { id: 'fokontany', label: 'Fokontany', render: (row) => row.fokontany },
     { id: 'nom', label: 'Nom', render: (row) => row.nom },
     { id: 'description', label: 'Description', render: (row) => row.description },
-    { id: 'offre', label: 'Offre', render: (row) => row.offre },
-    { id: 'nombreMembre', label: 'Nombre de membres', render: (row) => row.nombreMembre }   
+    { id: 'offre', label: 'Offre',
+      render: (row) => (
+        <div className="text-center">
+          {row.offre}
+        </div>
+      ) },
+    { id: 'nombreMembre', label: 'Nombre de membres', 
+      render: (row) => (
+        <div className="text-center">
+          {row.offre}
+        </div>
+      ) }  
   ];
 
   // Ouvre le modal de création de chauffeur

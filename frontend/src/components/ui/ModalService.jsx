@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, TextField } from '@mui/material';
 import { Fade, Grow } from '@mui/material';
+import SelectField from "./form/SelectField";
 
 const CustomBackdrop = (props) => {
   return <Backdrop {...props} onClick={(event) => event.stopPropagation()} />;
@@ -13,13 +14,16 @@ const ModalService = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
     nom: '',
     description: '',
     offre: '',
-    nombreMembre: ''
+    nombreMembre: '',
+    fokontany: ''
   });
 
   useEffect(() => {
-    const isValid = formData.nom !== '' && formData.description !== '' && formData.offre !== '' && formData.nombreMembre !== '';
+    const isValid = formData.nom !== '' && formData.description !== '' && formData.offre !== '' && formData.nombreMembre !== '' && formData.fokontany !== '';
     setLocalFormValid(isValid);
   }, [formData]);
+  
+  
 
   const handleChange = (e) => {
     setFormData({
@@ -103,8 +107,14 @@ const ModalService = ({ isOpen, onSave, onClose, children, isFormValid, resetFor
       <Grow in={isOpen} timeout={600}>
         <div>
           <DialogTitle className='fw-bold' sx={{ pb: 3, pt: 3 }}>{title}</DialogTitle>
-          <DialogContent sx={{ pb: '0', px: 3 }}>
-        
+          <DialogContent sx={{ pb: '0', px: 3 }} style={{paddingTop:'12px'}}>
+            <SelectField
+              label="Fokontany"
+              name="fokontany"
+              value={formData.fokontany}
+              onChange={handleChange}
+              options={["Ankadifotsy", "Isoraka", "Analakely"]} 
+            /> 
             <TextField
               fullWidth
               margin="normal"
