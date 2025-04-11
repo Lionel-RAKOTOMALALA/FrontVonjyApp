@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material'; 
+import { Box } from '@mui/material';
+import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView'; 
 import CommuneEdit from './CommuneEdit';  
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
@@ -102,6 +103,13 @@ function CommuneViews() {
 
   return (
     <>
+     <SnackbarAlert
+  open={openSnackbar}
+  setOpen={setOpenSnackbar}
+  severity={snackbarSeverity}
+  message={snackbarMessage}
+  anchorOrigin={{vertical:'top', horizontal:'right'}}
+/>
       {/* Fil d’Ariane avec bouton de création */}
       <Breadcrumb 
         mainText="Listes" 
@@ -148,16 +156,7 @@ function CommuneViews() {
       />
 
       {/* Notification (snackbar) après une action réussie */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+     
     </>
   );
 }
