@@ -26,8 +26,8 @@ const theme = createTheme({
       color: "#212121",
     },
     h4: {
-      fontSize: "1.75rem",
-      fontWeight: 400,
+      fontSize: "1.2rem",
+      fontWeight: 700,
       marginTop: "1.5rem",
       marginBottom: "1rem",
       color: "#212121",
