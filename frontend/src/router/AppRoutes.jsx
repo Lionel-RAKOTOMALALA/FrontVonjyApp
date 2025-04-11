@@ -1,7 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom"; 
 import { DashboardPage } from "../views/DashboardPage";  
-import Login from '../views/authentication/login';
-import Register from '../views/authentication/register';
+import Login from '../views/authentication'; 
 import Profile from '../views/account/profile';
 import Security from '../views/account/security';
 import Logout from '../views/logout';
@@ -43,7 +42,6 @@ const AppRoutes = ({user, isLoggedIn}) => {
 
 
             <Route path="/auth/login" element={isLoggedIn ? <Navigate to="/" />: <Login /> } />
-            <Route path="/auth/register" element={isLoggedIn ? <Navigate to="/" />: <Register /> } />
             <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
         </Routes>

@@ -21,12 +21,26 @@ const colorPalette = {
   warning: {
     main: "rgba(254, 201, 31, 0.9)",
     hover: "rgba(254, 201, 31, 1)",
-    contrastText: "#000",
+    contrastText: "#fff",
   },
   danger: {
     main: "#D32F2F",
     hover: "#B71C1C",
     contrastText: "#ffffff",
+  },
+};
+const sizeStyleMap = {
+  small: {
+    padding: "4px 12px",
+    fontSize: "0.75rem",
+  },
+  medium: {
+    padding: "6px 20px",
+    fontSize: "0.875rem",
+  },
+  large: {
+    padding: "8px 24px",
+    fontSize: "1rem",
   },
 };
 
@@ -126,16 +140,22 @@ const CustomButton = ({
   sx = {},
   variant = "contained",
   color = "primary",
+  size = "medium", // 👈 ajouter default ici
   ...props
 }) => {
   const colorStyle = getButtonStyle(variant, color);
+  const sizeStyle = sizeStyleMap[size] || sizeStyleMap.medium;
 
   return (
     <Button
       {...props}
       variant={variant === "contained" ? "contained" : "text"}
+      size={size} // 👈 important pour d'autres styles internes MUI
       sx={{
-        ...baseStyle,
+        textTransform: "none",
+        fontWeight: 600,
+        borderRadius: "8px",
+        ...sizeStyle,
         ...colorStyle,
         ...sx,
       }}

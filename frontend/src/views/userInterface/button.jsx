@@ -15,6 +15,9 @@ function button() {
           <CustomButton variant="contained" color="primary">
             Button
           </CustomButton>
+          <CustomButton size="small" variant="contained" color="primary">
+            Button
+          </CustomButton>
           <CustomButton variant="outlined" color="primary">
             Button
           </CustomButton>
@@ -97,6 +100,9 @@ function button() {
         <small className="text-light fw-medium">Warning</small>
         <div className="demo-inline-spacing">
           <CustomButton variant="contained" color="warning">
+            Button
+          </CustomButton>
+          <CustomButton size='small' variant="contained" color="warning">
             Button
           </CustomButton>
           <CustomButton variant="outlined" color="warning">
