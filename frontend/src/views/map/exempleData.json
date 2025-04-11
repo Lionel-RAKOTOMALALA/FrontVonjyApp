@@ -1,0 +1,102 @@
+{
+    "id": 1,
+    "nomCommune": "Ampanihy",
+    "fokotanys": [
+      {
+        "id": 1,
+        "nomFokotany": "Ankadifotsy",
+        "classe_responsable": "Classe A",
+        "nom_responsable": "Rakoto",
+        "prenom_responsable": "Jean",
+        "fonction": "Chef Fokotany",
+        "formation_acquise": "BAC+3",
+        "services": [
+          {
+            "id": 1,
+            "nomService": "Centre de santé communautaire",
+            "description": "Fournit des soins de santé de base à la population locale.",
+            "offre": "Consultation, vaccination, sensibilisation",
+            "membre": "Docteur Rasoanaivo, Infirmier Rakoto, Sage-femme Ralaivola",
+            "nombre_membre": 5
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "nomFokotany": "Ambohimasina",
+        "classe_responsable": "Classe B",
+        "nom_responsable": "Ravelo",
+        "prenom_responsable": "Marie",
+        "fonction": "Chef Fokotany",
+        "formation_acquise": "BAC",
+        "services": [
+          {
+            "id": 2,
+            "nomService": "Éducation communautaire",
+            "description": "Appui scolaire pour les enfants défavorisés.",
+            "offre": "Cours du soir, alphabétisation, aide aux devoirs",
+            "membre": "Professeur Randria, Volontaire Fanja",
+            "nombre_membre": 3
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "nomFokotany": "Andranomena",
+        "classe_responsable": "Classe C",
+        "nom_responsable": "Andrianina",
+        "prenom_responsable": "Hery",
+        "fonction": "Chef Fokotany",
+        "formation_acquise": "CAP",
+        "services": [
+          {
+            "id": 3,
+            "nomService": "Sécurité locale",
+            "description": "Assure la sécurité de la population.",
+            "offre": "Patrouille, médiation, sensibilisation",
+            "membre": "Agent Ramamy, Volontaire Solo",
+            "nombre_membre": 4
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "nomFokotany": "Ambalavato",
+        "classe_responsable": "Classe A",
+        "nom_responsable": "Rasoa",
+        "prenom_responsable": "Claudine",
+        "fonction": "Chef Fokotany",
+        "formation_acquise": "BAC+2",
+        "services": [
+          {
+            "id": 4,
+            "nomService": "Développement agricole",
+            "description": "Soutien aux agriculteurs locaux.",
+            "offre": "Formation, distribution de semences, aide technique",
+            "membre": "Ingénieur agronome Tovo, Technicien Faly",
+            "nombre_membre": 4
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "nomFokotany": "Mahatsinjo",
+        "classe_responsable": "Classe B",
+        "nom_responsable": "Randria",
+        "prenom_responsable": "Tiana",
+        "fonction": "Chef Fokotany",
+        "formation_acquise": "BAC+1",
+        "services": [
+          {
+            "id": 5,
+            "nomService": "Assainissement",
+            "description": "Gestion des déchets et hygiène publique.",
+            "offre": "Collecte d'ordures, éducation sanitaire, entretien des latrines",
+            "membre": "Chef d’équipe Liva, Agent Fitiavana",
+            "nombre_membre": 6
+          }
+        ]
+      }
+    ]
+  }
+  
