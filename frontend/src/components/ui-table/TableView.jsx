@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TableSortLabel, IconButton
+  TableSortLabel, IconButton,
+  Box
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import PaginationComponent from './PaginationComponent';
@@ -105,7 +106,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <>
+    <Box sx={{border:'1px solid rgba(224, 224, 224, .6)', borderRadius:'16px', overflow:'hidden'}}>
       <TableContainer>
         <div style={{ position: 'relative' }}>
           {/* Header personnalisé pour les éléments sélectionnés */}
@@ -150,7 +151,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
             >
               <TableRow>
                 {showCheckboxes && (
-                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800' }}>
+                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}>
                     <BpCheckbox
                       indeterminate={selected.length > 0 && selected.length < filteredData.length}
                       checked={selected.length === filteredData.length}
@@ -162,7 +163,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                   <TableCell
                     key={column.id}
                     sortDirection={orderBy === column.id ? order : false}
-                    sx={{ color: '#637381', fontWeight: '800' }}
+                    sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}
                     className={column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
                   >
                     <TableSortLabel
@@ -174,7 +175,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                <TableCell sx={{ color: '#637381', fontWeight: '800' }}>Actions</TableCell>
+                <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800', paddingRight:'30px' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
   
@@ -191,7 +192,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     }}
                   >
                     {showCheckboxes && (
-                      <TableCell padding="checkbox">
+                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important'}} padding="checkbox">
                         <BpCheckbox
                           checked={isItemSelected}
                           onChange={(event) => handleCheckboxChange(event, row.id)}
@@ -199,11 +200,11 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                       </TableCell>
                     )}
                     {columns.map((column) => (
-                      <TableCell key={column.id}>
+                      <TableCell sx={{borderBottom: '1px dashed #e0e0e0 !important'}} key={column.id}>
                         {column.render ? column.render(row) : row[column.id]}
                       </TableCell>
                     ))}
-                    <TableCell align="right">
+                    <TableCell align="right"  sx={{borderBottom: '1px dashed #e0e0e0 !important'}}>
                       <IconButton  onClick={() => onEdit(row)}>
                         <EditIcon />
                       </IconButton>
@@ -224,7 +225,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
         page={page + 1}
         onChange={handleChangePage}
       />
-    </>
+    </Box>
   );
   
 }
