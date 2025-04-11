@@ -119,7 +119,7 @@ function ChauffeurEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
               label="Permis de conduire"
               labelId="permis-label"
               id="permisBackdrop"
-              multiple
+              
               value={permis_conduire}
               onChange={(e) => onChange({ ...validChauffeur, permis_conduire: e.target.value })}
               renderValue={(selected) => selected.join(', ')}

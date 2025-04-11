@@ -151,7 +151,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
             >
               <TableRow>
                 {showCheckboxes && (
-                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800' }}>
+                  <TableCell padding="checkbox" sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}>
                     <BpCheckbox
                       indeterminate={selected.length > 0 && selected.length < filteredData.length}
                       checked={selected.length === filteredData.length}
