@@ -106,6 +106,8 @@ const ResponsableCreate = ({ isOpen, onSave, onClose }) => {
           <InputField label="Fonction" name="fonction" value={responsable.fonction} onChange={handleChange} />
         </div>
       </div>
+
+      
       <div className="row">
         <div className="col mb-3">
           <RadioGroupField
