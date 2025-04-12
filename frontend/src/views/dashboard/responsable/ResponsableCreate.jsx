@@ -3,9 +3,9 @@ import Modal from "../../../components/ui/Modal"
 import InputField from "../../../components/ui/form/InputField"
 import RadioGroupField from "../../../components/ui/form/RadioGroupField"
 
-const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
+const ResponsableCreate = ({ isOpen, onSave, onClose }) => {
   // État local pour stocker les données du formulaire
-  const [fokontany, setFokontany] = useState({
+  const [responsable, setResponsable] = useState({
     nom: "",
     classeResponsable: "",
     nomResponsable: "",
@@ -16,15 +16,15 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
 
   // Vérifie si le formulaire est valide avant de pouvoir le soumettre
   const isFormValid =
-    fokontany.nom !== "" &&
-    fokontany.classeResponsable !== "" &&
-    fokontany.nomResponsable !== "" &&
-    fokontany.prenomResponsable !== "" &&
-    fokontany.fonction !== "" 
+    responsable.nom !== "" &&
+    responsable.classeResponsable !== "" &&
+    responsable.nomResponsable !== "" &&
+    responsable.prenomResponsable !== "" &&
+    responsable.fonction !== "" 
 
   const handleChange = (event) => {
     const { name, value } = event.target
-    setFokontany((prevState) => ({
+    setResponsable((prevState) => ({
       ...prevState,
       [name]: value,
     }))
@@ -32,7 +32,7 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
 
   // Réinitialise tous les champs du formulaire après soumission
   const resetForm = () => {
-    setFokontany({
+    setResponsable({
       nom: "",
       classeResponsable: "",
       nomResponsable: "",
@@ -45,16 +45,16 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
   const handleSave = () => {
     // Conversion de la valeur string en booléen avant de sauvegarder
     const formattedData = {
-      ...fokontany,
-      formationAcquise: fokontany.formationAcquise === "true",
+      ...responsable,
+      formationAcquise: responsable.formationAcquise === "true",
     }
     onSave(formattedData)
-    console.log("Données du fokontany:", formattedData)
+    console.log("Données du responsable:", formattedData)
   }
 
   return (
     <Modal
-      title="Créer un Fokontany"
+      title="Créer un responsable"
       btnLabel="Créer"
       isOpen={isOpen}
       onSave={handleSave}
@@ -65,7 +65,7 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <InputField required label="Nom" name="nom" value={fokontany.nom} onChange={handleChange} />
+          <InputField required label="Nom" name="nom" value={responsable.nom} onChange={handleChange} />
         </div>
       </div>
       <div className="row">
@@ -74,7 +74,7 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
             required
             label="Classe Responsable"
             name="classeResponsable"
-            value={fokontany.classeResponsable}
+            value={responsable.classeResponsable}
             onChange={handleChange}
           />
         </div>
@@ -85,7 +85,7 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
             required
             label="Nom du Responsable"
             name="nomResponsable"
-            value={fokontany.nomResponsable}
+            value={responsable.nomResponsable}
             onChange={handleChange}
           />
         </div>
@@ -96,14 +96,14 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
             required
             label="Prénom du Responsable"
             name="prenomResponsable"
-            value={fokontany.prenomResponsable}
+            value={responsable.prenomResponsable}
             onChange={handleChange}
           />
         </div>
       </div>
       <div className="row">
         <div className="col mb-3">
-          <InputField label="Fonction" name="fonction" value={fokontany.fonction} onChange={handleChange} />
+          <InputField label="Fonction" name="fonction" value={responsable.fonction} onChange={handleChange} />
         </div>
       </div>
       <div className="row">
@@ -111,7 +111,7 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
           <RadioGroupField
             label="Formation Acquise"
             name="formationAcquise"
-            value={fokontany.formationAcquise}
+            value={responsable.formationAcquise}
             onChange={handleChange}
             options={[
               { value: "true", label: "Oui" },
@@ -124,4 +124,4 @@ const FokontanyCreate = ({ isOpen, onSave, onClose }) => {
   )
 }
 
-export default FokontanyCreate
+export default ResponsableCreate

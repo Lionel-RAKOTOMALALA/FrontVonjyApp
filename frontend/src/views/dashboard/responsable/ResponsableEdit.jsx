@@ -3,9 +3,9 @@ import Modal from "../../../components/ui/Modal"
 import InputField from "../../../components/ui/form/InputField"
 import RadioGroupField from "../../../components/ui/form/RadioGroupField"
 
-const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onClose }) => {
+const ResponsableEdit = ({ isOpen, responsable: propResponsable, onChange, onSave, onClose }) => {
   // État local pour stocker les données du formulaire
-  const [fokontany, setFokontany] = useState({
+  const [responsable, setResponsable] = useState({
     nom: "",
     classeResponsable: "",
     nomResponsable: "",
@@ -16,7 +16,7 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
 
   // Fonction pour réinitialiser le formulaire
   const resetForm = () => {
-    setFokontany({
+    setResponsable({
       nom: "",
       classeResponsable: "",
       nomResponsable: "",
@@ -26,40 +26,40 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
     })
   }
 
-  // Mettre à jour l'état local lorsque le fokontany sélectionné change
+  // Mettre à jour l'état local lorsque le responsable sélectionné change
   useEffect(() => {
-    if (propFokontany) {
+    if (propResponsable) {
       // Initialiser avec les valeurs existantes ou des valeurs par défaut
-      setFokontany({
-        id: propFokontany.id || "",
-        nom: propFokontany.nom || "",
+      setResponsable({
+        id: propResponsable.id || "",
+        nom: propResponsable.nom || "",
         // Utiliser des valeurs par défaut pour les champs manquants
-        classeResponsable: propFokontany.classeResponsable || "", // Valeur par défaut
-        nomResponsable: propFokontany.nomResponsable || "",
-        prenomResponsable: propFokontany.prenomResponsable || propFokontany.prenom || "",
-        fonction: propFokontany.fonction || "", // Valeur par défaut
+        classeResponsable: propResponsable.classeResponsable || "", // Valeur par défaut
+        nomResponsable: propResponsable.nomResponsable || "",
+        prenomResponsable: propResponsable.prenomResponsable || propResponsable.prenom || "",
+        fonction: propResponsable.fonction || "", // Valeur par défaut
         // Convertir la valeur booléenne en chaîne pour le RadioGroupField
         formationAcquise:
-          propFokontany.formationAcquise === true || propFokontany.formationAcquise === "true" ? "true" : "false",
+          propResponsable.formationAcquise === true || propResponsable.formationAcquise === "true" ? "true" : "false",
       })
     }
-  }, [propFokontany])
+  }, [propResponsable])
 
   // Vérifie si le formulaire est valide avant de pouvoir le soumettre
   const isFormValid =
-    fokontany.nom !== "" &&
-    fokontany.classeResponsable !== "" &&
-    fokontany.nomResponsable !== "" &&
-    fokontany.prenomResponsable !== "" &&
-    fokontany.fonction !== "" 
+    responsable.nom !== "" &&
+    responsable.classeResponsable !== "" &&
+    responsable.nomResponsable !== "" &&
+    responsable.prenomResponsable !== "" &&
+    responsable.fonction !== "" 
 
   const handleChange = (event) => {
     const { name, value } = event.target
     const updatedFokontany = {
-      ...fokontany,
+      ...responsable,
       [name]: value,
     }
-    setFokontany(updatedFokontany)
+    setResponsable(updatedFokontany)
 
     // Propager les changements au composant parent
     if (onChange) {
@@ -70,16 +70,16 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
   const handleSave = () => {
     // Convertir la valeur string en booléen avant de sauvegarder
     const formattedData = {
-      ...fokontany,
-      formationAcquise: fokontany.formationAcquise === "true",
+      ...responsable,
+      formationAcquise: responsable.formationAcquise === "true",
     }
     onSave(formattedData)
-    console.log("Données du fokontany modifiées:", formattedData)
+    console.log("Données du responsable modifiées:", formattedData)
   }
 
   return (
     <Modal
-      title="Modifier un Fokontany"
+      title="Modifier un responsable"
       btnLabel="Modifier"
       isOpen={isOpen}
       onSave={handleSave}
@@ -90,7 +90,7 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <InputField required label="Nom" name="nom" value={fokontany.nom} onChange={handleChange} />
+          <InputField required label="Nom" name="nom" value={responsable.nom} onChange={handleChange} />
         </div>
       </div>
       <div className="row">
@@ -99,7 +99,7 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
             required
             label="Classe Responsable"
             name="classeResponsable"
-            value={fokontany.classeResponsable}
+            value={responsable.classeResponsable}
             onChange={handleChange}
           />
         </div>
@@ -110,7 +110,7 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
             required
             label="Nom du Responsable"
             name="nomResponsable"
-            value={fokontany.nomResponsable}
+            value={responsable.nomResponsable}
             onChange={handleChange}
           />
         </div>
@@ -121,14 +121,14 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
             required
             label="Prénom du Responsable"
             name="prenomResponsable"
-            value={fokontany.prenomResponsable}
+            value={responsable.prenomResponsable}
             onChange={handleChange}
           />
         </div>
       </div>
       <div className="row">
         <div className="col mb-3">
-          <InputField label="Fonction" name="fonction" value={fokontany.fonction} onChange={handleChange} />
+          <InputField label="Fonction" name="fonction" value={responsable.fonction} onChange={handleChange} />
         </div>
       </div>
       <div className="row">
@@ -136,7 +136,7 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
           <RadioGroupField
             label="Formation Acquise"
             name="formationAcquise"
-            value={fokontany.formationAcquise}
+            value={responsable.formationAcquise}
             onChange={handleChange}
             options={[
               { value: "true", label: "Oui" },
@@ -149,4 +149,4 @@ const FokontanyEdit = ({ isOpen, fokontany: propFokontany, onChange, onSave, onC
   )
 }
 
-export default FokontanyEdit
+export default ResponsableEdit

@@ -18,18 +18,18 @@
                 "icon": "bx bx-dock-top",
                 "available": true,
                 "link": "/composant"
-            },
-            {
-                "text": "Composant",
-                "icon": "bx bx-dock-top",
-                "available": true,
-                "link": "/composant"
-            },
+            }, 
             {
                 "text": "Commune",
                 "icon": "bx bx-dock-top",
                 "available": true,
                 "link": "/commune"
+            },
+            {
+                "text": "Fokontany",
+                "icon": "bx bx-dock-top",
+                "available": true,
+                "link": "/fokontany"
             },
             {
                 "text": "Responsable",
