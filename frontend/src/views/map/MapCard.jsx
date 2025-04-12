@@ -15,8 +15,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
   return (
     <Card sx={{
       borderRadius: 4,
-      height: '100%',
-      marginLeft: "35px",
+      height: '100%', 
       boxShadow: '0 0 2px 0 rgba(145 158 171 / 0.2),0 12px 24px -4px rgba(145 158 171 / 0.12)'
     }}>
       <CardContent className='p-0'>

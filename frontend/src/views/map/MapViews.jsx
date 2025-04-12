@@ -145,7 +145,7 @@ function MapViews() {
                   transition={{ duration: 0.3, delay: 0.1 }}
                   style={{ margin: 0 }}
                 >
-                 <H3 className="my-3">{selectedCommune.nom}</H3>
+                 <H3 className="my-3">Commune {selectedCommune.nom}</H3>
                 </motion.div>
               </>
             )}
