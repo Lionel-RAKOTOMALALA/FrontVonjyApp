@@ -1,111 +1,220 @@
-import React, { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { useMap } from 'react-leaflet';
-import L from 'leaflet';
-import AmpanihyData from './Ampanihy.json';
-import { calculateBBox } from './MapUtils';
+"use client"
 
-// Styling functions
-const getColor = (d) => {
-  return d > 1000 ? '#800026' :
-    d > 500 ? '#BD0026' :
-      d > 200 ? '#E31A1C' :
-        d > 100 ? '#FC4E2A' :
-          d > 50 ? '#FD8D3C' :
-            d > 20 ? '#FEB24C' :
-              d > 10 ? '#FED976' :
-                '#FFEDA0';
-};
+import { useEffect, useRef, useState } from "react"
+import PropTypes from "prop-types"
+import { useMap } from "react-leaflet"
+import L from "leaflet"
+import AmpanihyData from "./Ampanihy.json"
+import { calculateBBox } from "./MapUtils"
 
-const featureStyle = (feature) => ({
-  fillColor: feature.properties.density ? getColor(feature.properties.density) : '#cccccc',
+// Style par défaut
+const featureStyle = {
+  fillColor: "#555555",
   weight: 2,
   opacity: 1,
-  color: 'white',
-  dashArray: '3',
-  fillOpacity: 0.7
-});
+  color: "white",
+  dashArray: "3",
+  fillOpacity: 0.7,
+}
 
+// Style de sélection
 const selectedStyle = {
   weight: 3,
-  color: '#666',
-  dashArray: '',
+  color: "#666",
+  dashArray: "",
   fillOpacity: 0.9,
-  fillColor: '#3388ff'
-};
+  fillColor: "#3388ff",
+}
 
-function MapController({ selectedCommuneName, resetView }) {
-  const map = useMap();
-  const geoJsonLayerRef = useRef(null);
-  
-  // Effect to filter GeoJSON when a commune is selected
+// Style pour les éléments non sélectionnés (presque invisible)
+const inactiveStyle = {
+  weight: 1,
+  color: "#ffffff",
+  dashArray: "3",
+  fillOpacity: 0.2,
+  fillColor: "#dddddd",
+}
+
+// Style de survol - clair comme demandé
+const hoverStyle = {
+  weight: 2,
+  color: "#FFF",
+  dashArray: "",
+  fillOpacity: 0.8,
+  fillColor: "#99ccff", // Couleur claire au survol
+}
+
+function MapController({ selectedCommuneName, resetView, onCommuneClick, resetViewToDefault }) {
+  const map = useMap()
+  const geoJsonLayerRef = useRef(null)
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Fonction pour appliquer une transition CSS aux styles de la couche
+  const applyStyleWithTransition = (layer, style, duration = 0.5) => {
+    if (!layer || !layer._path) return
+
+    // Ajouter une transition CSS pour les propriétés de style
+    layer._path.style.transition = `fill-opacity ${duration}s ease, stroke-opacity ${duration}s ease, fill ${duration}s ease, stroke ${duration}s ease, stroke-width ${duration}s ease`
+    layer.setStyle(style)
+  }
+
+  // Initialisation de la couche GeoJSON une seule fois
   useEffect(() => {
-    if (!geoJsonLayerRef.current) return;
-    
-    if (selectedCommuneName) {
-      // Filter to show only the selected commune
-      geoJsonLayerRef.current.clearLayers();
-      
-      const filteredData = {
-        type: "FeatureCollection",
-        features: AmpanihyData.features.filter(
-          feature => feature.properties.District_N === selectedCommuneName
-        )
-      };
-      
-      const selectedLayer = L.geoJSON(filteredData, {
-        style: selectedStyle
-      }).addTo(geoJsonLayerRef.current);
-      
-      // Zoom to the selected commune
-      const bounds = selectedLayer.getBounds();
-      map.fitBounds(bounds, { padding: [50, 50] });
-    } else if (resetView) {
-      // Show all communes again
-      geoJsonLayerRef.current.clearLayers();
-      
-      L.geoJSON(AmpanihyData, {
-        style: featureStyle,
-        onEachFeature: (feature, layer) => {
-          const nomCommune = feature.properties.District_N;
-          layer.bindTooltip(nomCommune);
-        }
-      }).addTo(geoJsonLayerRef.current);
-      
-      // Reset to original view
-      const bounds = calculateBBox(AmpanihyData);
-      if (bounds) {
-        map.fitBounds(bounds, { padding: [50, 50] });
-      }
+    // Nettoyer les couches existantes si nécessaire
+    if (geoJsonLayerRef.current) {
+      map.removeLayer(geoJsonLayerRef.current)
     }
-  }, [map, selectedCommuneName, resetView]);
 
-  // Create a ref to the GeoJSON layer
-  useEffect(() => {
-    geoJsonLayerRef.current = L.layerGroup().addTo(map);
-    
-    // Initial load of all communes
-    L.geoJSON(AmpanihyData, {
-      style: featureStyle,
+    // Créer une nouvelle couche GeoJSON avec les styles et événements
+    const geoJsonLayer = L.geoJSON(AmpanihyData, {
+      style: () => featureStyle,
       onEachFeature: (feature, layer) => {
-        const nomCommune = feature.properties.District_N;
-        layer.bindTooltip(nomCommune);
-      }
-    }).addTo(geoJsonLayerRef.current);
-    
+        const nomCommune = feature.properties.District_N
+
+        // Tooltip
+        layer.bindTooltip(nomCommune, {
+          sticky: true,
+          direction: "top",
+          opacity: 0.9,
+        })
+
+        // Attacher les événements de clic ET de survol
+        layer.on({
+          click: () => {
+            if (onCommuneClick) {
+              onCommuneClick(nomCommune)
+            }
+          },
+          // Ajouter l'événement mouseover (survol)
+          mouseover: () => {
+            // Ne pas changer le style si la commune est déjà sélectionnée
+            if (selectedCommuneName !== nomCommune) {
+              applyStyleWithTransition(layer, hoverStyle, 0.2)
+            }
+            // Amener au premier plan lors du survol
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+              layer.bringToFront()
+            }
+          },
+          // Ajouter l'événement mouseout (fin de survol)
+          mouseout: () => {
+            // Restaurer le style approprié quand la souris quitte
+            if (selectedCommuneName === nomCommune) {
+              applyStyleWithTransition(layer, selectedStyle, 0.2)
+            } else if (selectedCommuneName) {
+              applyStyleWithTransition(layer, inactiveStyle, 0.2)
+            } else {
+              applyStyleWithTransition(layer, featureStyle, 0.2)
+            }
+          }
+        })
+      },
+    }).addTo(map)
+
+    // Stocker la référence à la couche
+    geoJsonLayerRef.current = geoJsonLayer
+
+    // Ajuster la vue initiale
+    const bounds = calculateBBox(AmpanihyData)
+    if (bounds) {
+      map.fitBounds(bounds, { padding: [50, 50] })
+    }
+
+    setIsInitialized(true)
+
+    // Nettoyer lors du démontage
     return () => {
       if (geoJsonLayerRef.current) {
-        geoJsonLayerRef.current.clearLayers();
+        map.removeLayer(geoJsonLayerRef.current)
       }
-    };
-  }, [map]);
+    }
+  }, [map]) // Dépendance uniquement à map pour s'assurer que cela ne se réexécute pas inutilement
 
-  return null;
+  // Mise à jour des styles quand une commune est sélectionnée
+  useEffect(() => {
+    if (!geoJsonLayerRef.current || !isInitialized) return
+
+    geoJsonLayerRef.current.eachLayer((layer) => {
+      const nomCommune = layer.feature.properties.District_N
+
+      // Appliquer le style approprié en fonction de la sélection
+      if (selectedCommuneName) {
+        if (nomCommune === selectedCommuneName) {
+          applyStyleWithTransition(layer, selectedStyle)
+
+          // Zoom sur la commune sélectionnée
+          const bounds = layer.getBounds()
+          map.fitBounds(bounds, {
+            padding: [50, 50],
+            duration: 0.5,
+          })
+
+          // Amener au premier plan
+          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront()
+          }
+        } else {
+          // Animer les autres communes pour qu'elles deviennent presque invisibles
+          // avec un délai progressif basé sur la distance
+          const selectedLayer = geoJsonLayerRef.current
+            .getLayers()
+            .find((l) => l.feature.properties.District_N === selectedCommuneName)
+
+          if (selectedLayer) {
+            const selectedCenter = selectedLayer.getBounds().getCenter()
+            const currentCenter = layer.getBounds().getCenter()
+            const distance = selectedCenter.distanceTo(currentCenter)
+            const maxDistance = 100000 // distance maximale estimée en mètres
+            const normalizedDelay = Math.min(distance / maxDistance, 1) * 300 // délai max de 300ms
+
+            setTimeout(() => {
+              applyStyleWithTransition(layer, inactiveStyle)
+            }, normalizedDelay)
+          } else {
+            applyStyleWithTransition(layer, inactiveStyle)
+          }
+        }
+      } else {
+        // Si aucune commune n'est sélectionnée, réinitialiser tous les styles
+        applyStyleWithTransition(layer, featureStyle)
+      }
+    })
+
+    // Réinitialiser la vue si nécessaire
+    if (resetView && !selectedCommuneName) {
+      const bounds = calculateBBox(AmpanihyData)
+      if (bounds) {
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          duration: 0.5,
+        })
+      }
+    }
+  }, [map, selectedCommuneName, resetView, isInitialized])
+
+  // Remise à zéro à la vue par défaut
+  useEffect(() => {
+    if (!isInitialized) return
+
+    if (resetViewToDefault) {
+      const bounds = calculateBBox(AmpanihyData)
+      if (bounds) {
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          duration: 0.5,
+        })
+      }
+    }
+  }, [resetViewToDefault, isInitialized])
+
+  return null
 }
 
 MapController.propTypes = {
   selectedCommuneName: PropTypes.string,
-  resetView: PropTypes.bool
-};
+  resetView: PropTypes.bool,
+  onCommuneClick: PropTypes.func,
+  resetViewToDefault: PropTypes.bool,
+}
 
-export default MapController;
+export default MapController
