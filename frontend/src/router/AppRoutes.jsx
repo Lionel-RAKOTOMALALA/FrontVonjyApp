@@ -13,8 +13,7 @@ import Fokontany from '../views/dashboard/fokontany/FokontanyViews';
 import Responsable from '../views/dashboard/responsable/ResponsableViews';
 import Service from '../views/dashboard/service/ServiceViews';
 import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
-import Map from '../views/map/MapViews';
-import MapDetail from '../views/map/MapViewsDetail';
+import Map from '../views/map/MapViews'; 
 
 import Composant from '../views/userInterface';
 
@@ -39,8 +38,7 @@ const AppRoutes = ({user, isLoggedIn}) => {
             <Route path="/chef-service" element={<Layout user={user}><ChefService user={user}/></Layout>}/>
             <Route path="/composant" element={<Layout user={user}><Composant user={user}/></Layout>}/>
 
-            <Route path="/map" element={<Map />}/>
-            <Route path="/commune/:name" element={<MapDetail />}/>
+            <Route path="/map" element={<Map />}/> 
 
 
             <Route path="/auth/login" element={isLoggedIn ? <Navigate to="/" />: <Login /> } />

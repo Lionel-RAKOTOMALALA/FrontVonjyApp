@@ -1,0 +1,110 @@
+  {
+    "id": 1,
+    "nomCommune": "Ampanihy",
+    "fokotanys": [
+      {
+        "id": 1,
+        "nomFokotany": "Ankadifotsy",
+        "responsable": [
+          {
+            "id": 1,
+            "classe_responsable": "Chef Fokotany",
+            "nom_responsable": "Rakoto",
+            "prenom_responsable": "Jean",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
+          },
+          {
+            "id": 2,
+            "classe_responsable": "Chef adjoints",
+            "nom_responsable": "Rakoto",
+            "prenom_responsable": "Jean",
+            "fonction": "Mpamboly",
+            "formation_acquise": true
+          }
+        ],
+        "services": [
+          {
+            "id": 1,
+            "nomService": "Centre de santé communautaire",
+            "description": "Fournit des soins de santé de base à la population locale.",
+            "offre": "Consultation, vaccination, sensibilisation",
+            "membre": "Docteur Rasoanaivo, Infirmier Rakoto, Sage-femme Ralaivola",
+            "nombre_membre": 5
+          },
+          {
+            "id": 2,
+            "nomService": "Centre de développement rural",
+            "description": "Accompagnement des agriculteurs locaux.",
+            "offre": "Formations agricoles, microcrédit, aide technique",
+            "membre": "Technicien Andry, Agronome Fanja",
+            "nombre_membre": 3
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "nomFokotany": "Ambohimasina",
+        "responsable": [
+          {
+            "id": 3,
+            "classe_responsable": "Chef Fokotany",
+            "nom_responsable": "Rabe",
+            "prenom_responsable": "Paul",
+            "fonction": "Enseignant",
+            "formation_acquise": true
+          },
+          {
+            "id": 4,
+            "classe_responsable": "Chef adjoints",
+            "nom_responsable": "Rasolondraibe",
+            "prenom_responsable": "Lalao",
+            "fonction": "Commerçante",
+            "formation_acquise": false
+          }
+        ],
+        "services": [
+          {
+            "id": 3,
+            "nomService": "École primaire publique",
+            "description": "Offre un enseignement de base aux enfants du fokontany.",
+            "offre": "Cours de base, alphabétisation, activités périscolaires",
+            "membre": "Directeur Ranaivo, Enseignante Saholy",
+            "nombre_membre": 6
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "nomFokotany": "Mahavoky",
+        "responsable": [
+          {
+            "id": 5,
+            "classe_responsable": "Chef Fokotany",
+            "nom_responsable": "Andrianina",
+            "prenom_responsable": "Tiana",
+            "fonction": "Infirmier",
+            "formation_acquise": true
+          }
+        ],
+        "services": [
+          {
+            "id": 4,
+            "nomService": "Centre jeunesse et culture",
+            "description": "Espace pour les jeunes : sport, culture et loisirs.",
+            "offre": "Bibliothèque, sport, musique",
+            "membre": "Animateur Faly, Coordinatrice Noro",
+            "nombre_membre": 4
+          },
+          {
+            "id": 5,
+            "nomService": "Poste de sécurité communautaire",
+            "description": "Assure la sécurité et la prévention des délits.",
+            "offre": "Rondes, intervention, sensibilisation",
+            "membre": "Chef de poste Solofo, Garde Randria",
+            "nombre_membre": 5
+          }
+        ]
+      }
+    ]
+  }
