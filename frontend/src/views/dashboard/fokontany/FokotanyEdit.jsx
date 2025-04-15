@@ -2,56 +2,74 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
-import useFokotanyStore from '../../../store/fokotanyStore'; // Import du store des fokotanys
+import RadioGroupField from "../../../components/ui/form/RadioGroupField";
+import useResponsableStore from '../../../store/responsableStore'; // Import du store des responsables
 
-const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
-  const { updateFokotany } = useFokotanyStore(); // Utilisation de la méthode updateFokotany du store
-  const [communes, setCommunes] = useState([]);
+const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => {
+  const { updateResponsable } = useResponsableStore(); // Utilisation de la méthode updateResponsable du store
+  const [fokotanys, setFokotanys] = useState([]);
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const validFokotany = fokotany || { commune_id: '', nomFokotany: '' };
+  const validResponsable = responsable || {
+    fokotany_id: '',
+    classe_responsable: '',
+    nom_responsable: '',
+    prenom_responsable: '',
+    fonction: '',
+    formation_acquise: 'true',
+  };
 
   useEffect(() => {
-    // Charger les communes depuis l'API
-    const fetchCommunes = async () => {
+    // Charger les fokotanys depuis l'API
+    const fetchFokotanys = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/communes/', {
+        const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
         if (!response.ok) {
-          throw new Error('Erreur lors du chargement des communes.');
+          throw new Error('Erreur lors du chargement des fokotanys.');
         }
         const data = await response.json();
-        setCommunes(data);
+        setFokotanys(data);
       } catch (err) {
-        console.error('Erreur lors de la récupération des communes :', err);
-        setError('Impossible de charger les communes.');
+        console.error('Erreur lors de la récupération des fokotanys :', err);
+        setError('Impossible de charger les fokotanys.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCommunes();
+    fetchFokotanys();
   }, []);
 
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
+  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9\s-]*$/i.test(value);
 
   const isFormValid =
-    validFokotany.nomFokotany?.trim() !== '' &&
-    validFokotany.commune_id?.trim() !== '' &&
-    isValidName(validFokotany.nomFokotany?.trim()) &&
+    validResponsable.nom_responsable?.trim() !== '' &&
+    validResponsable.prenom_responsable?.trim() !== '' &&
+    validResponsable.classe_responsable?.trim() !== '' &&
+    validResponsable.fonction?.trim() !== '' &&
+    validResponsable.fokotany_id?.trim() !== '' &&
+    isValidName(validResponsable.nom_responsable?.trim()) &&
     !inputDisabled;
 
   const resetForm = () => {
-    onChange({ commune_id: '', nomFokotany: '' });
+    onChange({
+      fokotany_id: '',
+      classe_responsable: '',
+      nom_responsable: '',
+      prenom_responsable: '',
+      fonction: '',
+      formation_acquise: 'true',
+    });
     setError('');
     setSubmitError('');
     setInputDisabled(false);
@@ -60,15 +78,15 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === 'nomFokotany' && !isValidName(value)) {
-      setError("Seules les lettres, chiffres romains, espaces et tirets sont autorisés.");
+    if (name === 'nom_responsable' && !isValidName(value)) {
+      setError("Seules les lettres, chiffres, espaces et tirets sont autorisés.");
       setInputDisabled(true);
       return;
     }
 
     setError('');
     setInputDisabled(false);
-    onChange({ ...validFokotany, [name]: value });
+    onChange({ ...validResponsable, [name]: value });
   };
 
   const handleSave = async () => {
@@ -77,33 +95,37 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
         setSubmitError("Veuillez corriger les erreurs du formulaire avant de soumettre.");
         return;
       }
-  
+
       setSubmitError('');
-  
-      // Transforme 'commune' en 'commune_id' pour satisfaire les attentes de l'API
+
+      // Transforme les données pour satisfaire les attentes de l'API
       const payload = {
-        id: validFokotany.id,
-        commune_id: validFokotany.commune?.id || validFokotany.commune_id, // Utilise 'id' si 'commune' est un objet
-        nomFokotany: validFokotany.nomFokotany,
+        id: validResponsable.id,
+        fokotany_id: validResponsable.fokotany?.id || validResponsable.fokotany_id,
+        classe_responsable: validResponsable.classe_responsable,
+        nom_responsable: validResponsable.nom_responsable,
+        prenom_responsable: validResponsable.prenom_responsable,
+        fonction: validResponsable.fonction,
+        formation_acquise: validResponsable.formation_acquise === 'true',
       };
-  
+
       console.log('Données envoyées pour la mise à jour :', payload); // Debug
-  
-      // Appel au store pour mettre à jour le fokotany
-      await updateFokotany(validFokotany.id, payload);
-      if (onSave) onSave('Fokotany modifié avec succès !');
-  
+
+      // Appel au store pour mettre à jour le responsable
+      await updateResponsable(validResponsable.id, payload);
+      if (onSave) onSave('Responsable modifié avec succès !');
+
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du fokotany :", err); // Debug
+      console.error("Erreur lors de la mise à jour du responsable :", err); // Debug
       setSubmitError(err.message || "Une erreur est survenue lors de la modification. Veuillez réessayer.");
     }
   };
 
   return (
     <Modal
-      title="Modifier un fokotany"
+      title="Modifier un responsable"
       btnLabel="Sauvegarder"
       isOpen={isOpen}
       onSave={handleSave}
@@ -117,23 +139,23 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <label htmlFor="commune_id" className="form-label">Commune</label>
+          <label htmlFor="fokotany_id" className="form-label">Fokotany</label>
           {loading ? (
-            <p>Chargement des communes...</p>
-          ) : communes.length > 0 ? (
+            <p>Chargement des fokotanys...</p>
+          ) : fokotanys.length > 0 ? (
             <SelectField
-              label="Sélectionnez une commune"
-              name="commune_id"
-              value={validFokotany.commune_id}
+              label="Sélectionnez un fokotany"
+              name="fokotany_id"
+              value={validResponsable.fokotany_id}
               onChange={handleChange}
-              options={communes.map((commune) => ({
-                value: commune.id.toString(),
-                label: commune.nomCommune,
+              options={fokotanys.map((fokotany) => ({
+                value: fokotany.id.toString(),
+                label: fokotany.nomFokotany,
               }))}
-              placeholder="Choisissez une commune"
+              placeholder="Choisissez un fokotany"
             />
           ) : (
-            <p className="text-danger">Aucune commune disponible.</p>
+            <p className="text-danger">Aucun fokotany disponible.</p>
           )}
         </div>
       </div>
@@ -141,22 +163,69 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
         <div className="col mb-3">
           <InputField
             required
-            label="Nom du fokotany"
-            name="nomFokotany"
-            value={validFokotany.nomFokotany || ''}
+            label="Classe Responsable"
+            name="classe_responsable"
+            value={validResponsable.classe_responsable || ''}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <InputField
+            required
+            label="Nom du Responsable"
+            name="nom_responsable"
+            value={validResponsable.nom_responsable || ''}
             onChange={handleChange}
             error={!!error}
             helperText={error || ' '}
           />
         </div>
-        {submitError && (
-          <p className="text-danger mt-2" style={{ fontSize: '0.9rem' }}>
-            {submitError}
-          </p>
-        )}
-      </div>    
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <InputField
+            required
+            label="Prénom du Responsable"
+            name="prenom_responsable"
+            value={validResponsable.prenom_responsable || ''}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <InputField
+            required
+            label="Fonction"
+            name="fonction"
+            value={validResponsable.fonction || ''}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <RadioGroupField
+            label="Formation Acquise"
+            name="formation_acquise"
+            value={validResponsable.formation_acquise}
+            onChange={handleChange}
+            options={[
+              { value: 'true', label: 'Oui' },
+              { value: 'false', label: 'Non' },
+            ]}
+          />
+        </div>
+      </div>
+      {submitError && (
+        <p className="text-danger mt-2" style={{ fontSize: '0.9rem' }}>
+          {submitError}
+        </p>
+      )}
     </Modal>
   );
 };
 
-export default FokotanyEdit;
+export default ResponsableEdit;

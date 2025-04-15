@@ -1,96 +1,137 @@
-import { useState, useEffect } from "react"
-import Modal from "../../../components/ui/Modal"
-import InputField from "../../../components/ui/form/InputField"
-import RadioGroupField from "../../../components/ui/form/RadioGroupField"
+import React, { useState, useEffect } from 'react';
+import Modal from '../../../components/ui/Modal';
+import InputField from '../../../components/ui/form/InputField';
+import SelectField from '../../../components/ui/form/SelectField';
+import RadioGroupField from "../../../components/ui/form/RadioGroupField";
+import useResponsableStore from '../../../store/responsableStore'; // Import du store des responsables
 
-const ResponsableEdit = ({ isOpen, responsable: propResponsable, onChange, onSave, onClose }) => {
-  // État local pour stocker les données du formulaire
-  const [responsable, setResponsable] = useState({
-    nom: "",
-    classeResponsable: "",
-    nomResponsable: "",
-    prenomResponsable: "",
-    fonction: "",
-    formationAcquise: "true",
-  })
+const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => {
+  const { updateResponsable } = useResponsableStore(); // Utilisation de la méthode updateResponsable du store
+  const [fokotanys, setFokotanys] = useState([]);
+  const [communes, setCommunes] = useState([]);
+  const [error, setError] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [loadingFokotanys, setLoadingFokotanys] = useState(false);
+  const [loadingCommunes, setLoadingCommunes] = useState(false);
 
-  // Fonction pour réinitialiser le formulaire
-  const resetForm = () => {
-    setResponsable({
-      nom: "",
-      classeResponsable: "",
-      nomResponsable: "",
-      prenomResponsable: "",
-      fonction: "",
-      formationAcquise: "true",
-    })
-  }
+  const [localResponsable, setLocalResponsable] = useState({
+    fokotany_id: '',
+    classe_responsable: '',
+    nom_responsable: '',
+    prenom_responsable: '',
+    fonction: '',
+    formation_acquise: 'true',
+  });
 
-  // Mettre à jour l'état local lorsque le responsable sélectionné change
+  // Initialize localResponsable state when responsable prop changes
   useEffect(() => {
-    if (propResponsable) {
-      // Initialiser avec les valeurs existantes ou des valeurs par défaut
-      setResponsable({
-        id: propResponsable.id || "",
-        nom: propResponsable.nom || "",
-        // Utiliser des valeurs par défaut pour les champs manquants
-        classeResponsable: propResponsable.classeResponsable || "", // Valeur par défaut
-        nomResponsable: propResponsable.nomResponsable || "",
-        prenomResponsable: propResponsable.prenomResponsable || propResponsable.prenom || "",
-        fonction: propResponsable.fonction || "", // Valeur par défaut
-        // Convertir la valeur booléenne en chaîne pour le RadioGroupField
-        formationAcquise:
-          propResponsable.formationAcquise === true || propResponsable.formationAcquise === "true" ? "true" : "false",
-      })
+    if (responsable) {
+      setLocalResponsable({
+        fokotany_id: responsable.fokotany?.id?.toString() || '',
+        classe_responsable: responsable.classe_responsable || '',
+        nom_responsable: responsable.nom_responsable || '',
+        prenom_responsable: responsable.prenom_responsable || '',
+        fonction: responsable.fonction || '',
+        formation_acquise: responsable.formation_acquise ? 'true' : 'false',
+      });
     }
-  }, [propResponsable])
+  }, [responsable]);
 
-  // Vérifie si le formulaire est valide avant de pouvoir le soumettre
-  const isFormValid =
-    responsable.nom !== "" &&
-    responsable.classeResponsable !== "" &&
-    responsable.nomResponsable !== "" &&
-    responsable.prenomResponsable !== "" &&
-    responsable.fonction !== "" 
+  // Fetch fokotanys
+  useEffect(() => {
+    const fetchFokotanys = async () => {
+      setLoadingFokotanys(true);
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Erreur lors du chargement des fokotanys.');
+        }
+        const data = await response.json();
+        setFokotanys(data);
+      } catch (err) {
+        console.error('Erreur lors de la récupération des fokotanys :', err);
+        setError('Impossible de charger les fokotanys.');
+      } finally {
+        setLoadingFokotanys(false);
+      }
+    };
+
+    fetchFokotanys();
+  }, []);
+
+
 
   const handleChange = (event) => {
-    const { name, value } = event.target
-    const updatedFokontany = {
-      ...responsable,
-      [name]: value,
-    }
-    setResponsable(updatedFokontany)
+    const { name, value } = event.target;
+    setLocalResponsable((prev) => ({ ...prev, [name]: value }));
+  };
 
-    // Propager les changements au composant parent
-    if (onChange) {
-      onChange(updatedFokontany)
+  const handleSave = async () => {
+    if (
+      !localResponsable.nom_responsable ||
+      !localResponsable.prenom_responsable ||
+      !localResponsable.classe_responsable ||
+      !localResponsable.fonction ||
+      !localResponsable.fokotany_id 
+    ) {
+      setSubmitError("Tous les champs sont requis. Veuillez les remplir.");
+      return;
     }
-  }
 
-  const handleSave = () => {
-    // Convertir la valeur string en booléen avant de sauvegarder
-    const formattedData = {
-      ...responsable,
-      formationAcquise: responsable.formationAcquise === "true",
+    try {
+      const payload = {
+        ...localResponsable,
+        formation_acquise: localResponsable.formation_acquise === 'true',
+      };
+
+      console.log('Données envoyées pour la mise à jour :', payload);
+
+      await updateResponsable(responsable.id, payload);
+      if (onSave) onSave('Responsable modifié avec succès !');
+      onClose();
+    } catch (err) {
+      console.error('Erreur lors de la mise à jour du responsable :', err);
+      setSubmitError(err.message || 'Une erreur est survenue lors de la modification.');
     }
-    onSave(formattedData)
-    console.log("Données du responsable modifiées:", formattedData)
-  }
+  };
 
   return (
     <Modal
       title="Modifier un responsable"
-      btnLabel="Modifier"
+      btnLabel="Sauvegarder"
       isOpen={isOpen}
       onSave={handleSave}
       onClose={onClose}
-      isFormValid={isFormValid}
-      resetForm={resetForm}
+      isFormValid
       maxWidth="435px"
     >
+
       <div className="row">
         <div className="col mb-3 mt-2">
-          <InputField required label="Nom" name="nom" value={responsable.nom} onChange={handleChange} />
+          <label htmlFor="fokotany_id" className="form-label">Fokotany</label>
+          {loadingFokotanys ? (
+            <p>Chargement des fokotanys...</p>
+          ) : fokotanys.length > 0 ? (
+            <SelectField
+              label="Sélectionnez un fokotany"
+              name="fokotany_id"
+              value={localResponsable.fokotany_id}
+              onChange={handleChange}
+              options={fokotanys.map((fokotany) => ({
+                value: fokotany.id.toString(),
+                label: fokotany.nomFokotany,
+              }))}
+              placeholder="Choisissez un fokotany"
+            />
+          ) : (
+            <p className="text-danger">Aucun fokotany disponible.</p>
+          )}
         </div>
       </div>
       <div className="row">
@@ -98,8 +139,8 @@ const ResponsableEdit = ({ isOpen, responsable: propResponsable, onChange, onSav
           <InputField
             required
             label="Classe Responsable"
-            name="classeResponsable"
-            value={responsable.classeResponsable}
+            name="classe_responsable"
+            value={localResponsable.classe_responsable}
             onChange={handleChange}
           />
         </div>
@@ -109,8 +150,8 @@ const ResponsableEdit = ({ isOpen, responsable: propResponsable, onChange, onSav
           <InputField
             required
             label="Nom du Responsable"
-            name="nomResponsable"
-            value={responsable.nomResponsable}
+            name="nom_responsable"
+            value={localResponsable.nom_responsable}
             onChange={handleChange}
           />
         </div>
@@ -120,33 +161,40 @@ const ResponsableEdit = ({ isOpen, responsable: propResponsable, onChange, onSav
           <InputField
             required
             label="Prénom du Responsable"
-            name="prenomResponsable"
-            value={responsable.prenomResponsable}
+            name="prenom_responsable"
+            value={localResponsable.prenom_responsable}
             onChange={handleChange}
           />
         </div>
       </div>
       <div className="row">
         <div className="col mb-3">
-          <InputField label="Fonction" name="fonction" value={responsable.fonction} onChange={handleChange} />
+          <InputField
+            required
+            label="Fonction"
+            name="fonction"
+            value={localResponsable.fonction}
+            onChange={handleChange}
+          />
         </div>
       </div>
       <div className="row">
         <div className="col mb-3">
           <RadioGroupField
             label="Formation Acquise"
-            name="formationAcquise"
-            value={responsable.formationAcquise}
+            name="formation_acquise"
+            value={localResponsable.formation_acquise}
             onChange={handleChange}
             options={[
-              { value: "true", label: "Oui" },
-              { value: "false", label: "Non" },
+              { value: 'true', label: 'Oui' },
+              { value: 'false', label: 'Non' },
             ]}
           />
         </div>
       </div>
+      {submitError && <p className="text-danger mt-2">{submitError}</p>}
     </Modal>
-  )
-}
+  );
+};
 
-export default ResponsableEdit
+export default ResponsableEdit;
