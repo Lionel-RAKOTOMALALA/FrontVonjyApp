@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
+import useCommuneStore from '../../../store/communeStore';
 
-const CommuneCreate = ({ isOpen, onSave, onClose }) => {
-  const [commune, setCommune] = useState({ nom: '' });
+const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onSave
+  const [commune, setCommune] = useState({ nomCommune: '' });
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [inputDisabled, setInputDisabled] = useState(false);
+  const { createCommune } = useCommuneStore();
 
-  // Regex autorise : lettres, chiffres, chiffres romains, espaces, tirets
   const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
 
-  const isFormValid = commune.nom.trim() !== '' && isValidName(commune.nom.trim()) && !inputDisabled;
+  const isFormValid = commune.nomCommune.trim() !== '' && 
+                     isValidName(commune.nomCommune.trim()) && 
+                     !inputDisabled;
 
   const resetForm = () => {
-    setCommune({ nom: '' });
+    setCommune({ nomCommune: '' });
     setError('');
     setSubmitError('');
     setInputDisabled(false);
@@ -22,12 +25,11 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    // Bloque la saisie dès qu’un caractère invalide est détecté
+    
     if (!isValidName(value)) {
-      setError("Seules les lettres, chiffres romains, espaces et tirets sont autorisés.");
+      setError("Caractères non autorisés détectés");
       setInputDisabled(true);
-      return; 
+      return;
     }
 
     setError('');
@@ -35,30 +37,39 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
     setCommune(prev => ({ ...prev, [name]: value }));
   };
 
-  // Enregistrement
   const handleSave = async () => {
     try {
       if (!isFormValid) {
-        setSubmitError("Veuillez corriger les erreurs du formulaire avant de soumettre.");
+        setSubmitError("Formulaire invalide");
         return;
       }
 
       setSubmitError('');
-      await onSave(commune);
-      console.log('Données du commune:', commune);
+      
+      // 2. Appel unique au store
+      await createCommune(commune);
+      if (onSuccess) onSuccess('Commune créée avec succès !');
+      
+      // 3. Fermeture et reset
+      resetForm();
+      onClose(); // Appel direct sans callback intermédiaire
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement du commune :", err);
-      setSubmitError("Une erreur est survenue lors de la création. Veuillez réessayer.");
+      console.error("Erreur:", err);
+      setSubmitError(err.message || "Erreur lors de la création");
+      if (onSuccess) onSuccess(err.message || "Erreur lors de la création", 'error');
     }
   };
 
   return (
     <Modal
-      title="Créer un commune"
+      title="Créer une commune"
       btnLabel="Créer"
       isOpen={isOpen}
       onSave={handleSave}
-      onClose={onClose}
+      onClose={() => {
+        resetForm();
+        onClose();
+      }}
       isFormValid={isFormValid}
       resetForm={resetForm}
       maxWidth="435px"
@@ -68,14 +79,14 @@ const CommuneCreate = ({ isOpen, onSave, onClose }) => {
           <InputField
             required
             label="Nom"
-            name="nom"
-            value={commune.nom}
+            name="nomCommune"
+            value={commune.nomCommune}
             onChange={handleChange}
             error={!!error}
             helperText={error || ' '}
           />
           {submitError && (
-            <p className="text-danger mt-2" style={{ fontSize: '0.9rem' }}>
+            <p className="text-danger mt-2 text-sm">
               {submitError}
             </p>
           )}

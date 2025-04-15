@@ -1,63 +1,78 @@
 import React, { useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
+import useCommuneStore from '../../../store/communeStore';
 
-function CommuneEdit({ isOpen, commune, onChange, onSave, onClose }) {
+const CommuneEdit = ({ isOpen, commune: initialCommune, onClose, onSuccess }) => {
+  const [commune, setCommune] = useState(initialCommune || { nomCommune: '' });
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [inputDisabled, setInputDisabled] = useState(false);
-  const validCommune = commune || {};
+  const { updateCommune } = useCommuneStore();
+
+  console.log(commune);
+  
 
   // Regex : lettres, chiffres, chiffres romains, espaces, tirets
   const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
 
-  const isFormValid = validCommune.nom?.trim() !== '' && isValidName(validCommune.nom?.trim()) && !inputDisabled;
+  const isFormValid = commune.nomCommune?.trim() !== '' && 
+                     isValidName(commune.nomCommune?.trim()) && 
+                     !inputDisabled;
 
   const resetForm = () => {
-    onChange({ nom: '' });
+    setCommune(initialCommune || { nomCommune: '' });
     setError('');
     setSubmitError('');
     setInputDisabled(false);
   };
 
-  const handleInputChange = (event) => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // Stoppe la saisie si caractère invalide
     if (!isValidName(value)) {
-      setError("Seules les lettres, chiffres romains, espaces et tirets sont autorisés.");
+      setError("Caractères non autorisés détectés");
       setInputDisabled(true);
       return;
     }
 
     setError('');
     setInputDisabled(false);
-    onChange({ ...validCommune, [name]: value });
+    setCommune(prev => ({ ...prev, [name]: value }));
   };
 
-  // Sauvegarde
   const handleSave = async () => {
-    if (!isFormValid) {
-      setSubmitError("Veuillez corriger les erreurs du formulaire avant de soumettre.");
-      return;
-    }
-
     try {
+      if (!isFormValid) {
+        setSubmitError("Formulaire invalide");
+        return;
+      }
+
       setSubmitError('');
-      await onSave(validCommune);
+      
+      await updateCommune(commune.id, commune);
+      
+      if (onSuccess) onSuccess('Commune modifiée avec succès !');
+      
+      resetForm();
+      onClose();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du commune :", err);
-      setSubmitError("Une erreur est survenue lors de la modification. Veuillez réessayer.");
+      console.error("Erreur:", err);
+      setSubmitError(err.message || "Erreur lors de la modification");
+      if (onSuccess) onSuccess(err.message || "Erreur lors de la modification", 'error');
     }
   };
 
   return (
     <Modal
-      title="Modifier un commune"
+      title="Modifier la commune"
       btnLabel="Sauvegarder"
       isOpen={isOpen}
       onSave={handleSave}
-      onClose={onClose}
+      onClose={() => {
+        resetForm();
+        onClose();
+      }}
       isFormValid={isFormValid}
       resetForm={resetForm}
       maxWidth="435px"
@@ -67,14 +82,14 @@ function CommuneEdit({ isOpen, commune, onChange, onSave, onClose }) {
           <InputField
             required
             label="Nom"
-            name="nom"
-            value={validCommune.nom || ''}
-            onChange={handleInputChange}
+            name="nomCommune"
+            value={commune.nomCommune || ''}
+            onChange={handleChange}
             error={!!error}
             helperText={error || ' '}
           />
           {submitError && (
-            <p className="text-danger mt-2" style={{ fontSize: '0.9rem' }}>
+            <p className="text-danger mt-2 text-sm">
               {submitError}
             </p>
           )}
@@ -82,6 +97,6 @@ function CommuneEdit({ isOpen, commune, onChange, onSave, onClose }) {
       </div>
     </Modal>
   );
-}
+};
 
 export default CommuneEdit;

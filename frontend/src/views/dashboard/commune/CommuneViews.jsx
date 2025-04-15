@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView'; 
@@ -6,8 +6,19 @@ import CommuneEdit from './CommuneEdit';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import CommuneCreate from './CommuneCreate';
+import useCommuneStore from '../../../store/communeStore';
 
 function CommuneViews() {
+  const {
+    communes,
+    loading,
+    error,
+    fetchCommunes,
+    createCommune,
+    updateCommune,
+    deleteCommune
+  } = useCommuneStore();
+
   const [selectedCommune, setSelectedCommune] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -17,63 +28,64 @@ function CommuneViews() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-  // Données fictives des chauffeurs
-  const data = [
-    { id: 1, nom: 'Rasoanaivo',  },
-    { id: 2, nom: 'Rakotoarivelo', },
-    { id: 3, nom: 'Andrianarivo',  },
-    { id: 4, nom: 'Ravelojaona', },
-    { id: 5, nom: 'Mihobisoa' },
-    { id: 6, nom: 'Andriantsitohaina', },
-  ];
-  
+  // Charger les communes au montage du composant
+  useEffect(() => {
+    fetchCommunes();
+  }, [fetchCommunes]);
 
-  // Colonnes du tableau avec formatage personnalisé
+  // Colonnes du tableau
   const columns = [
     { id: 'id', label: 'Id' },
-    { id: 'nom', label: 'Nom', render: (row) => row.nom }, 
+    { id: 'nomCommune', label: 'Nom', render: (row) => row.nomCommune }, 
   ];
 
-  // Ouvre le modal de création de chauffeur
+  // Gérer les erreurs
+  useEffect(() => {
+    if (error) {
+      setOpenSnackbar(true);
+      setSnackbarMessage(error);
+      setSnackbarSeverity('error');
+    }
+  }, [error]);
+
+  // Ouvre le modal de création
   const handleCreate = () => {
     setSelectedCommune(null);
     setOpenCreateModal(true);
   };
 
-  // Gère l'enregistrement d'un nouveau chauffeur
+  // Gère l'enregistrement d'une nouvelle commune
   const handleSaveCreate = async (commune) => {
     try {
-      console.log('Created:', commune);
+      await createCommune(commune);
       setOpenSnackbar(true);  
-      setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+      setOpenCreateModal(false);
       setSnackbarMessage('Commune créée avec succès!');
       setSnackbarSeverity('success');
     } catch (error) {
-      console.error('Erreur lors de la création du commune:', error);
       setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la création du commune. Veuillez réessayer.');
+      setSnackbarMessage(error.message || 'Erreur lors de la création de la commune');
       setSnackbarSeverity('error');
     }
   };
 
-  // Ouvre le modal d'édition avec les infos du commune sélectionné
+  // Ouvre le modal d'édition
   const handleEdit = (row) => {
     setSelectedCommune(row);
     setOpenEditModal(true);
   };
 
-  // Gère l'enregistrement des modifications d'un commune
+  // Gère l'enregistrement des modifications
   const handleSaveEdit = async (updatedCommune) => {  
     try {
-      console.log('Edited:', updatedCommune);
+      await updateCommune(updatedCommune.id, updatedCommune);
       setOpenEditModal(false);
       setOpenSnackbar(true);
       setSnackbarMessage('Commune modifiée avec succès!');
       setSnackbarSeverity('success');
     } catch (error) {
-      console.error('Erreur lors de l\'édition du commune:', error);
       setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la modification du commune. Veuillez réessayer.');
+      setSnackbarMessage(error.message || 'Erreur lors de la modification de la commune');
       setSnackbarSeverity('error');
     }
   };
@@ -84,33 +96,32 @@ function CommuneViews() {
     setOpenDialog(true);
   };
 
-  // Confirme la suppression d’un chauffeur
+  // Confirme la suppression
   const confirmDelete = async () => {
     try {
-      console.log('Deleted:', communeToDelete);
+      await deleteCommune(communeToDelete.id);
       setOpenDialog(false);
       setOpenSnackbar(true);  
       setSnackbarMessage('Commune supprimée avec succès!');
       setSnackbarSeverity('success');
     } catch (error) {
-      console.error('Erreur lors de la suppression du commune:', error);
       setOpenDialog(false);
       setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la suppression du commune. Veuillez réessayer.');
+      setSnackbarMessage(error.message || 'Erreur lors de la suppression de la commune');
       setSnackbarSeverity('error');
     }
   };
 
   return (
     <>
-     <SnackbarAlert
-  open={openSnackbar}
-  setOpen={setOpenSnackbar}
-  severity={snackbarSeverity}
-  message={snackbarMessage}
-  anchorOrigin={{vertical:'top', horizontal:'right'}}
-/>
-      {/* Fil d’Ariane avec bouton de création */}
+      <SnackbarAlert
+        open={openSnackbar}
+        setOpen={setOpenSnackbar}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        anchorOrigin={{vertical:'top', horizontal:'right'}}
+      />
+      
       <Breadcrumb 
         mainText="Listes" 
         subText="Commune" 
@@ -118,45 +129,50 @@ function CommuneViews() {
         onCreate={handleCreate} 
       /> 
 
-      {/* Tableau principal affichant les chauffeurs */}
       <Box className="card">   
         <TableView 
-          data={data}
+          data={communes}
           columns={columns} 
           rowsPerPage={5}
           onEdit={handleEdit} 
+          onDelete={handleDelete}
           showCheckboxes={true} 
-          showDeleteIcon={false} 
+          showDeleteIcon={true}
+          loading={loading}
         /> 
       </Box> 
        
-      {/* Modal de création */}
       <CommuneCreate
         isOpen={openCreateModal}
-        onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)} 
-      /> 
+        onClose={() => setOpenCreateModal(false)}
+        onSuccess={(message, severity = 'success') => {
+          setSnackbarMessage(message);
+          setSnackbarSeverity(severity);
+          setOpenSnackbar(true);
+          fetchCommunes(); // Rafraîchir la liste
+        }}
+      />
 
-      {/* Modal d’édition */}
       <CommuneEdit
         isOpen={openEditModal}
         commune={selectedCommune}
-        onChange={(updatedCommune) => setSelectedCommune(updatedCommune)}
-        onSave={handleSaveEdit}
-        onClose={() => setOpenEditModal(false)} 
+        onClose={() => setOpenEditModal(false)}
+        onSuccess={(message, severity = 'success') => {
+          setSnackbarMessage(message);
+          setSnackbarSeverity(severity);
+          setOpenSnackbar(true);
+          fetchCommunes(); // Rafraîchir la liste
+        }}
+        key={selectedCommune?.id || 'new-edit-modal'} // Ajout de la clé pour forcer le re-render
       />
       
-      {/* Boîte de dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onConfirm={confirmDelete}
         title="Suppression"
-        content="Êtes-vous sûr de vouloir supprimer ce chauffeur?"
+        content="Êtes-vous sûr de vouloir supprimer cette commune?"
       />
-
-      {/* Notification (snackbar) après une action réussie */}
-     
     </>
   );
 }

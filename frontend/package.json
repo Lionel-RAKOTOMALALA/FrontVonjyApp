@@ -24,6 +24,7 @@
         "js-cookie": "^3.0.5",
         "jwt-decode": "^3.1.2",
         "leaflet": "^1.9.4",
+        "lucide-react": "^0.488.0",
         "material-ui-popup-state": "^5.3.5",
         "mui-datatables": "^4.3.0",
         "perfect-scrollbar": "^1.5.5",
@@ -37,7 +38,7 @@
         "react-ripples": "^2.2.1",
         "react-router-dom": "6.10.0",
         "react-top-loading-bar": "^2.3.1",
-        "zustand": "^4.3.8"
+        "zustand": "^4.5.6"
     },
     "devDependencies": {
         "@types/react": "^18.0.28",

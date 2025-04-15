@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import { H3, Paragraphe } from '../../../components/ui/TypographyVariants'
 import InputField from '../../../components/ui/form/InputField'
 import CustomButton from '../../../components/ui/CustomButton'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../../store/auth' // Assurez-vous que ce chemin est correct
 
 function LoginForm({ onNavigate }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,6 +15,10 @@ function LoginForm({ onNavigate }) {
     password: "",
     rememberMe: false,
   })
+  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const { setAuthData } = useAuthStore()
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target
@@ -21,10 +28,36 @@ function LoginForm({ onNavigate }) {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Logique de connexion ici
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/auth/login/',
+        {
+          email: formData.email,
+          password: formData.password
+        }
+      )
+
+      // Stockage des données d'authentification dans le store et localStorage
+      setAuthData({
+        access: response.data.access,
+        refresh: response.data.refresh,
+        user: response.data.user
+      })
+
+      // Redirection après connexion réussie
+      navigate('/commune') // Adaptez selon votre route par défaut
+
+    } catch (err) {
+      setError(err.response?.data?.message || 'Email ou mot de passe incorrect')
+      console.error('Login error:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -34,6 +67,21 @@ function LoginForm({ onNavigate }) {
         <Paragraphe sx={{ textAlign: "center", mb: 2 }}>
           Connectez-vous pour commencer votre mission de collecte
         </Paragraphe>
+        
+        {/* Affichage des erreurs */}
+        {error && (
+          <Paragraphe sx={{ 
+            color: 'error.main', 
+            textAlign: 'center', 
+            mb: 2,
+            bgcolor: 'error.light',
+            p: 1,
+            borderRadius: 1
+          }}>
+            {error}
+          </Paragraphe>
+        )}
+
         <Box sx={{ mb: 3 }}>
           <InputField
             label="Email"
@@ -45,6 +93,7 @@ function LoginForm({ onNavigate }) {
             type="email"  
             size="small"
             InputLabelProps={{ shrink: true }}
+            error={!!error}
           />
         </Box>
         <Box sx={{ mb: 1 }}>
@@ -62,13 +111,18 @@ function LoginForm({ onNavigate }) {
               sx: { bgcolor: "white" },
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                  <IconButton 
+                    onClick={() => setShowPassword(!showPassword)} 
+                    edge="end" 
+                    size="small"
+                  >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
             size="small"
+            error={!!error}
           />
         </Box>
         <Box
@@ -120,8 +174,10 @@ function LoginForm({ onNavigate }) {
           fullWidth
           color="warning" 
           size="medium"
+          loading={isLoading}
+          disabled={isLoading}
         >
-          Se Connecter
+          {isLoading ? 'Connexion en cours...' : 'Se Connecter'}
         </CustomButton>
       </Box>
     </Box>
