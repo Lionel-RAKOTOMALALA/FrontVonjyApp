@@ -50,7 +50,7 @@ function LoginForm({ onNavigate }) {
       })
 
       // Redirection après connexion réussie
-      navigate('/commune') // Adaptez selon votre route par défaut
+      navigate('/commune') 
 
     } catch (err) {
       setError(err.response?.data?.message || 'Email ou mot de passe incorrect')

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView';
@@ -6,14 +6,10 @@ import FokotanyCreate from './FokotanyCreate';
 import FokotanyEdit from './FokotanyEdit';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
+import useFokotanyStore from '../../../store/fokotanyStore'; // Import du fokotanyStore
 
 function FokotanyViews() {
-  const [fokotanyList, setFokotanyList] = useState([
-    { id: 1, commune: 'Antananarivo', nomFokotany: 'Anosibe' },
-    { id: 2, commune: 'Antsirabe', nomFokotany: 'Ambohimena' },
-    { id: 3, commune: 'Fianarantsoa', nomFokotany: 'Tsianolondroa' },
-  ]);
-
+  const { fokotanys, loading, error, fetchFokotanys, deleteFokotany } = useFokotanyStore(); // Ajout de deleteFokotany
   const [selectedFokotany, setSelectedFokotany] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -23,9 +19,15 @@ function FokotanyViews() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
+  // Charger les fokotanys au montage du composant
+  useEffect(() => {
+    fetchFokotanys();
+  }, [fetchFokotanys]);
+
+  // Colonnes du tableau
   const columns = [
     { id: 'id', label: 'ID' },
-    { id: 'commune', label: 'Commune' },
+    { id: 'commune', label: 'Commune', render: (row) => row.commune.nomCommune }, // Affichage de la commune
     { id: 'nomFokotany', label: 'Fokotany' },
   ];
 
@@ -33,6 +35,7 @@ function FokotanyViews() {
     setSelectedFokotany(null);
     setOpenCreateModal(true);
   };
+
   const handleEdit = (row) => {
     setSelectedFokotany(row);
     setOpenEditModal(true);
@@ -40,12 +43,19 @@ function FokotanyViews() {
 
   const handleFokotanyChange = (updatedFokotany) => {
     setSelectedFokotany(updatedFokotany);
-};
+  };
+
+  // Gérer les erreurs
+  useEffect(() => {
+    if (error) {
+      setOpenSnackbar(true);
+      setSnackbarMessage(error);
+      setSnackbarSeverity('error');
+    }
+  }, [error]);
 
   const handleSaveCreate = async (fokotany) => {
     try {
-      const newFokotany = { ...fokotany, id: fokotanyList.length + 1 };
-      setFokotanyList(prev => [...prev, newFokotany]);
       setOpenCreateModal(false);
       setOpenSnackbar(true);
       setSnackbarMessage('Fokotany créé avec succès!');
@@ -58,10 +68,8 @@ function FokotanyViews() {
     }
   };
 
-  // Fonction de sauvegarde des modifs
   const handleSaveEdit = async (updatedFokotany) => {
     try {
-      console.log('Edited:', updatedFokotany);
       setOpenEditModal(false);
       setSnackbarMessage('Fokontany modifié avec succès!');
       setSnackbarSeverity('success');
@@ -81,7 +89,8 @@ function FokotanyViews() {
 
   const confirmDelete = async () => {
     try {
-      setFokotanyList(prev => prev.filter(item => item.id !== fokotanyToDelete.id));
+      // Appel à deleteFokotany via le store
+      await deleteFokotany(fokotanyToDelete.id);
       setOpenDialog(false);
       setOpenSnackbar(true);
       setSnackbarMessage('Fokotany supprimé avec succès!');
@@ -114,13 +123,14 @@ function FokotanyViews() {
 
       <Box className="card">
         <TableView
-          data={fokotanyList}
+          data={fokotanys} // Les données viennent du store
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
           showCheckboxes={true}
           showDeleteIcon={true}
           onDelete={handleDelete}
+          loading={loading} // Indicateur de chargement
         />
       </Box>
 
