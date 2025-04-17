@@ -5,6 +5,7 @@ import { Box } from "@mui/material"
 import { H3 } from "../../components/ui/TypographyVariants"
 import AmpanihyData from "./Ampanihy.json"
 import AppHeader from "./AppHeader"
+import Navbar from "../../layouts/Navbar"
 import MapCard from "./MapCard"
 import StatistiqueGlobal from "./StatistiqueGlobal"
 import BackToOverviewButton from "./BackToOverviewButton"
@@ -137,10 +138,11 @@ function MapViews() {
       {/* Main Content */}
       <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
         <div
+          className="z-2"
           style={{
             position: "sticky",
             top: 0,
-            zIndex: 9999,
+            // zIndex: 5000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

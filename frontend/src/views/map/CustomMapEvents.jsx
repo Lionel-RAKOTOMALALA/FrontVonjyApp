@@ -8,13 +8,56 @@ function CustomMapEvents({ onCommuneClick }) {
   const map = useMap();
   
   useEffect(() => {
-    // Add invisible GeoJSON to handle clicks
+    // Default style (invisible)
+    const defaultStyle = {
+      weight: 2,
+      opacity: 0,
+      color: '#3388ff',
+      fillOpacity: 0
+    };
+    
+    // Hover style - using colors from MapController
+    const hoverStyle = {
+      weight: 2,
+      color: '#FFF',
+      dashArray: '',
+      fillOpacity: 0.8,
+      fillColor: '#99ccff' // Light blue color from MapController
+    };
+    
+    // Add GeoJSON with hover effects
     const interactiveLayer = L.geoJSON(AmpanihyData, {
-      style: { opacity: 0, fillOpacity: 0 }, // Invisible
+      style: defaultStyle,
       onEachFeature: (feature, layer) => {
         const nomCommune = feature.properties.District_N;
+        
+        // Add click handler
         layer.on('click', () => {
           onCommuneClick(nomCommune);
+        });
+        
+        // Add hover handlers
+        layer.on('mouseover', (e) => {
+          // Apply hover style
+          layer.setStyle(hoverStyle);
+          
+          // Bring to front to avoid overlap issues
+          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+          }
+          
+          // Show tooltip with commune name
+          layer.bindTooltip(nomCommune).openTooltip();
+        });
+        
+        layer.on('mouseout', (e) => {
+          // Reset to default style when not hovering
+          layer.setStyle(defaultStyle);
+          
+          // Close tooltip
+          if (layer.getTooltip()) {
+            layer.closeTooltip();
+          }
         });
       }
     }).addTo(map);
@@ -31,4 +74,4 @@ CustomMapEvents.propTypes = {
   onCommuneClick: PropTypes.func.isRequired
 };
 
-export default CustomMapEvents
+export default CustomMapEvents;

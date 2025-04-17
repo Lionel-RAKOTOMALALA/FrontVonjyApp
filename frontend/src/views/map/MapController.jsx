@@ -35,15 +35,6 @@ const inactiveStyle = {
   fillColor: "#dddddd",
 }
 
-// Style de survol - clair comme demandé
-const hoverStyle = {
-  weight: 2,
-  color: "#FFF",
-  dashArray: "",
-  fillOpacity: 0.8,
-  fillColor: "#99ccff", // Couleur claire au survol
-}
-
 function MapController({ selectedCommuneName, resetView, onCommuneClick, resetViewToDefault }) {
   const map = useMap()
   const geoJsonLayerRef = useRef(null)
@@ -78,33 +69,11 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
           opacity: 0.9,
         })
 
-        // Attacher les événements de clic ET de survol
+        // Attacher uniquement l'événement de clic
         layer.on({
           click: () => {
             if (onCommuneClick) {
               onCommuneClick(nomCommune)
-            }
-          },
-          // Ajouter l'événement mouseover (survol)
-          mouseover: () => {
-            // Ne pas changer le style si la commune est déjà sélectionnée
-            if (selectedCommuneName !== nomCommune) {
-              applyStyleWithTransition(layer, hoverStyle, 0.2)
-            }
-            // Amener au premier plan lors du survol
-            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-              layer.bringToFront()
-            }
-          },
-          // Ajouter l'événement mouseout (fin de survol)
-          mouseout: () => {
-            // Restaurer le style approprié quand la souris quitte
-            if (selectedCommuneName === nomCommune) {
-              applyStyleWithTransition(layer, selectedStyle, 0.2)
-            } else if (selectedCommuneName) {
-              applyStyleWithTransition(layer, inactiveStyle, 0.2)
-            } else {
-              applyStyleWithTransition(layer, featureStyle, 0.2)
             }
           }
         })

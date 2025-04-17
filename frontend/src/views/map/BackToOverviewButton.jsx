@@ -17,7 +17,7 @@ function BackToOverviewButton({ onClick }) {
       padding: '8px',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',zIndex:5010
+      justifyContent: 'center',
     }}
   >
     <ArrowBackIcon />

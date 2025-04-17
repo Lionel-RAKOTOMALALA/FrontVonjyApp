@@ -27,16 +27,17 @@ function AppHeader({ scrolled }) {
   };
 
   return (
-    <AppBar 
+    <AppBar
       elevation={scrolled ? 4 : 0}
+      className='z-1'
       sx={{
         bgcolor: '#fff',
         color: '#000',
         backdropFilter: scrolled ? 'blur(10px)' : 'none',
         transition: 'all 0.3s ease',
-        position: 'fixed', 
-        boxShadow:'none',
-        zIndex:5000
+        position: 'fixed',
+        boxShadow: 'none',
+        // zIndex: 4000
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -44,7 +45,7 @@ function AppHeader({ scrolled }) {
           <img
             src={VonjyLogo}
             alt="Centre Vonjy Logo"
-            style={{ height: 60, marginRight: 10, position: 'absolute', top: '10px' }}
+            style={{ height: '4em', marginRight: 10 }}
           />
         </Box>
 
@@ -63,7 +64,17 @@ function AppHeader({ scrolled }) {
             <ArrowDropDownIcon />
           </IconButton>
           <Menu
-            id="user-menu"
+            sx={{
+              '& .MuiPaper-root': {
+                borderRadius: '10px',
+                boxShadow: 'rgba(145, 158, 171, 0.24) 0px 0px 2px 0px, rgba(145, 158, 171, 0.24) -20px 20px 40px -4px;',
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(20px)',
+                overflow: 'visible',
+                position: 'relative',
+                maxWidth: '200px',
+              },
+            }}
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
@@ -73,10 +84,19 @@ function AppHeader({ scrolled }) {
               'aria-labelledby': 'user-menu',
             }}
           >
-            <MenuItem onClick={handleClose}>Paramètres</MenuItem>
-            <MenuItem onClick={handleClose}>Voir profil</MenuItem>
+            <MenuItem 
+              className='mx-2 my-1'
+              sx={{ borderRadius: '10px' }}
+              onClick={handleClose}>Paramètres</MenuItem>
+            <MenuItem 
+              className='mx-2 my-1'
+              sx={{ borderRadius: '10px' }}
+               onClick={handleClose}>Voir profil</MenuItem>
             <Divider />
-            <MenuItem onClick={handleClose}>Déconnexion</MenuItem>
+            <MenuItem 
+              className='mx-2 my-1'
+              sx={{ borderRadius: '10px' }}
+               onClick={handleClose}>Déconnexion</MenuItem>
           </Menu>
         </Box>
       </Toolbar>

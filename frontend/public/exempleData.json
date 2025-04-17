@@ -4,21 +4,37 @@
     "fokotanys": [
       {
         "id": 1,
-        "nomFokotany": "Ankadifotsy",
+        "nomFokotany": "LAVAPOSA",
         "responsable": [
           {
             "id": 1,
             "classe_responsable": "Chef Fokotany",
-            "nom_responsable": "Rakoto",
-            "prenom_responsable": "Jean",
+            "nom_responsable": "MASINTOLOTSE",
+            "prenom_responsable": "",
             "fonction": "Mpamboly",
             "formation_acquise": false
           },
           {
             "id": 2,
             "classe_responsable": "Chef adjoints",
-            "nom_responsable": "Rakoto",
-            "prenom_responsable": "Jean",
+            "nom_responsable": "MANAMARE",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": true
+          },
+          {
+            "id":3,
+            "classe_responsable": "Pdt DINABE",
+            "nom_responsable": "MAHASAKA",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": true
+          },
+          {
+            "id":4,
+            "classe_responsable": "AC Agent communautaire",
+            "nom_responsable": "SOANAMBOATSE",
+            "prenom_responsable": "",
             "fonction": "Mpamboly",
             "formation_acquise": true
           }
@@ -26,83 +42,147 @@
         "services": [
           {
             "id": 1,
-            "nomService": "Centre de santé communautaire",
-            "description": "Fournit des soins de santé de base à la population locale.",
-            "offre": "Consultation, vaccination, sensibilisation",
-            "membre": "Docteur Rasoanaivo, Infirmier Rakoto, Sage-femme Ralaivola",
-            "nombre_membre": 5
+            "nomService": "Agent communautaire",
+            "description": "Mpanentana ara-pahasalamana.",
+            "offre": "VAKISINY TSY FANJARIAN TSAKAFO",
+            "membre": "SOANAMBOATSE",
+            "nombre_membre": 3
           },
           {
             "id": 2,
-            "nomService": "Centre de développement rural",
-            "description": "Accompagnement des agriculteurs locaux.",
-            "offre": "Formations agricoles, microcrédit, aide technique",
-            "membre": "Technicien Andry, Agronome Fanja",
+            "nomService": "ECOLE PRIMAIRE PUBLIQUE :  EPP LAVAPOSA",
+            "description": "",
+            "offre": "MAMPIANATRA",
+            "membre": "MINDRESOA Larissa",
             "nombre_membre": 3
+          },
+          {
+            "id": 3,
+            "nomService": "FIANGONANA",
+            "description": "EKAR",
+            "offre": "",
+            "membre": "FIANDRIANE",
+            "nombre_membre": 0
+          },
+          {
+            "id": 4,
+            "nomService": "FIANGONANA",
+            "description": "ORTHODOX",
+            "offre": "",
+            "membre": "MANATOVO",
+            "nombre_membre": 0
           }
         ]
       },
       {
         "id": 2,
-        "nomFokotany": "Ambohimasina",
+        "nomFokotany": "ETANJO",
         "responsable": [
           {
-            "id": 3,
+            "id": 1,
             "classe_responsable": "Chef Fokotany",
-            "nom_responsable": "Rabe",
-            "prenom_responsable": "Paul",
-            "fonction": "Enseignant",
-            "formation_acquise": true
+            "nom_responsable": "MAHAMARO",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
           },
           {
-            "id": 4,
+            "id": 2,
             "classe_responsable": "Chef adjoints",
-            "nom_responsable": "Rasolondraibe",
-            "prenom_responsable": "Lalao",
-            "fonction": "Commerçante",
+            "nom_responsable": "RAVELONDRIANARENA",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
+          },
+          {
+            "id": 3,
+            "classe_responsable": "AC Agent communautaire",
+            "nom_responsable": "LIMBERAZA",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
             "formation_acquise": false
           }
         ],
         "services": [
           {
+            "id": 1,
+            "nomService": "Agent communautaire ",
+            "description": "Mpanentana ara-pahasalamana  .",
+            "offre": "VAKISINY FAHADIOVANA FAHASALAMAN’NY VEHIVAVY",
+            "membre": "LIMBERAZA",
+            "nombre_membre": 2
+          },
+          {
+            "id": 2,
+            "nomService": "Agent communautaire ",
+            "description": "Mpanentana ara-pahasalamana  .",
+            "offre": "VAKISINY FAHADIOVANA FAHASALAMAN’NY VEHIVAVY",
+            "membre": "LIMBERAZA",
+            "nombre_membre": 2
+          },
+          {
             "id": 3,
-            "nomService": "École primaire publique",
-            "description": "Offre un enseignement de base aux enfants du fokontany.",
-            "offre": "Cours de base, alphabétisation, activités périscolaires",
-            "membre": "Directeur Ranaivo, Enseignante Saholy",
-            "nombre_membre": 6
+            "nomService": "FILAMINAM-BAHOAKA ",
+            "description": "Vaomiera fandriampahalemana DINABE  .",
+            "offre": "MIAMBY HAVORIA MANAO KABARY MAGNARA DIA",
+            "membre": "ALIZA",
+            "nombre_membre": 0
           }
         ]
       },
       {
         "id": 3,
-        "nomFokotany": "Mahavoky",
+        "nomFokotany": "ANKILETOKA",
         "responsable": [
           {
-            "id": 5,
+            "id": 1,
             "classe_responsable": "Chef Fokotany",
-            "nom_responsable": "Andrianina",
-            "prenom_responsable": "Tiana",
-            "fonction": "Infirmier",
-            "formation_acquise": true
+            "nom_responsable": "ESAMBEVOATSE",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
+          },
+          {
+            "id": 2,
+            "classe_responsable": "Chef adjoints",
+            "nom_responsable": "SAMBEHENY",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
+          },
+          {
+            "id": 3,
+            "classe_responsable": "AC Agent communautaire",
+            "nom_responsable": "LIMBERAZA",
+            "prenom_responsable": "",
+            "fonction": "Mpamboly",
+            "formation_acquise": false
           }
         ],
         "services": [
           {
-            "id": 4,
-            "nomService": "Centre jeunesse et culture",
-            "description": "Espace pour les jeunes : sport, culture et loisirs.",
-            "offre": "Bibliothèque, sport, musique",
-            "membre": "Animateur Faly, Coordinatrice Noro",
-            "nombre_membre": 4
+            "id": 1,
+            "nomService": "Agent communautaire ",
+            "description": "Mpanentana ara-pahasalamana  .",
+            "offre": "VAKISINY FAHADIOVANA FAHASALAMAN’NY VEHIVAVY",
+            "membre": "LIMBERAZA",
+            "nombre_membre": 2
           },
           {
-            "id": 5,
-            "nomService": "Poste de sécurité communautaire",
-            "description": "Assure la sécurité et la prévention des délits.",
-            "offre": "Rondes, intervention, sensibilisation",
-            "membre": "Chef de poste Solofo, Garde Randria",
-            "nombre_membre": 5
+            "id": 2,
+            "nomService": "Agent communautaire ",
+            "description": "Mpanentana ara-pahasalamana  .",
+            "offre": "VAKISINY FAHADIOVANA FAHASALAMAN’NY VEHIVAVY",
+            "membre": "LIMBERAZA",
+            "nombre_membre": 2
+          },
+          {
+            "id": 3,
+            "nomService": "FILAMINAM-BAHOAKA ",
+            "description": "Vaomiera fandriampahalemana DINABE  .",
+            "offre": "MIAMBY HAVORIA MANAO KABARY MAGNARA DIA",
+            "membre": "ALIZA",
+            "nombre_membre": 0
           }
         ]
       }
