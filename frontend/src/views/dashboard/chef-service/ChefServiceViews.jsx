@@ -1,133 +1,131 @@
-import React, { useState } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material'; 
-import TableView from '../../../components/ui-table/TableView'; 
-import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
-import Breadcrumb from '../../../components/ui/Breadcrumb';
-import ChefServiceEdit from './ChefServiceEdit';  
-import ChefServiceCreate from './ChefServiceCreate';
+import React, { useEffect, useState } from "react";
+import { Box, Snackbar, Alert } from "@mui/material";
+import TableView from "../../../components/ui-table/TableView";
+import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
+import ChefServiceEdit from "./ChefServiceEdit";
+import ChefServiceCreate from "./ChefServiceCreate";
+import useChefServiceStore from "../../../store/chefServiceStore"; // Import du store
 
 function ChefServiceViews() {
+  const { chefServices, fetchChefServices, loading, deleteChefService, error } = useChefServiceStore(); // Utilisation du store
   const [selectedChefService, setSelectedChefService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [chauffeurToDelete, setChefServiceToDelete] = useState(null);
+  const [chefServiceToDelete, setChefServiceToDelete] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  useEffect(() => {
+    fetchChefServices();
+  }, [fetchChefServices]);
 
-  // Données fictives des chauffeurs
-  const data = [
-    { id: 1,service:'Informatique', nom: 'Rasoanaivo', prenom: 'Hery', permis_conduire: ['B'], experience: 5, status: 'Disponible', contact:'234565342' , adresse:'Betania' , sexe:'Femme' },
-    { id: 2,service:'', nom: 'Rakotoarivelo', prenom: 'Naina', permis_conduire: ['C'], experience: 3, status: 'EnMission', contact:'23342456' , adresse:'Ampasikibo' , sexe:'Homme' },
-    { id: 3,service:'', nom: 'Andrianarivo', prenom: 'Mamy', permis_conduire: ['D'], experience: 8, status: 'Disponible', contact:'2342356' , adresse:'Bazar' , sexe:'Femme' },
-    { id: 4,service:'', nom: 'Ravelojaona', prenom: 'Lova', permis_conduire: ['B'], experience: 10, status: 'EnMission', contact:'234234256' , adresse:'Andakoro' , sexe:'Homme' },
-    { id: 5,service:'', nom: 'Mihobisoa', prenom: 'Antsa Sarobidy Hardiot', permis_conduire: ['E', 'B'], experience: 2, status: 'Disponible', contact:'234562424' , adresse:'Andaboly' , sexe:'Femme' },
-    { id: 6,service:'', nom: 'Andriantsitohaina', prenom: 'Tiana', permis_conduire: ['E'], experience: 2, status: 'Disponible', contact:'23456452452' , adresse:'Mahavatsy' , sexe:'Homme' },
-  ];
-  
-
-  // Colonnes du tableau avec formatage personnalisé
   const columns = [
-    { id: 'id', label: 'Id' },
-    { id: 'service', label: 'Service', render: (row) => row.service },
-    { id: 'nom', label: 'Nom', render: (row) => row.nom },
-    { id: 'prenom', label: 'Prénom', render: (row) => row.prenom },   
-    { id: 'contact', label: 'Contact', render: (row) => row.contact },  
-    { id: 'adresse', label: 'Adresse', render: (row) => row.adresse },
-    { id: 'sexe', label: 'Sexe', render: (row) => row.sexe } 
+    { id: "id", label: "ID" },
+    { id: "nomChef", label: "Nom Chef" },
+    { id: "prenomChef", label: "Prénom Chef" },
+    { id: "contact", label: "Contact" },
+    { id: "adresse", label: "Adresse" },
+    { id: "sexe", label: "Sexe" },
+    {
+      id: "service",
+      label: "Service",
+      render: (row) => row.service.nomService,
+    },
   ];
- 
+
   const handleCreate = () => {
     setSelectedChefService(null);
     setOpenCreateModal(true);
   };
- 
+
   const handleSaveCreate = (chefService) => {
-    console.log('Created:', chefService);
-    setOpenSnackbar(true);  
-    setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+    setSnackbarMessage("Chef de service créé avec succès!");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setOpenCreateModal(false);
   };
- 
+
   const handleEdit = (row) => {
     setSelectedChefService(row);
     setOpenEditModal(true);
-  }; 
-
-  const handleSaveEdit = (updatedChefService) => {  
-    console.log('Edited:', updatedChefService);
-    setOpenEditModal(false);
-    setOpenSnackbar(true);
   };
 
-  // Ouvre le dialogue de confirmation pour la suppression
+  const handleSaveEdit = (updatedChefService) => {
+    setSnackbarMessage("Chef de service modifié avec succès!");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setOpenEditModal(false);
+  };
+
   const handleDelete = (row) => {
     setChefServiceToDelete(row);
     setOpenDialog(true);
   };
 
-  const confirmDelete = () => {
-    console.log('Deleted:', chauffeurToDelete);
-    setOpenDialog(false);
-    setOpenSnackbar(true);  
+  const confirmDelete = async () => {
+    try {
+      await deleteChefService(chefServiceToDelete.id);
+      setSnackbarMessage("Chef de service supprimé avec succès!");
+      setSnackbarSeverity("success");
+    } catch (error) {
+      setSnackbarMessage("Erreur lors de la suppression du chef de service.");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenDialog(false);
+      setOpenSnackbar(true);
+    }
   };
 
   return (
     <>
-      {/* Fil d’Ariane avec bouton de création */}
-      <Breadcrumb 
-        mainText="Listes" 
-        subText="Chef de service" 
-        showCreateButton={true} 
-        onCreate={handleCreate} 
-      /> 
-
-      {/* Tableau principal affichant les chauffeurs */}
-      <Box className="card">   
-        <TableView 
-          data={data}
-          columns={columns} 
+      <Breadcrumb
+        mainText="Listes"
+        subText="Chefs de Service"
+        showCreateButton={true}
+        onCreate={handleCreate}
+      />
+      <Box className="card">
+        <TableView
+          data={chefServices}
+          columns={columns}
           rowsPerPage={5}
-          onEdit={handleEdit} 
-          showCheckboxes={true} 
-          showDeleteIcon={false} 
-        /> 
-      </Box> 
-       
-      {/* Modal de création */}
+          onEdit={handleEdit}
+          showCheckboxes={true}
+          showDeleteIcon={true}
+          onDelete={handleDelete}
+          loading={loading}
+        />
+      </Box>
       <ChefServiceCreate
         isOpen={openCreateModal}
         onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)} 
-      /> 
-
-      {/* Modal d’édition */}
+        onClose={() => setOpenCreateModal(false)}
+      />
       <ChefServiceEdit
         isOpen={openEditModal}
         chefService={selectedChefService}
         onChange={(updatedChefService) => setSelectedChefService(updatedChefService)}
         onSave={handleSaveEdit}
-        onClose={() => setOpenEditModal(false)} 
+        onClose={() => setOpenEditModal(false)}
       />
-      
-      {/* Boîte de dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onConfirm={confirmDelete}
         title="Suppression"
-        content="Êtes-vous sûr de vouloir supprimer ce chefService?"
+        content="Êtes-vous sûr de vouloir supprimer ce chef de service ?"
       />
-
-      {/* Notification (snackbar) après une action réussie */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-          Opération réalisée avec succès!
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>

@@ -1,146 +1,132 @@
-import React, { useState } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material'; 
-import TableView from '../../../components/ui-table/TableView'; 
-import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
-import Breadcrumb from '../../../components/ui/Breadcrumb';
-import ServiceEdit from './ServiceEdit';  
-import ServiceCreate from './ServiceCreate';
+import React, { useEffect, useState } from "react";
+import { Box, Snackbar, Alert } from "@mui/material";
+import TableView from "../../../components/ui-table/TableView";
+import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
+import Breadcrumb from "../../../components/ui/Breadcrumb";
+import ServiceEdit from "./ServiceEdit";
+import ServiceCreate from "./ServiceCreate";
+import useServiceStore from "../../../store/serviceStore"; // Import du store
 
 function ServiceViews() {
-  const [selectedChauffeur, setSelectedChauffeur] = useState(null);
+  const { services, fetchServices, loading, deleteService, error } = useServiceStore(); // Utilisation du store
+  const [selectedService, setSelectedService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [chauffeurToDelete, setChauffeurToDelete] = useState(null);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  // Charger les services au montage du composant
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
 
-  // Données fictives des chauffeurs
-  const data = [
-    { id: 1,fokontany:'Ampanihy', nom: 'Service 1', description: 'Description du service 1', offre: 'Offre standard', nombreMembre: 5 },
-    { id: 2,fokontany:'Androka', nom: 'Service 2', description: 'Description du service 2', offre: 'Offre premium', nombreMembre: 3 },
-    { id: 3,fokontany:'Ejeda', nom: 'Service 3', description: 'Description du service 3', offre: 'Offre basic', nombreMembre: 8 },
-    { id: 4,fokontany:'Gogogogo', nom: 'Service 4', description: 'Description du service 4', offre: 'Offre standard', nombreMembre: 10 },
-  ];
-  
-
-  // Colonnes du tableau avec formatage personnalisé
   const columns = [
-    { id: 'id', label: 'Id' },
-    { id: 'fokontany', label: 'Fokontany', render: (row) => row.fokontany },
-    { id: 'nom', label: 'Nom', render: (row) => row.nom },
-    { id: 'description', label: 'Description', render: (row) => row.description },
-    { id: 'offre', label: 'Offre',
-      render: (row) => (
-        <div className="text-center">
-          {row.offre}
-        </div>
-      ) },
-    { id: 'nombreMembre', label: 'Nombre de membres', 
-      render: (row) => (
-        <div className="text-center">
-          {row.offre}
-        </div>
-      ) }  
+    { id: "id", label: "ID" },
+    {
+      id: "fokotany",
+      label: "Fokontany",
+      render: (row) => row.fokotany.nomFokotany,
+    },
+    { id: "nomService", label: "Nom Service" },
+    { id: "description", label: "Description" },
+    { id: "offre", label: "Offre" },
+    { id: "membre", label: "Membre" },
+    { id: "nombre_membre", label: "Nombre de Membres" },
   ];
 
-  // Ouvre le modal de création de chauffeur
   const handleCreate = () => {
-    setSelectedChauffeur(null);
+    setSelectedService(null);
     setOpenCreateModal(true);
   };
 
-  // Gère l'enregistrement d'un nouveau chauffeur
-  const handleSaveCreate = (chauffeur) => {
-    console.log('Created:', chauffeur);
-    setOpenSnackbar(true);  
-    setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+  const handleSaveCreate = (service) => {
+    setSnackbarMessage("Service créé avec succès!");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+    setOpenCreateModal(false);
   };
 
-  // Ouvre le modal d'édition avec les infos du chauffeur sélectionné
   const handleEdit = (row) => {
-    setSelectedChauffeur(row);
+    setSelectedService(row);
     setOpenEditModal(true);
   };
 
-  // Gère l'enregistrement des modifications d'un chauffeur
-  const handleSaveEdit = (updatedChauffeur) => {  
-    console.log('Edited:', updatedChauffeur);
-    setOpenEditModal(false);
+  const handleSaveEdit = (updatedService) => {
+    setSnackbarMessage("Service modifié avec succès!");
+    setSnackbarSeverity("success");
     setOpenSnackbar(true);
+    setOpenEditModal(false);
   };
 
-  // Ouvre le dialogue de confirmation pour la suppression
   const handleDelete = (row) => {
-    setChauffeurToDelete(row);
+    setServiceToDelete(row);
     setOpenDialog(true);
   };
 
-  // Confirme la suppression d'un chauffeur
-  const confirmDelete = () => {
-    console.log('Deleted:', chauffeurToDelete);
-    setOpenDialog(false);
-    setOpenSnackbar(true);  
+  const confirmDelete = async () => {
+    try {
+      await deleteService(serviceToDelete.id);
+      setSnackbarMessage("Service supprimé avec succès!");
+      setSnackbarSeverity("success");
+    } catch (error) {
+      setSnackbarMessage("Erreur lors de la suppression du service.");
+      setSnackbarSeverity("error");
+    } finally {
+      setOpenDialog(false);
+      setOpenSnackbar(true);
+    }
   };
 
   return (
     <>
-      {/* Fil d'Ariane avec bouton de création */}
-      <Breadcrumb 
-        mainText="Listes" 
-        subText="Service" 
-        showCreateButton={true} 
-        onCreate={handleCreate} 
-      /> 
-
-      {/* Tableau principal affichant les chauffeurs */}
-      <Box className="card">   
-        <TableView 
-          data={data}
-          columns={columns} 
+      <Breadcrumb
+        mainText="Listes"
+        subText="Services"
+        showCreateButton={true}
+        onCreate={handleCreate}
+      />
+      <Box className="card">
+        <TableView
+          data={services}
+          columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
+          showCheckboxes={true}
+          showDeleteIcon={true}
           onDelete={handleDelete}
-          showCheckboxes={true} 
-          showDeleteIcon={false} 
-        /> 
-      </Box> 
-       
-      {/* Modal de création */}
+          loading={loading}
+        />
+      </Box>
       <ServiceCreate
         isOpen={openCreateModal}
         onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)} 
-      /> 
-
-      {/* Modal d'édition */}
+        onClose={() => setOpenCreateModal(false)}
+      />
       <ServiceEdit
         isOpen={openEditModal}
-        chauffeur={selectedChauffeur}
-        onChange={(updatedChauffeur) => setSelectedChauffeur(updatedChauffeur)}
+        service={selectedService}
+        onChange={(updatedService) => setSelectedService(updatedService)}
         onSave={handleSaveEdit}
-        onClose={() => setOpenEditModal(false)} 
+        onClose={() => setOpenEditModal(false)}
       />
-      
-      {/* Boîte de dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onConfirm={confirmDelete}
         title="Suppression"
-        content="Êtes-vous sûr de vouloir supprimer ce service?"
+        content="Êtes-vous sûr de vouloir supprimer ce service ?"
       />
-
-      {/* Notification (snackbar) après une action réussie */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
-          Opération réalisée avec succès!
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>
