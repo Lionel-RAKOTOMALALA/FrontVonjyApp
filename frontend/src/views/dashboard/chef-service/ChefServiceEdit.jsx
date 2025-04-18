@@ -18,6 +18,19 @@ const ChefServiceEdit = ({ isOpen, chefService, onChange, onSave, onClose }) => 
   const [submitError, setSubmitError] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+
+  const resetForm = () => {
+    onChange({
+      service_id: "",
+      nomChef: "",
+      prenomChef: "",
+      contact: "",
+      adresse: "",
+      sexe: "",
+    });
+  };
+
   useEffect(() => {
     if (chefService) {
       setLocalChefService({
@@ -99,6 +112,7 @@ const ChefServiceEdit = ({ isOpen, chefService, onChange, onSave, onClose }) => 
       onClose={onClose}
       isFormValid={isFormValid}
       maxWidth="435px"
+      resetForm={resetForm}
     >
       <div className="row">
         <div className="col mb-3 mt-2">

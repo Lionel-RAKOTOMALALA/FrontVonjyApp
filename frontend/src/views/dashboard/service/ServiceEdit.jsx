@@ -17,6 +17,17 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
   });
   const [submitError, setSubmitError] = useState("");
 
+  const resetForm = () => {
+    onChange({
+      fokotany_id: '',
+      nomService: '',
+      description: "",
+      offre: "",
+      membre: "",
+      nombre_membre: "",
+    });
+  };
+
   useEffect(() => {
     if (service) {
       setLocalService({
@@ -94,6 +105,7 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
       onClose={onClose}
       isFormValid
       maxWidth="435px"
+      resetForm={resetForm}
     >
       <div className="row">
         <div className="col mb-3 mt-2">
