@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CustomButton from '../../components/ui/CustomButton';
+import CustomButton from '../../../../components/ui/CustomButton';
 
 function BackToOverviewButton({ onClick }) {
   return (

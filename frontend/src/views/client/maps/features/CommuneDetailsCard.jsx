@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { Box, Card, CardContent, Typography } from "@mui/material"
-import { H4 } from "../../components/ui/TypographyVariants"
+import { H4 } from "../../../../components/ui/TypographyVariants"
 import { motion } from "framer-motion"
-import CollapsibleTable from "../../components/ui-table/CollapsibleTable"
+import CollapsibleTable from "../../../../components/ui-table/CollapsibleTable"
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital"
 import SchoolIcon from "@mui/icons-material/School"
 import WorkIcon from "@mui/icons-material/Work"

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
-import AmpanihyData from './Ampanihy.json';
+import AmpanihyData from '../data/Ampanihy.json';
 
 function CustomMapEvents({ onCommuneClick }) {
   const map = useMap();

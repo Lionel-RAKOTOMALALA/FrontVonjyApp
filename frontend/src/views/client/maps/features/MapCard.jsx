@@ -2,13 +2,13 @@
 import PropTypes from "prop-types"
 import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material"
 import { MapContainer, TileLayer } from "react-leaflet"
-import { H4, Paragraphe } from "../../components/ui/TypographyVariants"
+import { H4, Paragraphe } from "../../../../components/ui/TypographyVariants"
 import MapController from "./MapController"
 import CustomMapEvents from "./CustomMapEvents"
 import { motion, AnimatePresence } from "framer-motion"
 import "leaflet/dist/leaflet.css"
-import MenuPopup from "../../components/ui/MenuPopup"
-import AmpanihyData from "./Ampanihy.json"
+import MenuPopup from "../../../../components/ui/MenuPopup"
+import AmpanihyData from "../data/Ampanihy.json"
 
 // Default center coordinates (will be overridden if bbox is calculated)
 const defaultCenter = [-24.6833, 44.75]

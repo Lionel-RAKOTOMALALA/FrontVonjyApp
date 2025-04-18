@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import CommuneIcon from '../../assets/icons/commune.svg';
-import FokotanyIcon from '../../assets/icons/fokotany.svg';
-import ServiceIcon from '../../assets/icons/service.svg';
+import CommuneIcon from '../../../../assets/icons/commune.svg';
+import FokotanyIcon from '../../../../assets/icons/fokotany.svg';
+import ServiceIcon from '../../../../assets/icons/service.svg';
 
 const StatistiqueGlobal = ({ selectedCommune }) => {
   const [communeData, setCommuneData] = useState(null);

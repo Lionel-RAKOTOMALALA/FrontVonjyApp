@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
 import { useMap } from "react-leaflet"
 import L from "leaflet"
-import AmpanihyData from "./Ampanihy.json"
-import { calculateBBox } from "./MapUtils"
+import AmpanihyData from "../data/Ampanihy.json"
+import { calculateBBox } from "../../../../utils/maps"
 
 // Style par défaut
 const featureStyle = {

@@ -21,9 +21,12 @@ const Modal = ({ isOpen, onSave, onClose, children, isFormValid, resetForm, titl
   };
 
   const handleClose = () => {
-    resetForm();  // Reset form fields
+    if (resetForm) {
+      resetForm();
+    }
     onClose();
   };
+  
 
   
 
