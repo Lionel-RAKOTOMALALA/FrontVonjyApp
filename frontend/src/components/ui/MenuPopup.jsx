@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -37,7 +39,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
   },
 }));
 
-export default function MenuPopup({ buttonLabel, menuItems, selectedItem, onSelect }) {
+export default function MenuPopup({ buttonLabel, menuItems, selectedItemId, onSelect }) {
   return (
     <PopupState variant="popover" popupId="demo-popup-menu">
       {(popupState) => (
@@ -61,18 +63,18 @@ export default function MenuPopup({ buttonLabel, menuItems, selectedItem, onSele
               horizontal: 'right',
             }}
           >
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <MenuItem
                 className='mx-2 my-1'
                 sx={{borderRadius: '10px'}}
-                key={index}
-                selected={item === selectedItem}
+                key={item.id}
+                selected={item.id === selectedItemId}
                 onClick={() => {
-                  onSelect(item);
+                  onSelect(item.id);
                   popupState.close();
                 }} 
               >
-                {item}
+                {item.name}
               </MenuItem>
             ))}
           </StyledMenu>

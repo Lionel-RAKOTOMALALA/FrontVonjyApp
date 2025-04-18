@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useMap } from 'react-leaflet';
@@ -22,18 +24,19 @@ function CustomMapEvents({ onCommuneClick }) {
       color: '#FFF',
       dashArray: '',
       fillOpacity: 0.8,
-      fillColor: '#99ccff' // Light blue color from MapController
+      fillColor: '#99ccff' // Light blue color
     };
     
     // Add GeoJSON with hover effects
     const interactiveLayer = L.geoJSON(AmpanihyData, {
       style: defaultStyle,
-      onEachFeature: (feature, layer) => {
+      onEachFeature: (feature, layer) => { 
         const nomCommune = feature.properties.District_N;
         const communeId = feature.properties.id || feature.id; // Récupérer l'ID de la commune
         
-        // Add click handler - passer l'ID au lieu du nom
+        // Add click handler with both id and name
         layer.on('click', () => {
+          // Pass the commune id instead of name
           onCommuneClick(communeId);
         });
         

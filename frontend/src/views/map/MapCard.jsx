@@ -7,14 +7,24 @@ import MapController from "./MapController"
 import CustomMapEvents from "./CustomMapEvents"
 import { motion, AnimatePresence } from "framer-motion"
 import "leaflet/dist/leaflet.css"
-import CustomButton from '../../components/ui/CustomButton';
 import MenuPopup from "../../components/ui/MenuPopup"
+import AmpanihyData from "./Ampanihy.json"
 
 // Default center coordinates (will be overridden if bbox is calculated)
 const defaultCenter = [-24.6833, 44.75]
 const defaultZoom = 8
 
-const menuItems = ['Ampanihy', 'Gogogogo', 'Itampolo', 'Amboropotsy'];
+// Préparation des éléments de menu avec ID et nom
+const prepareMenuItems = () => {
+  if (!AmpanihyData || !AmpanihyData.features) return [];
+  
+  return AmpanihyData.features.map(feature => ({
+    id: feature.properties.id,
+    name: feature.properties.District_N
+  }));
+};
+
+const menuItems = prepareMenuItems();
 
 function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick }) {
   return (
@@ -47,8 +57,8 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 <MenuPopup
                   buttonLabel='Communes'
                   menuItems={menuItems}
-                  selectedItem={selectedCommune?.nom}
-                  onSelect={onCommuneClick}
+                  selectedItemId={selectedCommune?.id}
+                  onSelect={onCommuneClick}  
                 />
               </div>
             </div>
@@ -95,8 +105,8 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 zoom={defaultZoom}
                 style={{ width: "100%", height: "100%", zIndex: 0 }}
                 aria-label="Carte du district d'Ampanihy"
-                zoomControl={true} // Toujours activer les contrôles de zoom
-                dragging={true} // Toujours permettre le déplacement
+                zoomControl={true}
+                dragging={true}
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -104,7 +114,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 />
 
                 <MapController
-                  selectedCommuneId={selectedCommune?.id}
+                  selectedCommuneId={selectedCommune?.id} 
                   resetView={resetView}
                   onCommuneClick={onCommuneClick}
                 />

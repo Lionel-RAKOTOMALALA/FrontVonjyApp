@@ -60,8 +60,8 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
     const geoJsonLayer = L.geoJSON(AmpanihyData, {
       style: () => featureStyle,
       onEachFeature: (feature, layer) => {
+        const communeId = feature.properties.id
         const nomCommune = feature.properties.District_N
-        const communeId = feature.properties.id || feature.id
 
         // Tooltip
         layer.bindTooltip(nomCommune, {
@@ -98,14 +98,14 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
         map.removeLayer(geoJsonLayerRef.current)
       }
     }
-  }, [map, onCommuneClick]) // Ajout de onCommuneClick dans les dépendances
+  }, [map]) // Dépendance uniquement à map pour s'assurer que cela ne se réexécute pas inutilement
 
   // Mise à jour des styles quand une commune est sélectionnée
   useEffect(() => {
     if (!geoJsonLayerRef.current || !isInitialized) return
 
     geoJsonLayerRef.current.eachLayer((layer) => {
-      const communeId = layer.feature.properties.id || layer.feature.id
+      const communeId = layer.feature.properties.id
 
       // Appliquer le style approprié en fonction de la sélection
       if (selectedCommuneId) {
@@ -128,10 +128,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
           // avec un délai progressif basé sur la distance
           const selectedLayer = geoJsonLayerRef.current
             .getLayers()
-            .find((l) => {
-              const layerId = l.feature.properties.id || l.feature.id
-              return layerId === selectedCommuneId
-            })
+            .find((l) => l.feature.properties.id === selectedCommuneId)
 
           if (selectedLayer) {
             const selectedCenter = selectedLayer.getBounds().getCenter()
@@ -178,13 +175,13 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
         })
       }
     }
-  }, [resetViewToDefault, isInitialized, map])
+  }, [resetViewToDefault, isInitialized])
 
   return null
 }
 
 MapController.propTypes = {
-  selectedCommuneId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  selectedCommuneId: PropTypes.number,
   resetView: PropTypes.bool,
   onCommuneClick: PropTypes.func,
   resetViewToDefault: PropTypes.bool,

@@ -23,7 +23,7 @@ function MapViews() {
   const {
     fetchDetailCommune,
     communedetail
-  } = useCommuneStore();
+    } = useCommuneStore();
 
 
   // State for selected commune info
@@ -44,37 +44,8 @@ function MapViews() {
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-
-
-
   }, [])
-
-  useEffect(() => {
-    //get info commune by id
-    const fetchData = async () => {
-      await fetchDetailCommune(19);
-      console.log("Données de la commune chargées");
-    };
-    fetchData();
-  }, [fetchDetailCommune]);
-
-  // Afficher les détails de la commune quand ils sont disponibles
-  useEffect(() => {
-    if (communedetail) {
-      console.log("Détails de la commune:", communedetail);
-      // Si vous voulez utiliser ces données pour selectedCommune
-      if (communedetail.nom) {
-        setSelectedCommune({
-          nom: communedetail.nom,
-          population: communedetail.population || "Non disponible",
-          superficie: communedetail.superficie || "Non disponible",
-          fokotany: communedetail.fokotany_count || "Non disponible",
-        });
-      }
-    }
-  }, [communedetail]);
-
-
+  
   // Load and process map data
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -109,42 +80,53 @@ function MapViews() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Handle commune click on map
+  // Handle commune click on map - maintenant avec ID
   const handleCommuneClick = (communeId) => {
-    setIsAnimating(true);
-    setResetView(false);
-    console.log("Commune ID:", communeId);
-
-    // Find complete commune data by ID
-    const communeData = AmpanihyData.features.find(
-      (feature) => (feature.properties.id === communeId || feature.id === communeId)
-    );
+    setIsAnimating(true)
+    setResetView(false)
+    console.log(`Commune ID: ${communeId}`);
+    
+    // Charger les détails de la commune par ID
+    fetchDetailCommune(communeId);
+    
+    // Find complete commune data from GeoJSON
+    const communeData = AmpanihyData.features.find((feature) => feature.properties.id === communeId)
 
     if (communeData) {
       setSelectedCommune({
         id: communeId,
-        nom: communeData.properties.District_N || "Non disponible",
+        nom: communeData.properties.District_N,
         population: communeData.properties.population || "Non disponible",
         superficie: communeData.properties.superficie || "Non disponible",
         fokotany: communeData.properties.fokotany || "Non disponible",
-      });
-
-      // Utiliser le store pour récupérer les détails de la commune par ID
-      fetchDetailCommune(communeId);
+      })
     }
 
     // Reset animation flag after animation completes
     setTimeout(() => {
-      setIsAnimating(false);
-    }, 500);
-  };
+      setIsAnimating(false)
+    }, 500)
+  }
+  
+  // Mettre à jour selectedCommune quand les détails sont chargés du store
+  useEffect(() => {
+    if (communedetail && selectedCommune) {
+      console.log("Détails de la commune:", communedetail);
+      // Mettre à jour les informations de la commune sélectionnée avec les données du store
+      setSelectedCommune(prevState => ({
+        ...prevState,
+        population: communedetail.population || prevState.population,
+        superficie: communedetail.superficie || prevState.superficie,
+        fokotany: communedetail.fokotany_count || prevState.fokotany
+      }));
+    }
+  }, [communedetail]);
 
   // Handle back to overview
   const handleBackToOverview = () => {
     setIsAnimating(true)
 
     // Use animation timing to coordinate the state changes
-    // Delay the state change to allow the animation to play
     setTimeout(() => {
       setSelectedCommune(null)
       setResetView(true)
@@ -152,8 +134,8 @@ function MapViews() {
       // Reset animation flag after animation completes
       setTimeout(() => {
         setIsAnimating(false)
-      }, 800) // Increased duration to match the CSS transitions
-    }, 100) // Reduced initial delay to make the response feel more immediate
+      }, 800)
+    }, 100)
   }
 
   return (
@@ -185,7 +167,6 @@ function MapViews() {
           style={{
             position: "sticky",
             top: 0,
-            // zIndex: 5000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -252,7 +233,7 @@ function MapViews() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5 }}  
               >
                 <StatistiqueGlobal selectedCommune={selectedCommune} />
               </motion.div>
