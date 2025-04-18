@@ -3,8 +3,29 @@ import { create } from 'zustand';
 
 const useCommuneStore = create((set) => ({
   communes: [],
+  communedetail: [],
   loading: false,
   error: null,
+
+  fetchDetailCommune: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await fetch(`http://127.0.0.1:8000/api/communes/${id}/details/`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      set({ communedetail: data, loading: false }); // Update the state
+
+    } catch (error) {
+      console.error('fetchDetailCommune: Error fetching commune detail:', error);
+      set({ error: error.message, loading: false });
+    }
+  },
+
 
   // Action pour récupérer les communes
   fetchCommunes: async () => {

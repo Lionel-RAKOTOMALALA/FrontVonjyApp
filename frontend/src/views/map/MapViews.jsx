@@ -11,6 +11,8 @@ import StatistiqueGlobal from "./StatistiqueGlobal"
 import BackToOverviewButton from "./BackToOverviewButton"
 import CommuneDetailsCard from "./CommuneDetailsCard"
 import { motion, AnimatePresence } from "framer-motion"
+import useCommuneStore from '../../store/communeStore';
+
 
 function MapViews() {
   const [scrolled, setScrolled] = useState(false)
@@ -18,6 +20,11 @@ function MapViews() {
   const [mapError, setMapError] = useState(null)
   const [communeCount, setCommuneCount] = useState(0)
   const [fokotanyCount, setFokotanyCount] = useState(0)
+  const {
+    fetchDetailCommune,
+    communedetail
+    } = useCommuneStore();
+
 
   // State for selected commune info
   const [selectedCommune, setSelectedCommune] = useState(null)
@@ -37,7 +44,36 @@ function MapViews() {
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
+
+
+    
   }, [])
+  
+  useEffect(() => {
+    //get info commune by id
+    const fetchData = async () => {
+      await fetchDetailCommune(19);
+      console.log("Données de la commune chargées");
+    };
+    fetchData();
+  }, [fetchDetailCommune]);
+  
+  // Afficher les détails de la commune quand ils sont disponibles
+  useEffect(() => {
+    if (communedetail) {
+      console.log("Détails de la commune:", communedetail);
+      // Si vous voulez utiliser ces données pour selectedCommune
+      if (communedetail.nom) {
+        setSelectedCommune({
+          nom: communedetail.nom,
+          population: communedetail.population || "Non disponible",
+          superficie: communedetail.superficie || "Non disponible",
+          fokotany: communedetail.fokotany_count || "Non disponible",
+        });
+      }
+    }
+  }, [communedetail]);
+
 
   // Load and process map data
   useEffect(() => {
@@ -77,7 +113,8 @@ function MapViews() {
   const handleCommuneClick = (communeName) => {
     setIsAnimating(true)
     setResetView(false)
-
+    console.log(communeName);
+    
     // Find complete commune data
     const communeData = AmpanihyData.features.find((feature) => feature.properties.District_N === communeName)
 

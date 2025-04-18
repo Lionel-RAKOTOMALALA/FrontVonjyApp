@@ -41,7 +41,7 @@ const AppRoutes = ({user, isLoggedIn}) => {
             <Route path="/map" element={<Map />}/> 
 
 
-            <Route path="/auth/login" element={isLoggedIn ? <Navigate to="/responsable" />: <Login /> } />
+            <Route path="/auth/login" element={isLoggedIn ? <Navigate to="/map" />: <Login /> } />
             <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
