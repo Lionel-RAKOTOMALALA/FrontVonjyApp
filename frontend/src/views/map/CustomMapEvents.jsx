@@ -51,7 +51,7 @@ function CustomMapEvents({ onCommuneClick }) {
           }
           
           // Show tooltip with commune name and id
-          layer.bindTooltip(`${nomCommune} (ID: ${communeId})`).openTooltip();
+          layer.bindTooltip(`${nomCommune}`).openTooltip();
         });
         
         layer.on('mouseout', (e) => {
