@@ -30,10 +30,11 @@ function CustomMapEvents({ onCommuneClick }) {
       style: defaultStyle,
       onEachFeature: (feature, layer) => {
         const nomCommune = feature.properties.District_N;
+        const communeId = feature.properties.id || feature.id; // Récupérer l'ID de la commune
         
-        // Add click handler
+        // Add click handler - passer l'ID au lieu du nom
         layer.on('click', () => {
-          onCommuneClick(nomCommune);
+          onCommuneClick(communeId);
         });
         
         // Add hover handlers
@@ -46,8 +47,8 @@ function CustomMapEvents({ onCommuneClick }) {
             layer.bringToFront();
           }
           
-          // Show tooltip with commune name
-          layer.bindTooltip(nomCommune).openTooltip();
+          // Show tooltip with commune name and id
+          layer.bindTooltip(`${nomCommune} (ID: ${communeId})`).openTooltip();
         });
         
         layer.on('mouseout', (e) => {

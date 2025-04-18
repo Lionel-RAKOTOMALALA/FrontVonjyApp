@@ -23,7 +23,7 @@ function MapViews() {
   const {
     fetchDetailCommune,
     communedetail
-    } = useCommuneStore();
+  } = useCommuneStore();
 
 
   // State for selected commune info
@@ -46,9 +46,9 @@ function MapViews() {
     return () => window.removeEventListener("scroll", handleScroll)
 
 
-    
+
   }, [])
-  
+
   useEffect(() => {
     //get info commune by id
     const fetchData = async () => {
@@ -57,7 +57,7 @@ function MapViews() {
     };
     fetchData();
   }, [fetchDetailCommune]);
-  
+
   // Afficher les détails de la commune quand ils sont disponibles
   useEffect(() => {
     if (communedetail) {
@@ -110,28 +110,34 @@ function MapViews() {
   }, [])
 
   // Handle commune click on map
-  const handleCommuneClick = (communeName) => {
-    setIsAnimating(true)
-    setResetView(false)
-    console.log(communeName);
-    
-    // Find complete commune data
-    const communeData = AmpanihyData.features.find((feature) => feature.properties.District_N === communeName)
+  const handleCommuneClick = (communeId) => {
+    setIsAnimating(true);
+    setResetView(false);
+    console.log("Commune ID:", communeId);
+
+    // Find complete commune data by ID
+    const communeData = AmpanihyData.features.find(
+      (feature) => (feature.properties.id === communeId || feature.id === communeId)
+    );
 
     if (communeData) {
       setSelectedCommune({
-        nom: communeName,
+        id: communeId,
+        nom: communeData.properties.District_N || "Non disponible",
         population: communeData.properties.population || "Non disponible",
         superficie: communeData.properties.superficie || "Non disponible",
         fokotany: communeData.properties.fokotany || "Non disponible",
-      })
+      });
+
+      // Utiliser le store pour récupérer les détails de la commune par ID
+      fetchDetailCommune(communeId);
     }
 
     // Reset animation flag after animation completes
     setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }
+      setIsAnimating(false);
+    }, 500);
+  };
 
   // Handle back to overview
   const handleBackToOverview = () => {
@@ -246,7 +252,7 @@ function MapViews() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}  
+                transition={{ duration: 0.5 }}
               >
                 <StatistiqueGlobal selectedCommune={selectedCommune} />
               </motion.div>

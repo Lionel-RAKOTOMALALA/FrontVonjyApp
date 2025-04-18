@@ -40,7 +40,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                   Carte
                 </H4>
                 <Paragraphe style={{ marginTop: 4 }} mb={2} ml={3}>
-                    Cliquez sur une commune pour voir ses détails
+                  Cliquez sur une commune pour voir ses détails
                 </Paragraphe>
               </motion.div>
               <div className="d-flex flex-column justify-content-center mx-4">
@@ -48,7 +48,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                   buttonLabel='Communes'
                   menuItems={menuItems}
                   selectedItem={selectedCommune?.nom}
-                  onSelect={onCommuneClick}  
+                  onSelect={onCommuneClick}
                 />
               </div>
             </div>
@@ -93,7 +93,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
               <MapContainer
                 center={defaultCenter}
                 zoom={defaultZoom}
-                style={{ width: "100%", height: "100%", zIndex:0 }}
+                style={{ width: "100%", height: "100%", zIndex: 0 }}
                 aria-label="Carte du district d'Ampanihy"
                 zoomControl={true} // Toujours activer les contrôles de zoom
                 dragging={true} // Toujours permettre le déplacement
@@ -104,7 +104,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 />
 
                 <MapController
-                  selectedCommuneName={selectedCommune?.nom}
+                  selectedCommuneId={selectedCommune?.id}
                   resetView={resetView}
                   onCommuneClick={onCommuneClick}
                 />

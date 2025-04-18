@@ -35,7 +35,7 @@ const inactiveStyle = {
   fillColor: "#dddddd",
 }
 
-function MapController({ selectedCommuneName, resetView, onCommuneClick, resetViewToDefault }) {
+function MapController({ selectedCommuneId, resetView, onCommuneClick, resetViewToDefault }) {
   const map = useMap()
   const geoJsonLayerRef = useRef(null)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -61,6 +61,7 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
       style: () => featureStyle,
       onEachFeature: (feature, layer) => {
         const nomCommune = feature.properties.District_N
+        const communeId = feature.properties.id || feature.id
 
         // Tooltip
         layer.bindTooltip(nomCommune, {
@@ -73,7 +74,7 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
         layer.on({
           click: () => {
             if (onCommuneClick) {
-              onCommuneClick(nomCommune)
+              onCommuneClick(communeId)
             }
           }
         })
@@ -97,18 +98,18 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
         map.removeLayer(geoJsonLayerRef.current)
       }
     }
-  }, [map]) // Dépendance uniquement à map pour s'assurer que cela ne se réexécute pas inutilement
+  }, [map, onCommuneClick]) // Ajout de onCommuneClick dans les dépendances
 
   // Mise à jour des styles quand une commune est sélectionnée
   useEffect(() => {
     if (!geoJsonLayerRef.current || !isInitialized) return
 
     geoJsonLayerRef.current.eachLayer((layer) => {
-      const nomCommune = layer.feature.properties.District_N
+      const communeId = layer.feature.properties.id || layer.feature.id
 
       // Appliquer le style approprié en fonction de la sélection
-      if (selectedCommuneName) {
-        if (nomCommune === selectedCommuneName) {
+      if (selectedCommuneId) {
+        if (communeId === selectedCommuneId) {
           applyStyleWithTransition(layer, selectedStyle)
 
           // Zoom sur la commune sélectionnée
@@ -127,7 +128,10 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
           // avec un délai progressif basé sur la distance
           const selectedLayer = geoJsonLayerRef.current
             .getLayers()
-            .find((l) => l.feature.properties.District_N === selectedCommuneName)
+            .find((l) => {
+              const layerId = l.feature.properties.id || l.feature.id
+              return layerId === selectedCommuneId
+            })
 
           if (selectedLayer) {
             const selectedCenter = selectedLayer.getBounds().getCenter()
@@ -150,7 +154,7 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
     })
 
     // Réinitialiser la vue si nécessaire
-    if (resetView && !selectedCommuneName) {
+    if (resetView && !selectedCommuneId) {
       const bounds = calculateBBox(AmpanihyData)
       if (bounds) {
         map.fitBounds(bounds, {
@@ -159,7 +163,7 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
         })
       }
     }
-  }, [map, selectedCommuneName, resetView, isInitialized])
+  }, [map, selectedCommuneId, resetView, isInitialized])
 
   // Remise à zéro à la vue par défaut
   useEffect(() => {
@@ -174,13 +178,13 @@ function MapController({ selectedCommuneName, resetView, onCommuneClick, resetVi
         })
       }
     }
-  }, [resetViewToDefault, isInitialized])
+  }, [resetViewToDefault, isInitialized, map])
 
   return null
 }
 
 MapController.propTypes = {
-  selectedCommuneName: PropTypes.string,
+  selectedCommuneId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   resetView: PropTypes.bool,
   onCommuneClick: PropTypes.func,
   resetViewToDefault: PropTypes.bool,
