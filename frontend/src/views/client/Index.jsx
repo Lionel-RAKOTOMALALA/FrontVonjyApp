@@ -20,7 +20,7 @@ function MapViews() {
   const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 0)
+    const handleScroll = () => setScrolled(window.scrollY > 70)
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])

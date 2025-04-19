@@ -74,10 +74,10 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="row gap-3 mb-4"
+          className="row gap-3 mb-4 justify-content-center justify-content-md-start"
         >
-          <motion.div variants={cardVariants} transition={{ duration: 0.3 }} className="col">
-            <div className="card" style={{ maxWidth: '240px' }}>
+          <motion.div variants={cardVariants} className='col-12 col-md-9' transition={{ duration: 0.3 }}>
+            <div className="card" style={{minWidth:'190px'}} >
               <div className="card-body" style={cardBodyStyle}>
                 <div className="d-flex align-items-center gap-2">
                   <img
@@ -94,8 +94,8 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
             </div>
           </motion.div>
 
-          <motion.div variants={cardVariants} transition={{ duration: 0.3, delay: 0.1 }} className="">
-            <div className="card" style={{ maxWidth: '240px' }}>
+          <motion.div variants={cardVariants}  className='col-12 col-md-9' transition={{ duration: 0.3, delay: 0.1 }}>
+            <div className="card" style={{minWidth:'190px'}} >
               <div className="card-body" style={cardBodyStyle}>
                 <img
                   src={ServiceIcon}
@@ -109,8 +109,8 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
               </div>
             </div>
           </motion.div>
-          <motion.div variants={cardVariants} transition={{ duration: 0.3, delay: 0.2 }} className="">
-            <div className="card" style={{ maxWidth: '240px' }}>
+          <motion.div variants={cardVariants}  className='col-12 col-md-9' transition={{ duration: 0.3, delay: 0.2 }}>
+            <div className="card" style={{minWidth:'190px'}} >
               <div className="card-body" style={cardBodyStyle}>
                 <img
                   src={FokotanyIcon}
@@ -134,8 +134,8 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
           className="row gap-3 mb-4"
         >
 
-          <motion.div variants={cardVariants} transition={{ duration: 0.3 }} className="">
-            <div className="card" style={{ maxWidth: '240px' }}>
+          <motion.div variants={cardVariants}  className='col-12 col-md-9' transition={{ duration: 0.3 }}>
+            <div className="card" style={{minWidth:'190px'}} >
               <div className="card-body" style={cardBodyStyle}>
                 <img
                   src={FokotanyIcon}
@@ -149,8 +149,8 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
               </div>
             </div>
           </motion.div>
-          <motion.div variants={cardVariants} transition={{ duration: 0.3, delay: 0.1 }} className="">
-            <div className="card" style={{ maxWidth: '240px' }}>
+          <motion.div variants={cardVariants}  className='col-12 col-md-9' transition={{ duration: 0.3, delay: 0.1 }} >
+            <div className="card" style={{minWidth:'190px'}} >
               <div className="card-body" style={cardBodyStyle}>
                 <img
                   src={ServiceIcon}

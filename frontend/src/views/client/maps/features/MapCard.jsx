@@ -7,24 +7,11 @@ import MapController from "./MapController"
 import CustomMapEvents from "./CustomMapEvents"
 import { motion, AnimatePresence } from "framer-motion"
 import "leaflet/dist/leaflet.css"
-import MenuPopup from "../../../../components/ui/MenuPopup"
-import AmpanihyData from "../data/Ampanihy.json"
+import "./map-styles.css" // Import our custom map styles
 
 // Default center coordinates (will be overridden if bbox is calculated)
 const defaultCenter = [-24.6833, 44.75]
 const defaultZoom = 8
-
-// Préparation des éléments de menu avec ID et nom
-const prepareMenuItems = () => {
-  if (!AmpanihyData || !AmpanihyData.features) return [];
-  
-  return AmpanihyData.features.map(feature => ({
-    id: feature.properties.id,
-    name: feature.properties.District_N
-  }));
-};
-
-const menuItems = prepareMenuItems();
 
 function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick }) {
   return (
@@ -53,14 +40,6 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                   Cliquez sur une commune pour voir ses détails
                 </Paragraphe>
               </motion.div>
-              <div className="d-flex flex-column justify-content-center mx-4">
-                <MenuPopup
-                  buttonLabel='Communes'
-                  menuItems={menuItems}
-                  selectedItemId={selectedCommune?.id}
-                  onSelect={onCommuneClick}  
-                />
-              </div>
             </div>
           </AnimatePresence>
 
@@ -72,6 +51,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
               border: "1px solid #ddd",
               m: 3,
               mt: 0,
+              position: "relative", // Added for proper positioning of custom controls
             }}
           >
             {loading ? (
@@ -107,6 +87,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 aria-label="Carte du district d'Ampanihy"
                 zoomControl={true}
                 dragging={true}
+                className="modern-map-container"
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -114,7 +95,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 />
 
                 <MapController
-                  selectedCommuneId={selectedCommune?.id} 
+                  selectedCommuneId={selectedCommune?.id}
                   resetView={resetView}
                   onCommuneClick={onCommuneClick}
                 />

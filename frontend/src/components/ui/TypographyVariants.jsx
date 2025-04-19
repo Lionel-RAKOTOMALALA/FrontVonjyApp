@@ -3,41 +3,41 @@ import { Typography, createTheme, ThemeProvider } from "@mui/material"
 // Thème personnalisé
 const theme = createTheme({
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Public sans", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: "2rem",
       fontWeight: 700,
       marginTop: "1.5rem",
       marginBottom: "1rem",
-      color: "#212121",
+      color: "#1C252E",
     },
     h2: {
       fontSize: "1.75rem",
       fontWeight: 700,
       marginTop: "1.5rem",
       marginBottom: "1rem",
-      color: "#212121",
+      color: "#1C252E",
     },
     h3: {
       fontSize: "1.5rem",
       fontWeight: 700,
       marginTop: "1.5rem",
       marginBottom: "1rem",
-      color: "#212121",
+      color: "#1C252E",
     },
     h4: {
       fontSize: "1.2rem",
       fontWeight: 700,
       marginTop: "1.5rem",
       marginBottom: "1rem",
-      color: "#212121",
+      color: "#1C252E",
     },
     subtitle1: {
       fontSize: "1.25rem",
       fontWeight: 400,
       marginTop: "1rem",
       marginBottom: "0.75rem",
-      color: "#212121",
+      color: "#1C252E",
     },
     paragraphe: {
       fontSize: "0.875rem",

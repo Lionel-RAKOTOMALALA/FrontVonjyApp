@@ -20,7 +20,7 @@ const MapMainContent = ({
   return (
     <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
       <div
-        className="z-2"
+        className="z-2 mx-auto"
         style={{
           position: "sticky",
           top: 0,
@@ -28,6 +28,7 @@ const MapMainContent = ({
           alignItems: "center",
           justifyContent: "center",
           gap: "1rem",
+          // maxWidth:'350px'
         }}
       >
         <AnimatePresence mode="wait">
@@ -69,7 +70,7 @@ const MapMainContent = ({
         </AnimatePresence>
       </div>
 
-      <Box className="row mt-2 justify-content-center">
+      <Box className="row mt-2 flex-wrap-reverse justify-content-center">
         <Box className="col-12 col-md-8">
           <MapCard
             loading={loading}
