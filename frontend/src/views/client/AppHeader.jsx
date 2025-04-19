@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import VonjyLogo from '../../assets/VonjyLogo.svg';
-import Parametre from './settings/Parametre'; // Import du modal
+import Parametre from './settings/Index'; // Import du modal
 
 function AppHeader({ scrolled }) {
   const [anchorEl, setAnchorEl] = useState(null);
