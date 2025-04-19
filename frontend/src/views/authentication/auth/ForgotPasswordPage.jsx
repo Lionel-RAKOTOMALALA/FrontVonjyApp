@@ -1,10 +1,11 @@
-// In ForgotPasswordPage.jsx
-import { Box, IconButton } from '@mui/material' // Note: Box should be imported from MUI, not Lucide
-import { ArrowLeft } from 'lucide-react'
-import React, { useState } from 'react'
-import { H3, Paragraphe } from '../../../components/ui/TypographyVariants'
-import InputField from '../../../components/ui/form/InputField'
-import CustomButton from '../../../components/ui/CustomButton'
+"use client"
+
+import { Box, IconButton } from "@mui/material"
+import { ArrowLeft } from "lucide-react"
+import { useState } from "react"
+import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
+import InputField from "../../../components/ui/form/InputField"
+import CustomButton from "../../../components/ui/CustomButton"
 
 function ForgotPasswordPage({ onNavigate }) {
   const [forgotPasswordData, setForgotPasswordData] = useState({
@@ -29,10 +30,7 @@ function ForgotPasswordPage({ onNavigate }) {
   return (
     <Box component="form" onSubmit={handleForgotPasswordSubmit}>
       <Box sx={{ textAlign: "center", position: "relative", mb: 1 }} className="d-flex align-items-center">
-        <IconButton
-          onClick={() => onNavigate("login")}
-          sx={{ position: 'relative', left: '-6px' }}
-        >
+        <IconButton onClick={() => onNavigate("login")} sx={{ position: "relative", left: "-6px" }}>
           <ArrowLeft size={18} />
         </IconButton>
         <H3 className="m-0 p-0">Mot de passe oublié ?</H3>
@@ -58,12 +56,7 @@ function ForgotPasswordPage({ onNavigate }) {
         />
       </Box>
 
-      <CustomButton
-        size="medium"
-        type="submit"
-        fullWidth
-        color="warning"
-      >
+      <CustomButton size="medium" type="submit" fullWidth color="warning">
         Envoyer le code
       </CustomButton>
     </Box>

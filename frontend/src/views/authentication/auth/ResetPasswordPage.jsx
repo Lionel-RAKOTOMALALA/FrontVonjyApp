@@ -1,14 +1,16 @@
-import { Box, IconButton, InputAdornment } from '@mui/material'
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
-import React, { useState } from 'react'
-import { H3, Paragraphe } from '../../../components/ui/TypographyVariants'
-import InputField from '../../../components/ui/form/InputField'
-import CustomButton from '../../../components/ui/CustomButton'
+"use client"
+
+import { Box, IconButton, InputAdornment } from "@mui/material"
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"
+import { useState } from "react"
+import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
+import InputField from "../../../components/ui/form/InputField"
+import CustomButton from "../../../components/ui/CustomButton"
 
 function ResetPasswordPage({ onNavigate }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  
+
   const [resetPasswordData, setResetPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -35,17 +37,23 @@ function ResetPasswordPage({ onNavigate }) {
   }
 
   return (
-    <Box component="form" onSubmit={handleResetPasswordSubmit} sx={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}> 
-      <Box sx={{ textAlign: "center", position: "relative", mb: 1 }} className="d-flex align-items-center justify-content-center">
-        <IconButton
-          onClick={() => onNavigate("login")}
-          sx={{position:'relative', left:'-6px'}}
-        >
+    <Box
+      component="form"
+      onSubmit={handleResetPasswordSubmit}
+      sx={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}
+    >
+      <Box
+        sx={{ textAlign: "center", position: "relative", mb: 1 }}
+        className="d-flex align-items-center justify-content-center"
+      >
+        <IconButton onClick={() => onNavigate("verification")} sx={{ position: "relative", left: "-6px" }}>
           <ArrowLeft size={18} />
         </IconButton>
-        <H3 className="m-0 mb-2 p-0">Réinitialiser votre  <br className="d-none d-lg-block" />   mot de passe</H3>
+        <H3 className="m-0 mb-2 p-0">
+          Réinitialiser votre <br className="d-none d-lg-block" /> mot de passe
+        </H3>
       </Box>
-      <Paragraphe sx={{ mb: 3, mt:1, textAlign: "center" }}>
+      <Paragraphe sx={{ mb: 3, mt: 1, textAlign: "center" }}>
         Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
       </Paragraphe>
 
@@ -70,7 +78,7 @@ function ResetPasswordPage({ onNavigate }) {
               </InputAdornment>
             ),
           }}
-        /> 
+        />
       </Box>
 
       <Box sx={{ mb: 3 }}>
@@ -97,12 +105,7 @@ function ResetPasswordPage({ onNavigate }) {
         />
       </Box>
 
-      <CustomButton
-        size="medium"
-        type="submit"
-        fullWidth
-        color="warning" 
-      >
+      <CustomButton size="medium" type="submit" fullWidth color="warning">
         Réinitialiser mon mot de passe
       </CustomButton>
     </Box>

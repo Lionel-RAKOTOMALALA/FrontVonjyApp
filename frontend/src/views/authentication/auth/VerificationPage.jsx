@@ -1,14 +1,16 @@
-import { Box, IconButton } from '@mui/material'
-import { ArrowLeft } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { H3, Paragraphe } from '../../../components/ui/TypographyVariants'
-import CustomButton from '../../../components/ui/CustomButton'
-import OTPInput from './OTPInput' // Assurez-vous que le chemin d'importation est correct
+"use client"
+
+import { Box, IconButton } from "@mui/material"
+import { ArrowLeft } from "lucide-react"
+import { useEffect, useState } from "react"
+import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
+import CustomButton from "../../../components/ui/CustomButton"
+import OTPInput from "./OTPInput"
 
 function VerificationPage({ onNavigate }) {
-  const [otp, setOtp] = useState('')
+  const [otp, setOtp] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [resendCooldown, setResendCooldown] = useState(0) 
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   // Auto focus on mount
   useEffect(() => {
@@ -17,33 +19,33 @@ function VerificationPage({ onNavigate }) {
   }, [])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     // Validation de base - vérifier que tous les champs sont remplis
     if (otp.length !== 5) {
-      alert("Veuillez entrer un code à 6 chiffres complet");
-      return;
+      alert("Veuillez entrer un code à 5 chiffres complet")
+      return
     }
-    
-    setIsSubmitting(true);
-    
+
+    setIsSubmitting(true)
+
     try {
       // Ajouter cette ligne pour afficher l'OTP dans la console
-      console.log("Code OTP saisi :", otp);
-      
+      console.log("Code OTP saisi :", otp)
+
       // Simuler une requête API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       // Si la vérification réussit
-      onNavigate("resetPassword");
+      onNavigate("resetPassword")
     } catch (error) {
-      console.error("Erreur lors de la vérification:", error);
-      alert("Échec de la vérification. Veuillez réessayer.");
+      console.error("Erreur lors de la vérification:", error)
+      alert("Échec de la vérification. Veuillez réessayer.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
-  
+  }
+
   const handleResendCode = async () => {
     if (resendCooldown > 0) return
     try {
@@ -58,7 +60,7 @@ function VerificationPage({ onNavigate }) {
   useEffect(() => {
     if (resendCooldown > 0) {
       const timer = setInterval(() => {
-        setResendCooldown(prev => prev - 1)
+        setResendCooldown((prev) => prev - 1)
       }, 1000)
       return () => clearInterval(timer)
     }
@@ -91,22 +93,22 @@ function VerificationPage({ onNavigate }) {
       </Paragraphe>
 
       <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 3 }}>
-        <OTPInput 
-          value={otp} 
-          onChange={setOtp} 
-          length={5} 
+        <OTPInput
+          value={otp}
+          onChange={setOtp}
+          length={5}
           inputProps={{
             style: {
-              width: '40px',
-              height: '40px',
-              margin: '0 4px',
-              fontSize: '16px',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 0, 0, 0.23)',
-              transition: 'border-color 0.3s'
-            }
+              width: "40px",
+              height: "40px",
+              margin: "0 4px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "1px solid rgba(0, 0, 0, 0.23)",
+              transition: "border-color 0.3s",
+            },
           }}
-          separator={<span style={{ margin: '0 2px' }}></span>}
+          separator={<span style={{ margin: "0 2px" }}></span>}
           inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
         />
       </Box>
@@ -131,19 +133,11 @@ function VerificationPage({ onNavigate }) {
             },
           }}
         >
-          {resendCooldown > 0 
-            ? `Renvoyer le code (${resendCooldown}s)` 
-            : "Renvoyer le code ?"}
+          {resendCooldown > 0 ? `Renvoyer le code (${resendCooldown}s)` : "Renvoyer le code ?"}
         </Paragraphe>
       </Box>
 
-      <CustomButton 
-        size="medium"
-        type="submit"
-        fullWidth
-        color="warning"
-        disabled={isSubmitting || otp.length !== 5}
-      >
+      <CustomButton size="medium" type="submit" fullWidth color="warning" disabled={isSubmitting || otp.length !== 5}>
         {isSubmitting ? "Vérification..." : "Vérifier le code"}
       </CustomButton>
     </Box>
