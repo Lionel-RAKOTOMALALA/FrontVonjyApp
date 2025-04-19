@@ -144,7 +144,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
             {/* En-tête standard */}
             <TableHead
               sx={{
-                backgroundColor: '#f5f5f5',
+                backgroundColor: 'rgba(255, 255, 0, 0.08)',
                 position: 'relative',  // Assure-toi que le header standard est en dessous
                 zIndex: 0
               }}

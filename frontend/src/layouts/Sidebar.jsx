@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import menuData from '../data/menuData.json'
+import sneatLogo from '../assets/VonjyLogo.svg';
 
 const Sidebar = () => {
     return (
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
-            <div className="app-brand demo"> 
-                    <span className="app-brand-logo demo">
-                        <img src="/assets/img/sneat.svg" alt="sneat-logo" aria-label='Sneat logo image' />
-                    </span>
-                    <span className="app-brand-text demo menu-text fw-bold ms-2">Admin</span> 
+            <div className="app-brand demo">
+                <span className="app-brand-logo demo">
+                    <img src={sneatLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
+                </span>
+                <span className="app-brand-text demo menu-text fw-bold ms-2">Admin</span>
 
                 {/* <a
                     href="#"
@@ -44,7 +45,11 @@ const MenuItem = (item) => {
     const isSubmenuActive = hasSubmenu && item.submenu.some(subitem => location.pathname === subitem.link);
 
     return (
-        <li key={item.text} className={`menu-item ${isActive || isSubmenuActive ? 'active' : ''} ${hasSubmenu && isSubmenuActive ? 'open' : ''}`}>
+        <li
+            key={item.text}
+            className={`menu-item ${isActive || isSubmenuActive ? 'active' : ''} ${hasSubmenu && isSubmenuActive ? 'open' : ''} ${item.isBottom ? 'mt-auto' : ''}`}
+        >
+
             <NavLink
                 aria-label={`Navigate to ${item.text} ${!item.available ? 'Pro' : ''}`}
                 to={item.link}

@@ -14,26 +14,20 @@
         "header": "Gestion",
         "items": [
             {
-                "text": "Composant",
-                "icon": "bx bx-dock-top",
-                "available": true,
-                "link": "/composant"
-            }, 
-            {
                 "text": "Commune",
-                "icon": "bx bx-dock-top",
+                "icon": "bx bx-sitemap",
                 "available": true,
                 "link": "/commune"
             },
             {
                 "text": "Fokontany",
-                "icon": "bx bx-dock-top",
+                "icon": "bx bx-map",
                 "available": true,
                 "link": "/fokontany"
             },
             {
                 "text": "Responsable",
-                "icon": "bx bx-dock-top",
+                "icon": "bx bxs-user-detail",
                 "available": true,
                 "link": "/responsable"
             },
@@ -45,9 +39,16 @@
             },
             {
                 "text": "Chef de service",
-                "icon": "bx bx-dock-top",
+                "icon": "bx bxs-user-pin",
                 "available": true,
                 "link": "/chef-service"
+            },
+            {
+                "text": "Sortir",
+                "icon": "bx bx-log-out",
+                "available": true,
+                "link": "/logout",
+                "isBottom": true
             }
         ]
     }
