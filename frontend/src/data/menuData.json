@@ -1,16 +1,5 @@
 [
     {
-        "header": "",
-        "items": [
-            {
-                "text": "Dashboard",
-                "icon": "bx bx-home",
-                "available": true,
-                "link": "/"
-            }
-        ]
-    },
-    {
         "header": "Gestion",
         "items": [
             {

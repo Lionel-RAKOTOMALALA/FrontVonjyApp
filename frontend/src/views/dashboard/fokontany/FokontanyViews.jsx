@@ -127,7 +127,7 @@ function FokotanyViews() {
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
-          showCheckboxes={true}
+          showCheckboxes={false}
           showDeleteIcon={true}
           onDelete={handleDelete}
           loading={loading} // Indicateur de chargement

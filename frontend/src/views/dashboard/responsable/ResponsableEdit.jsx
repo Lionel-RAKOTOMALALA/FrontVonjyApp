@@ -19,6 +19,7 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
     classe_responsable: '',
     nom_responsable: '',
     prenom_responsable: '',
+    contact_responsable: '',
     fonction: '',
     formation_acquise: 'true',
   });
@@ -31,6 +32,7 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
         classe_responsable: responsable.classe_responsable || '',
         nom_responsable: responsable.nom_responsable || '',
         prenom_responsable: responsable.prenom_responsable || '',
+        contact_responsable: responsable.contact_responsable || '',
         fonction: responsable.fonction || '',
         formation_acquise: responsable.formation_acquise ? 'true' : 'false',
       });
@@ -74,8 +76,7 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
 
   const handleSave = async () => {
     if (
-      !localResponsable.nom_responsable ||
-      !localResponsable.prenom_responsable ||
+      !localResponsable.nom_responsable || 
       !localResponsable.classe_responsable ||
       !localResponsable.fonction ||
       !localResponsable.fokotany_id 
@@ -114,7 +115,6 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
 
       <div className="row">
         <div className="col mb-3 mt-2">
-          <label htmlFor="fokotany_id" className="form-label">Fokotany</label>
           {loadingFokotanys ? (
             <p>Chargement des fokotanys...</p>
           ) : fokotanys.length > 0 ? (
@@ -155,18 +155,16 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             onChange={handleChange}
           />
         </div>
-      </div>
-      <div className="row">
         <div className="col mb-3">
           <InputField
-            required
+            required={false}
             label="Prénom du Responsable"
             name="prenom_responsable"
             value={localResponsable.prenom_responsable}
             onChange={handleChange}
           />
         </div>
-      </div>
+      </div> 
       <div className="row">
         <div className="col mb-3">
           <InputField
@@ -174,6 +172,17 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             label="Fonction"
             name="fonction"
             value={localResponsable.fonction}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <InputField
+            required={false}
+            label="Contact"
+            name="contact_responsable"
+            value={localResponsable.contact_responsable}
             onChange={handleChange}
           />
         </div>
@@ -192,7 +201,6 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
           />
         </div>
       </div>
-      {submitError && <p className="text-danger mt-2">{submitError}</p>}
     </Modal>
   );
 };

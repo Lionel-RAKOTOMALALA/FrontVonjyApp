@@ -12,6 +12,8 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const { createFokotany } = useFokotanyStore(); // Utiliser l'action `createFokotany` du store
+  const communeOptions = communes.map((commune) => `${commune.id}-${commune.nomCommune}`);
+
 
   // Charger les communes depuis l'API
   useEffect(() => {
@@ -107,27 +109,18 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
       resetForm={resetForm}
       maxWidth="435px"
     >
-      <div className="row">
-        <div className="col mb-3 mt-2">
-          <label htmlFor="commune_id" className="form-label">Commune</label>
-          {loading ? (
-            <p>Chargement des communes...</p>
-          ) : communes.length > 0 ? (
-            <SelectField
-              required
-              label="Sélectionnez une commune"
-              name="commune_id"
-              value={fokotany.commune_id}
-              onChange={handleChange}
-              options={communes.map((commune) => ({
-                value: commune.id.toString(),
-                label: commune.nomCommune,
-              }))}
-              placeholder="Choisissez une commune"
-            />
-          ) : (
-            <p className="text-danger">Aucune commune disponible.</p>
-          )}
+      <div className="row mt-2">
+        <div className="col mb-4">
+          <SelectField
+            label="Commune"
+            name="commune_id"
+            value={fokotany.commune_id}
+            onChange={handleChange}
+            options={communes.map((commune) => ({
+              label: commune.nomCommune, // ou autre champ pour le nom
+              value: commune.id.toString(), // assure que value est une string
+            }))}
+          />
         </div>
       </div>
       <div className="row">
@@ -139,15 +132,8 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
             value={fokotany.nomFokotany}
             onChange={handleChange}
             error={!!error}
-            helperText={error || ' '}
           />
         </div>
-
-        {submitError && (
-          <p className="text-danger mt-2 text-sm">
-            {submitError}
-          </p>
-        )}
       </div>
     </Modal>
   );

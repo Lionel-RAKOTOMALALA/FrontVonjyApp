@@ -164,7 +164,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                     key={column.id}
                     sortDirection={orderBy === column.id ? order : false}
                     sx={{ color: '#637381', fontWeight: '800', borderBottom: '1px dashed #e0e0e0 !important' }}
-                    className={column.id === 'offre' ||column.id === 'nombreMembre' || column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
+                    className={column.id === 'prenom_responsable' ||column.id === 'contact_responsable' || column.id === 'formation_acquise' || column.id === 'offre' ||column.id === 'nombreMembre' || column.id === 'experience' || column.id === 'permis_conduire' ? 'text-center' : ''}
                   >
                     <TableSortLabel
                       active={orderBy === column.id}

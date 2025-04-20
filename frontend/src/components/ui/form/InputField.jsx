@@ -5,7 +5,7 @@ const InputField = ({ label, name, value, onChange, required = true, fullWidth =
 
   const customSx = {
     '& fieldset': {
-      borderColor: 'rgba(145 158 171 / 0.6)',
+      borderColor: 'rgba(145 158 171 / 0.4)',
     },
     '& .MuiFormLabel-root': {
       color: '#919EAB !important',

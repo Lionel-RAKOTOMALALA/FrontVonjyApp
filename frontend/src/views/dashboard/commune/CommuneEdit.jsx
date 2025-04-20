@@ -78,15 +78,14 @@ const CommuneEdit = ({ isOpen, commune: initialCommune, onClose, onSuccess }) =>
       maxWidth="435px"
     >
       <div className="row">
-        <div className="col mb-3 mt-2">
+        <div className="col mb-2 mt-2">
           <InputField
             required
             label="Nom"
             name="nomCommune"
             value={commune.nomCommune || ''}
             onChange={handleChange}
-            error={!!error}
-            helperText={error || ' '}
+            error={!!error} 
           />
           {submitError && (
             <p className="text-danger mt-2 text-sm">

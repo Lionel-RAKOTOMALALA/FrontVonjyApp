@@ -6,6 +6,7 @@ import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ServiceEdit from "./ServiceEdit";
 import ServiceCreate from "./ServiceCreate";
 import useServiceStore from "../../../store/serviceStore"; // Import du store
+import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ServiceViews() {
   const { services, fetchServices, loading, deleteService, error } = useServiceStore(); // Utilisation du store
@@ -30,11 +31,11 @@ function ServiceViews() {
       label: "Fokontany",
       render: (row) => row.fokotany.nomFokotany,
     },
-    { id: "nomService", label: "Nom Service" },
+    { id: "nomService", label: "Service" },
     { id: "description", label: "Description" },
     { id: "offre", label: "Offre" },
-    { id: "membre", label: "Membre" },
-    { id: "nombre_membre", label: "Nombre de Membres" },
+    { id: "nombre_membre", label: "Nombre de Membres", render: (row) => <div className="text-center">{row.nombre_membre}</div> },
+    { id: "membre", label: "Responsable" },
   ];
 
   const handleCreate = () => {
@@ -94,7 +95,7 @@ function ServiceViews() {
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
-          showCheckboxes={true}
+          showCheckboxes={false}
           showDeleteIcon={true}
           onDelete={handleDelete}
           loading={loading}
@@ -119,16 +120,14 @@ function ServiceViews() {
         title="Suppression"
         content="Êtes-vous sûr de vouloir supprimer ce service ?"
       />
-      <Snackbar
+      <SnackbarAlert
         open={openSnackbar}
-        autoHideDuration={6000}
+        setOpen={setOpenSnackbar}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      />
     </>
   );
 }

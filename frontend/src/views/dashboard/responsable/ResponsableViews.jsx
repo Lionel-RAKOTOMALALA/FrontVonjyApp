@@ -6,6 +6,7 @@ import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ResponsableEdit from "./ResponsableEdit";
 import ResponsableCreate from "./ResponsableCreate";
 import useResponsableStore from "../../../store/responsableStore"; // Import du store
+import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ResponsableViews() {
   const { responsables, fetchResponsables, loading,deleteResponsable, error } = useResponsableStore(); // Utilisation du store
@@ -37,20 +38,26 @@ function ResponsableViews() {
     },
     {
       id: "nom_responsable",
-      label: "Nom Responsable",
+      label: "Nom",
     },
     {
       id: "prenom_responsable",
-      label: "Prénom Responsable",
+      label: "Prénom",
+      render: (row) =>  (row.prenom_responsable ? <div className="text-center">{row.prenom_responsable}</div> : <div className="text-center">-</div>)
     },
     {
       id: "fonction",
       label: "Fonction",
     },
     {
+      id: "contact_responsable",
+      label: "Contact",
+      render: (row) => (row.contact_responsable ? <div className="text-center">{row.contact_responsable}</div> : <div className="text-center">-</div>)
+    },
+    {
       id: "formation_acquise",
       label: "Formation Acquise",
-      render: (row) => (row.formation_acquise ? "Oui" : "Non"), // Affiche "Oui" ou "Non"
+      render: (row) => (row.formation_acquise ? <div className="text-center">Oui</div> : <div className="text-center">Non</div>),
     },
   ];
 
@@ -113,7 +120,7 @@ function ResponsableViews() {
         mainText="Listes"
         subText="Responsables"
         showCreateButton={true}
-        onCreate={handleCreate}
+        onCreate={handleCreate} 
       />
 
       {/* Tableau principal affichant les responsables */}
@@ -123,7 +130,7 @@ function ResponsableViews() {
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
-          showCheckboxes={true}
+          showCheckboxes={false}
           showDeleteIcon={true}
           onDelete={handleDelete}
           loading={loading} // Indicateur de chargement
@@ -154,18 +161,13 @@ function ResponsableViews() {
         title="Suppression"
         content="Êtes-vous sûr de vouloir supprimer ce responsable ?"
       />
-
-      {/* Notification (snackbar) après une action réussie */}
-      <Snackbar
+      <SnackbarAlert
         open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        setOpen={setOpenSnackbar}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        anchorOrigin={{vertical:'top', horizontal:'right'}}
+      />
     </>
   );
 }

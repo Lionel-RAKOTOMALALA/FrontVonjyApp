@@ -2,130 +2,133 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
-import RadioGroupField from "../../../components/ui/form/RadioGroupField";
-import useResponsableStore from '../../../store/responsableStore'; // Import du store des responsables
+import useFokotanyStore from '../../../store/fokotanyStore';
 
-const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => {
-  const { updateResponsable } = useResponsableStore(); // Utilisation de la méthode updateResponsable du store
-  const [fokotanys, setFokotanys] = useState([]);
+const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
+  const { updateFokotany } = useFokotanyStore();
+  const [communes, setCommunes] = useState([]);
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  const validResponsable = responsable || {
-    fokotany_id: '',
-    classe_responsable: '',
-    nom_responsable: '',
-    prenom_responsable: '',
-    fonction: '',
-    formation_acquise: 'true',
+  // Préparation des données du fokotany avec une valeur par défaut pour commune_id
+  const validFokotany = fokotany || {
+    commune_id: '',
+    nomFokotany: ''
   };
 
+  // Charger les communes depuis l'API
   useEffect(() => {
-    // Charger les fokotanys depuis l'API
-    const fetchFokotanys = async () => {
+    const fetchCommunes = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
+        const response = await fetch('http://127.0.0.1:8000/api/communes/', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
         if (!response.ok) {
-          throw new Error('Erreur lors du chargement des fokotanys.');
+          throw new Error('Erreur lors du chargement des communes.');
         }
         const data = await response.json();
-        setFokotanys(data);
+        setCommunes(data);
+        
+        // Après avoir chargé les communes, initialiser commune_id si on a un fokotany
+        if (!initialized && fokotany && fokotany.commune && fokotany.commune.id) {
+          onChange({
+            ...fokotany,
+            commune_id: fokotany.commune.id.toString()
+          });
+          setInitialized(true);
+        }
       } catch (err) {
-        console.error('Erreur lors de la récupération des fokotanys :', err);
-        setError('Impossible de charger les fokotanys.');
+        console.error('Erreur lors de la récupération des communes :', err);
+        setError('Impossible de charger les communes.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFokotanys();
-  }, []);
+    fetchCommunes();
+  }, [fokotany, onChange, initialized]);
 
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9\s-]*$/i.test(value);
+  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
 
   const isFormValid =
-    validResponsable.nom_responsable?.trim() !== '' &&
-    validResponsable.prenom_responsable?.trim() !== '' &&
-    validResponsable.classe_responsable?.trim() !== '' &&
-    validResponsable.fonction?.trim() !== '' &&
-    validResponsable.fokotany_id?.trim() !== '' &&
-    isValidName(validResponsable.nom_responsable?.trim()) &&
+    validFokotany.nomFokotany?.trim() !== '' &&
+    validFokotany.commune_id && 
+    isValidName(validFokotany.nomFokotany?.trim()) &&
     !inputDisabled;
 
   const resetForm = () => {
     onChange({
-      fokotany_id: '',
-      classe_responsable: '',
-      nom_responsable: '',
-      prenom_responsable: '',
-      fonction: '',
-      formation_acquise: 'true',
+      commune_id: '',
+      nomFokotany: ''
     });
     setError('');
     setSubmitError('');
     setInputDisabled(false);
+    setInitialized(false);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === 'nom_responsable' && !isValidName(value)) {
-      setError("Seules les lettres, chiffres, espaces et tirets sont autorisés.");
+    // Valider le champ nomFokotany
+    if (name === 'nomFokotany' && !isValidName(value)) {
+      setError("Caractères non autorisés détectés");
       setInputDisabled(true);
       return;
     }
 
     setError('');
     setInputDisabled(false);
-    onChange({ ...validResponsable, [name]: value });
+    onChange({ ...validFokotany, [name]: value });
   };
 
   const handleSave = async () => {
     try {
       if (!isFormValid) {
-        setSubmitError("Veuillez corriger les erreurs du formulaire avant de soumettre.");
+        setSubmitError("Formulaire invalide");
         return;
       }
 
       setSubmitError('');
 
-      // Transforme les données pour satisfaire les attentes de l'API
+      // Préparation des données pour l'API
       const payload = {
-        id: validResponsable.id,
-        fokotany_id: validResponsable.fokotany?.id || validResponsable.fokotany_id,
-        classe_responsable: validResponsable.classe_responsable,
-        nom_responsable: validResponsable.nom_responsable,
-        prenom_responsable: validResponsable.prenom_responsable,
-        fonction: validResponsable.fonction,
-        formation_acquise: validResponsable.formation_acquise === 'true',
+        id: validFokotany.id,
+        commune_id: validFokotany.commune_id,
+        nomFokotany: validFokotany.nomFokotany
       };
 
-      console.log('Données envoyées pour la mise à jour :', payload); // Debug
+      console.log('Données envoyées pour la mise à jour :', payload);
 
-      // Appel au store pour mettre à jour le responsable
-      await updateResponsable(validResponsable.id, payload);
-      if (onSave) onSave('Responsable modifié avec succès !');
+      // Appel au store pour mettre à jour le fokotany
+      await updateFokotany(validFokotany.id, payload);
+      if (onSave) onSave('Fokotany modifié avec succès !');
 
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du responsable :", err); // Debug
-      setSubmitError(err.message || "Une erreur est survenue lors de la modification. Veuillez réessayer.");
+      console.error("Erreur lors de la mise à jour du fokotany :", err);
+      setSubmitError(err.message || "Une erreur est survenue lors de la modification.");
+      if (onSave) onSave(err.message || "Erreur lors de la modification.", 'error');
     }
   };
 
+  // S'assurer que la valeur par défaut est '' si undefined ou non disponible
+  const selectedCommuneId = validFokotany.commune_id || '';
+  const communeExists = communes.some(commune => commune.id.toString() === selectedCommuneId);
+  const safeCommune = communeExists ? selectedCommuneId : '';
+
   return (
     <Modal
-      title="Modifier un responsable"
+      title="Modifier un fokotany"
       btnLabel="Sauvegarder"
       isOpen={isOpen}
       onSave={handleSave}
@@ -137,85 +140,31 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
       resetForm={resetForm}
       maxWidth="435px"
     >
-      <div className="row">
-        <div className="col mb-3 mt-2">
-          <label htmlFor="fokotany_id" className="form-label">Fokotany</label>
-          {loading ? (
-            <p>Chargement des fokotanys...</p>
-          ) : fokotanys.length > 0 ? (
+      <div className="row mt-2">
+        <div className="col mb-4">
             <SelectField
-              label="Sélectionnez un fokotany"
-              name="fokotany_id"
-              value={validResponsable.fokotany_id}
+              label="Commune"
+              name="commune_id"
+              value={safeCommune}
               onChange={handleChange}
-              options={fokotanys.map((fokotany) => ({
-                value: fokotany.id.toString(),
-                label: fokotany.nomFokotany,
+              options={communes.map((commune) => ({
+                label: commune.nomCommune,
+                value: commune.id.toString(),
               }))}
-              placeholder="Choisissez un fokotany"
+              placeholder="Choisissez une commune"
             />
-          ) : (
-            <p className="text-danger">Aucun fokotany disponible.</p>
-          )}
+       
         </div>
       </div>
       <div className="row">
         <div className="col mb-3">
           <InputField
             required
-            label="Classe Responsable"
-            name="classe_responsable"
-            value={validResponsable.classe_responsable || ''}
+            label="Nom du fokotany"
+            name="nomFokotany"
+            value={validFokotany.nomFokotany || ''}
             onChange={handleChange}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col mb-3">
-          <InputField
-            required
-            label="Nom du Responsable"
-            name="nom_responsable"
-            value={validResponsable.nom_responsable || ''}
-            onChange={handleChange}
-            error={!!error}
-            helperText={error || ' '}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col mb-3">
-          <InputField
-            required
-            label="Prénom du Responsable"
-            name="prenom_responsable"
-            value={validResponsable.prenom_responsable || ''}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col mb-3">
-          <InputField
-            required
-            label="Fonction"
-            name="fonction"
-            value={validResponsable.fonction || ''}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col mb-3">
-          <RadioGroupField
-            label="Formation Acquise"
-            name="formation_acquise"
-            value={validResponsable.formation_acquise}
-            onChange={handleChange}
-            options={[
-              { value: 'true', label: 'Oui' },
-              { value: 'false', label: 'Non' },
-            ]}
+            error={!!error} 
           />
         </div>
       </div>
@@ -228,4 +177,4 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
   );
 };
 
-export default ResponsableEdit;
+export default FokotanyEdit;

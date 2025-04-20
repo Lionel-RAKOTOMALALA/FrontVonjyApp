@@ -33,8 +33,7 @@ const useResponsableStore = create((set) => ({
   createResponsable: async (responsable) => {
     if (
       !responsable ||
-      !responsable.nom_responsable ||
-      !responsable.prenom_responsable ||
+      !responsable.nom_responsable || 
       !responsable.fokotany_id
     ) {
       throw new Error('Les données du responsable sont manquantes ou invalides.');

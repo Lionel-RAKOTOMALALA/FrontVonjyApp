@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-const Breadcrumb = ({ mainText, subText, onCreate, showCreateButton = true }) => {
+const Breadcrumb = ({ mainText, subText, onCreate, showCreateButton = true, btnLabel }) => {
   return (
     <Box className="d-flex flex-row justify-content-between align-items-start align-items-md-center mb-3">
       <Box className="d-flex flex-column justify-content-center">
@@ -26,7 +26,7 @@ const Breadcrumb = ({ mainText, subText, onCreate, showCreateButton = true }) =>
             }}
             onClick={onCreate}  
           >
-            Créer
+            {btnLabel ? btnLabel : "Ajouter"}
           </Button>
         </Box>
       )}

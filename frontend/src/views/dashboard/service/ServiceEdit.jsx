@@ -109,9 +109,6 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <label htmlFor="fokotany_id" className="form-label">
-            Fokotany
-          </label>
           {fokotanys.length > 0 ? (
             <SelectField
               label="Sélectionnez un fokotany"

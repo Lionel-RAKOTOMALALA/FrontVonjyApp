@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import menuData from '../data/menuData.json'
 import sneatLogo from '../assets/VonjyLogo.svg';
+import { Avatar } from '@mui/material';
 
 const Sidebar = () => {
     return (
@@ -10,7 +11,6 @@ const Sidebar = () => {
                 <span className="app-brand-logo demo">
                     <img src={sneatLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
                 </span>
-                <span className="app-brand-text demo menu-text fw-bold ms-2">Admin</span>
 
                 {/* <a
                     href="#"
@@ -21,7 +21,10 @@ const Sidebar = () => {
             </div>
 
             <div className="menu-inner-shadow"></div>
-
+            <div className='px-3 mx-3 rounded-3 my-3 d-flex align-items-center' style={{backgroundColor:'#F1F3F5'}}>
+                 <Avatar sx={{ bgcolor: "#C3CDD5",color:'#697988' }}>SU</Avatar>
+                <p className='p-4 text-dark fw-bold m-0'>Super admin</p>
+            </div>
             <ul className="menu-inner py-1">
                 {menuData.map((section) => (
                     <React.Fragment key={section.header}>

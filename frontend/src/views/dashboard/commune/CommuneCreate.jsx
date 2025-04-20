@@ -5,8 +5,7 @@ import useCommuneStore from '../../../store/communeStore';
 
 const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onSave
   const [commune, setCommune] = useState({ nomCommune: '' });
-  const [error, setError] = useState('');
-  const [submitError, setSubmitError] = useState('');
+  const [error, setError] = useState(''); 
   const [inputDisabled, setInputDisabled] = useState(false);
   const { createCommune } = useCommuneStore();
 
@@ -18,8 +17,7 @@ const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onS
 
   const resetForm = () => {
     setCommune({ nomCommune: '' });
-    setError('');
-    setSubmitError('');
+    setError(''); 
     setInputDisabled(false);
   };
 
@@ -39,12 +37,9 @@ const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onS
 
   const handleSave = async () => {
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
+      if (!isFormValid) { 
         return;
-      }
-
-      setSubmitError('');
+      } 
       
       // 2. Appel unique au store
       await createCommune(commune);
@@ -54,8 +49,7 @@ const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onS
       resetForm();
       onClose(); // Appel direct sans callback intermédiaire
     } catch (err) {
-      console.error("Erreur:", err);
-      setSubmitError(err.message || "Erreur lors de la création");
+      console.error("Erreur:", err); 
       if (onSuccess) onSuccess(err.message || "Erreur lors de la création", 'error');
     }
   };
@@ -74,22 +68,15 @@ const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onS
       resetForm={resetForm}
       maxWidth="435px"
     >
-      <div className="row">
-        <div className="col mb-3 mt-2">
+      <div className="row ">
+        <div className="col mb-0 mt-2">
           <InputField
             required
             label="Nom"
             name="nomCommune"
             value={commune.nomCommune}
-            onChange={handleChange}
-            error={!!error}
-            helperText={error || ' '}
+            onChange={handleChange} 
           />
-          {submitError && (
-            <p className="text-danger mt-2 text-sm">
-              {submitError}
-            </p>
-          )}
         </div>
       </div>
     </Modal>

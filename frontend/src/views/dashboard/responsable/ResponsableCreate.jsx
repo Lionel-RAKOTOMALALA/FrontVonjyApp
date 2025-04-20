@@ -11,6 +11,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
     classe_responsable: "",
     nom_responsable: "",
     prenom_responsable: "",
+    contact_responsable: "",
     fonction: "",
     formation_acquise: "true", // Valeur par défaut
   });
@@ -53,9 +54,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
   const isFormValid =
     responsable.fokotany_id !== "" &&
     responsable.classe_responsable.trim() !== "" &&
-    responsable.nom_responsable.trim() !== "" &&
-    responsable.prenom_responsable.trim() !== "" &&
-    responsable.fonction.trim() !== "" &&
+    responsable.nom_responsable.trim() !== "" && 
+    responsable.fonction.trim() !== "" && 
     !inputDisabled;
 
   const resetForm = () => {
@@ -64,6 +64,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
       classe_responsable: "",
       nom_responsable: "",
       prenom_responsable: "",
+      contact_responsable: "",
       fonction: "",
       formation_acquise: "true",
     });
@@ -107,7 +108,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <Modal
-      title="Créer un responsable"
+      title="Ajouter un responsable"
       btnLabel="Créer"
       isOpen={isOpen}
       onSave={handleSave}
@@ -120,10 +121,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
       maxWidth="435px"
     >
       <div className="row">
-        <div className="col mb-3 mt-2">
-          <label htmlFor="fokotany_id" className="form-label">
-            Fokotany
-          </label>
+        <div className="col mb-3 mt-2"> 
           {loading ? (
             <p>Chargement des fokotanys...</p>
           ) : fokotanys.length > 0 ? (
@@ -148,7 +146,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
         <div className="col mb-3">
           <InputField
             required
-            label="Classe Responsable"
+            label="Classe"
             name="classe_responsable"
             value={responsable.classe_responsable}
             onChange={handleChange}
@@ -159,24 +157,22 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
         <div className="col mb-3">
           <InputField
             required
-            label="Nom du Responsable"
+            label="Nom"
             name="nom_responsable"
             value={responsable.nom_responsable}
             onChange={handleChange}
           />
         </div>
-      </div>
-      <div className="row">
         <div className="col mb-3">
           <InputField
-            required
-            label="Prénom du Responsable"
+            required={false}
+            label="Prénom"
             name="prenom_responsable"
             value={responsable.prenom_responsable}
             onChange={handleChange}
           />
         </div>
-      </div>
+      </div> 
       <div className="row">
         <div className="col mb-3">
           <InputField
@@ -184,6 +180,17 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             label="Fonction"
             name="fonction"
             value={responsable.fonction}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3">
+          <InputField
+            required={false}
+            label="Contact"
+            name="contact_responsable"
+            value={responsable.contact_responsable}
             onChange={handleChange}
           />
         </div>
@@ -202,9 +209,6 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
           />
         </div>
       </div>
-      {submitError && (
-        <p className="text-danger mt-2 text-sm">{submitError}</p>
-      )}
     </Modal>
   );
 };

@@ -136,7 +136,7 @@ function CommuneViews() {
           rowsPerPage={5}
           onEdit={handleEdit} 
           onDelete={handleDelete}
-          showCheckboxes={true} 
+          showCheckboxes={false} 
           showDeleteIcon={true}
           loading={loading}
         /> 
