@@ -84,14 +84,15 @@ function MapViews() {
   }
 
   useEffect(() => {
-    if (communedetail) {
+    if (communedetail && selectedCommune) {
       console.log("Commune detail:", communedetail)
 
-      setSelectedCommune({
-        id: communedetail.id,
-        nomCommune: communedetail.nomCommune,
-        total_fokotanys: communedetail.total_fokotanys,
-        total_services: communedetail.total_services,
+      setSelectedCommune(prev => ({
+        ...prev,
+        id: communedetail.id || prev.id,
+        nomCommune: communedetail.nomCommune || prev.nomCommune,
+        total_fokotanys: communedetail.total_fokotanys || prev.total_fokotanys,
+        total_services: communedetail.total_services || prev.total_services,
         fokotanys: Array.isArray(communedetail.fokotanys)
           ? communedetail.fokotanys.map(fokotany => ({
               id: fokotany.id,
@@ -102,7 +103,7 @@ function MapViews() {
               services: fokotany.services || []
             }))
           : [] // Si fokotanys n'est pas un tableau, utilisez un tableau vide
-      })
+      }))
     }
   }, [communedetail])
 
