@@ -18,8 +18,8 @@ const useCommuneStore = create((set) => ({
         },
       });
       const data = await response.json();
-      set({ communedetail: data, loading: false }); // Update the state
-
+      console.log('Réponse API pour fetchDetailCommune:', data); // Vérification des données
+      set({ communedetail: data, loading: false }); // Mise à jour du store
     } catch (error) {
       console.error('fetchDetailCommune: Error fetching commune detail:', error);
       set({ error: error.message, loading: false });

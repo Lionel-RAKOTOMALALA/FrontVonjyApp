@@ -59,6 +59,7 @@ function MapViews() {
     setIsAnimating(true)
     setResetView(false)
     fetchDetailCommune(communeId)
+    console.log("Fetching commune detail...")
 
     const communeData = AmpanihyData.features.find(
       (f) => f.properties.id === communeId
@@ -78,16 +79,27 @@ function MapViews() {
   }
 
   useEffect(() => {
-    if (communedetail && selectedCommune) {
-      setSelectedCommune(prev => ({
-        ...prev,
-        population: communedetail.population || prev.population,
-        superficie: communedetail.superficie || prev.superficie,
-        fokotany: communedetail.fokotany_count || prev.fokotany
-      }))
+    if (communedetail) {
+      console.log("Commune detail:", communedetail)
+
+      setSelectedCommune({
+        id: communedetail.id,
+        nomCommune: communedetail.nomCommune,
+        total_fokotanys: communedetail.total_fokotanys,
+        total_services: communedetail.total_services,
+        fokotanys: Array.isArray(communedetail.fokotanys)
+          ? communedetail.fokotanys.map(fokotany => ({
+              id: fokotany.id,
+              nomFokotany: fokotany.nomFokotany,
+              responsables_count: fokotany.responsables_count,
+              services_count: fokotany.services_count,
+              responsables: fokotany.responsables || [],
+              services: fokotany.services || []
+            }))
+          : [] // Si fokotanys n'est pas un tableau, utilisez un tableau vide
+      })
     }
   }, [communedetail])
-
   const handleBackToOverview = () => {
     setIsAnimating(true)
     setTimeout(() => {

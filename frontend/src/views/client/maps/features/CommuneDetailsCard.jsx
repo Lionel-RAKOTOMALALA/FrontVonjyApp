@@ -20,26 +20,26 @@ const getServiceIcon = (serviceName) => {
 }
 
 const CommuneDetailsCard = ({ selectedCommune }) => {
+  console.log(selectedCommune)
   const [communeDetails, setCommuneDetails] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (selectedCommune?.nom) {
-      setIsLoading(true)
-      fetch("/exempleData.json")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.nomCommune === selectedCommune.nom) {
-            setCommuneDetails(data)
-          } else {
-            setCommuneDetails(null)
-          }
-          setIsLoading(false)
-        })
-        .catch(() => {
-          setCommuneDetails(null)
-          setIsLoading(false)
-        })
+    if (selectedCommune && Array.isArray(selectedCommune.fokotanys)) {
+      // Mise en forme directe de selectedCommune en respectant le format attendu
+      setCommuneDetails({
+        id: selectedCommune.id,
+        nomCommune: selectedCommune.nomCommune,
+        fokotanys: selectedCommune.fokotanys.map((fokotany) => ({
+          id: fokotany.id,
+          nomFokotany: fokotany.nomFokotany,
+          responsables: fokotany.responsables,
+          responsables_count: fokotany.responsables_count,
+          services: fokotany.services,
+          services_count: fokotany.services_count,
+        })),
+      })
+    } else {
+      setCommuneDetails(null) // Si selectedCommune ou fokotanys est invalide
     }
   }, [selectedCommune])
 
@@ -47,15 +47,16 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
 
   const fokotanyColumns = [
     { field: "nomFokotany", label: "Nom du Fokotany" },
-    { field: "nombreResponsables", label: "Responsables", align: "center" },
-    { field: "nombreServices", label: "Services", align: "center" },
+    { field: "responsables_count", label: "Responsables", align: "center" },
+    { field: "services_count", label: "Services", align: "center" },
   ]
 
   const responsableColumns = [
     { field: "classe_responsable", label: "Rôle" },
-    { field: "nom_complet", label: "Nom" },
+    { field: "nom_responsable", label: "Nom" },
+    { field: "prenom_responsable", label: "Prénom" },
     { field: "fonction", label: "Fonction" },
-    { field: "formation", label: "Formation" },
+    { field: "contact_responsable", label: "Contact" },
   ]
 
   const serviceColumns = [
@@ -65,23 +66,6 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
     { field: "membre", label: "Membres" },
     { field: "nombre_membre", label: "Nombre", align: "center" },
   ]
-
-  const prepareTableData = () => {
-    if (!communeDetails) return []
-
-    return communeDetails.fokotanys.map((fokotany) => ({
-      id: fokotany.id,
-      nomFokotany: fokotany.nomFokotany,
-      nombreResponsables: fokotany.responsable.length,
-      nombreServices: fokotany.services.length,
-      responsables: fokotany.responsable.map((resp) => ({
-        ...resp,
-        nom_complet: `${resp.prenom_responsable} ${resp.nom_responsable}`,
-        formation: resp.formation_acquise ? "Formé" : "Non formé",
-      })),
-      services: fokotany.services,
-    }))
-  }
 
   const detailTables = [
     {
@@ -132,23 +116,7 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
             sx={{ borderRadius: 5, overflow: "hidden", bgcolor: "#fff", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
           >
             <CardContent>
-              {isLoading ? (
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                  <Typography>Chargement des données...</Typography>
-                </Box>
-              ) : communeDetails ? (
-                <motion.div variants={contentVariants}>
-                  <Box sx={{ mt: 3 }}>
-                    <H4 sx={{ mb: 2 }}>Fokotany de {selectedCommune.nom}</H4>
-                    <CollapsibleTable
-                      columns={fokotanyColumns}
-                      rows={prepareTableData()}
-                      detailTables={detailTables}
-                      arrowPosition="left"
-                    />
-                  </Box>
-                </motion.div>
-              ) : (
+              {!communeDetails ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -162,6 +130,18 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
                     Les données détaillées pour cette commune ne sont pas encore disponibles.
                   </Typography>
                 </Box>
+              ) : (
+                <motion.div variants={contentVariants}>
+                  <Box sx={{ mt: 3 }}>
+                    <H4 sx={{ mb: 2 }}>Fokotany de {communeDetails.nomCommune}</H4>
+                    <CollapsibleTable
+                      columns={fokotanyColumns}
+                      rows={communeDetails.fokotanys}
+                      detailTables={detailTables}
+                      arrowPosition="left"
+                    />
+                  </Box>
+                </motion.div>
               )}
             </CardContent>
           </Card>

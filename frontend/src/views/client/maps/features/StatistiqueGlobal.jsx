@@ -5,6 +5,9 @@ import FokotanyIcon from '../../../../assets/icons/fokotany.svg';
 import ServiceIcon from '../../../../assets/icons/service.svg';
 
 const StatistiqueGlobal = ({ selectedCommune }) => {
+  console.log('====================================');
+  console.log(selectedCommune)
+  console.log('====================================');
   const [communeData, setCommuneData] = useState(null);
 
   useEffect(() => {
@@ -143,7 +146,7 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
                   height={35}
                   style={{ marginRight: "20px", marginLeft: "25px", position: "absolute", right: 0 }}
                 />
-                <h3 className="card-title fw-bold mb-0 mt-1">{fokotanyCount}</h3>
+                <h3 className="card-title fw-bold mb-0 mt-1">{selectedCommune.total_fokotanys}</h3>
                 <p className="mb-1">Fokontany</p>
                 <div style={{ ...svgStyle, backgroundImage: gradients.fokotany }}></div>
               </div>
@@ -158,7 +161,7 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
                   height={35}
                   style={{ marginRight: "20px", marginLeft: "25px", position: "absolute", right: 0 }}
                 />
-                <h3 className="card-title fw-bold mb-0 mt-1">{serviceCount}</h3>
+                <h3 className="card-title fw-bold mb-0 mt-1">{selectedCommune.total_services}</h3>
                 <p className="mb-1">Services</p>
                 <div style={{ ...svgStyle, backgroundImage: gradients.service }}></div>
               </div>
