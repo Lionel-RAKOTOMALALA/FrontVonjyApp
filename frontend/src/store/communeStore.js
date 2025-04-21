@@ -1,12 +1,13 @@
-// stores/communeStore.js
 import { create } from 'zustand';
 
 const useCommuneStore = create((set) => ({
   communes: [],
   communedetail: [],
+  totals: {}, // Ajout d'un objet pour stocker les totaux
   loading: false,
   error: null,
 
+  // Action pour récupérer les détails d'une commune
   fetchDetailCommune: async (id) => {
     set({ loading: true, error: null });
     try {
@@ -25,7 +26,6 @@ const useCommuneStore = create((set) => ({
       set({ error: error.message, loading: false });
     }
   },
-
 
   // Action pour récupérer les communes
   fetchCommunes: async () => {
@@ -127,7 +127,27 @@ const useCommuneStore = create((set) => ({
     } catch (error) {
       throw error;
     }
-  }
+  },
+
+  // Action pour récupérer les totaux (communes, fokotanys, services)
+  fetchTotals: async () => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await fetch('http://127.0.0.1:8000/api/totals/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log('Réponse API pour fetchTotals:', data); // Vérification des données
+      set({ totals: data, loading: false }); // Mise à jour du store
+    } catch (error) {
+      console.error('fetchTotals: Error fetching totals:', error);
+      set({ error: error.message, loading: false });
+    }
+  },
 }));
 
 export default useCommuneStore;

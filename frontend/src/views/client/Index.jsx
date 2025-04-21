@@ -13,7 +13,7 @@ function MapViews() {
   const [mapError, setMapError] = useState(null)
   const [communeCount, setCommuneCount] = useState(0)
   const [fokotanyCount, setFokotanyCount] = useState(0)
-  const { fetchDetailCommune, communedetail } = useCommuneStore()
+  const { fetchDetailCommune, fetchTotals, totals, communedetail } = useCommuneStore()
 
   const [selectedCommune, setSelectedCommune] = useState(null)
   const [resetView, setResetView] = useState(false)
@@ -54,6 +54,11 @@ function MapViews() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  // Appel à fetchTotals pour récupérer les totaux au montage du composant
+  useEffect(() => {
+    fetchTotals()
+  }, [fetchTotals])
 
   const handleCommuneClick = (communeId) => {
     setIsAnimating(true)
@@ -100,6 +105,7 @@ function MapViews() {
       })
     }
   }, [communedetail])
+
   const handleBackToOverview = () => {
     setIsAnimating(true)
     setTimeout(() => {
@@ -138,6 +144,7 @@ function MapViews() {
         isAnimating={isAnimating}
         handleCommuneClick={handleCommuneClick}
         handleBackToOverview={handleBackToOverview}
+        totals={totals} // Passage des totaux à MapMainContent
       />
     </Box>
   )

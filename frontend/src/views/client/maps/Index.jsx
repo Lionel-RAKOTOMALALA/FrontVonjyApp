@@ -16,7 +16,8 @@ const MapMainContent = ({
   isAnimating,
   handleCommuneClick,
   handleBackToOverview,
-}) => {
+  totals,
+}) => { 
   return (
     <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
       <div
@@ -90,7 +91,7 @@ const MapMainContent = ({
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <StatistiqueGlobal selectedCommune={selectedCommune} />
+              <StatistiqueGlobal selectedCommune={selectedCommune} totals={totals} />
             </motion.div>
           </AnimatePresence>
         </Box>

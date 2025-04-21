@@ -4,10 +4,8 @@ import CommuneIcon from '../../../../assets/icons/commune.svg';
 import FokotanyIcon from '../../../../assets/icons/fokotany.svg';
 import ServiceIcon from '../../../../assets/icons/service.svg';
 
-const StatistiqueGlobal = ({ selectedCommune }) => {
-  console.log('====================================');
-  console.log(selectedCommune)
-  console.log('====================================');
+const StatistiqueGlobal = ({ selectedCommune, totals }) => {
+  
   const [communeData, setCommuneData] = useState(null);
 
   useEffect(() => {
@@ -89,7 +87,7 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
                     height={35}
                     style={{ marginRight: "20px", marginLeft: "25px", position: "absolute", right: 0 }}
                   />
-                  <h3 className="card-title fw-bold mb-0 mt-1">{communeCount}</h3>
+                  <h3 className="card-title fw-bold mb-0 mt-1">{totals.total_communes}</h3>
                 </div>
                 <p className="mb-0">Communes</p>
                 <div style={{ ...svgStyle, backgroundImage: gradients.commune }}></div>
@@ -106,7 +104,7 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
                   height={35}
                   style={{ marginRight: "20px", marginLeft: "25px", position: "absolute", right: 0 }}
                 />
-                <h3 className="card-title fw-bold mb-0 mt-1">{serviceCount}</h3>
+                <h3 className="card-title fw-bold mb-0 mt-1">{totals.total_services}</h3>
                 <p className="mb-1">Services</p>
                 <div style={{ ...svgStyle, backgroundImage: gradients.service }}></div>
               </div>
@@ -121,7 +119,7 @@ const StatistiqueGlobal = ({ selectedCommune }) => {
                   height={35}
                   style={{ marginRight: "20px", marginLeft: "25px", position: "absolute", right: 0 }}
                 />
-                <h3 className="card-title fw-bold mb-0 mt-1">{fokotanyCount}</h3>
+                <h3 className="card-title fw-bold mb-0 mt-1">{totals.total_fokotanys}</h3>
                 <p className="mb-1">Total fokontany</p>
                 <div style={{ ...svgStyle, backgroundImage: gradients.fokotany }}></div>
               </div>
