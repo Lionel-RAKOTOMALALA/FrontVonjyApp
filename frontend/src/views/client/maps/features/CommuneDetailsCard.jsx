@@ -139,6 +139,7 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
                       rows={communeDetails.fokotanys}
                       detailTables={detailTables}
                       arrowPosition="left"
+                      accordion={true}
                     />
                   </Box>
                 </motion.div>

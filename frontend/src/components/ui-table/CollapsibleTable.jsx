@@ -17,7 +17,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PaginationComponent from '../ui-table/PaginationComponent';
 
 function Row(props) {
-  const { row, columns, detailTables, arrowPosition, isOpen } = props;
+  const { row, columns, detailTables, arrowPosition, isOpen, onToggle, isHighlighted } = props;
   const [open, setOpen] = useState(isOpen);
 
   const hasDetails = detailTables && detailTables.length > 0;
@@ -27,15 +27,30 @@ function Row(props) {
     setOpen(isOpen);
   }, [isOpen]);
 
+  const handleToggle = () => {
+    const newOpenState = !open;
+    setOpen(newOpenState);
+    if (onToggle) {
+      onToggle(row.id, newOpenState);
+    }
+  };
+
+  // Styles pour la mise en évidence
+  const highlightStyle = isHighlighted ? { backgroundColor: '#f0f7ff' } : {}; // Couleur douce bleutée
+
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'none !important' } }}>
+      <TableRow sx={{ 
+        '& > *': { borderBottom: 'none !important' },
+        ...highlightStyle,
+        transition: 'background-color 0.3s ease', // Transition douce pour le changement de couleur
+      }}>
         {arrowPosition === 'left' && (
           <TableCell sx={{ width: '30px' }}>
             <IconButton
               aria-label="expand row"
               size="small"
-              onClick={() => setOpen(!open)}
+              onClick={handleToggle}
               disabled={!hasDetails}
             >
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -52,7 +67,7 @@ function Row(props) {
             <IconButton
               aria-label="expand row"
               size="small"
-              onClick={() => setOpen(!open)}
+              onClick={handleToggle}
               disabled={!hasDetails}
             >
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -141,6 +156,8 @@ Row.propTypes = {
   ).isRequired,
   arrowPosition: PropTypes.oneOf(['left', 'right']).isRequired,
   isOpen: PropTypes.bool,
+  onToggle: PropTypes.func,
+  isHighlighted: PropTypes.bool,
 };
 
 export default function CollapsibleTable({ 
@@ -148,14 +165,32 @@ export default function CollapsibleTable({
   rows, 
   detailTables, 
   arrowPosition = 'left', 
-  expandedRows = {} 
+  expandedRows = {},
+  accordion = false, // Paramètre pour le comportement accordion
+  highlightSelected = true, // Nouveau paramètre pour la mise en évidence
+  highlightColor = '#f0f7ff', // Couleur de mise en évidence par défaut
 }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(1);
+  const [openRowId, setOpenRowId] = useState(null);
   const rowsPerPage = 5;
 
   const count = Math.ceil(rows.length / rowsPerPage);
+
+  // Initialiser l'état des lignes ouvertes à partir des expandedRows
+  useEffect(() => {
+    if (Object.keys(expandedRows).length > 0) {
+      // Si mode accordion, ne garder que la dernière ligne ouverte
+      if (accordion) {
+        const openRows = Object.entries(expandedRows).filter(([_, isOpen]) => isOpen);
+        if (openRows.length > 0) {
+          const lastOpenRowId = openRows[openRows.length - 1][0];
+          setOpenRowId(parseInt(lastOpenRowId, 10));
+        }
+      }
+    }
+  }, [expandedRows, accordion]);
 
   const handleRequestSort = (property) => {
     const column = columns.find(col => col.field === property);
@@ -208,6 +243,31 @@ export default function CollapsibleTable({
     }));
   };
 
+  // Gestionnaire pour le toggle d'une ligne
+  const handleRowToggle = (rowId, isOpen) => {
+    if (accordion && isOpen) {
+      // En mode accordion, on ferme toutes les autres lignes
+      setOpenRowId(rowId);
+    } else if (accordion && !isOpen && openRowId === rowId) {
+      // Si on ferme la ligne actuellement ouverte
+      setOpenRowId(null);
+    }
+  };
+
+  // Détermine si une ligne est ouverte ou non
+  const isRowOpen = (rowId) => {
+    if (accordion) {
+      return openRowId === rowId;
+    } else {
+      return expandedRows[rowId] || false;
+    }
+  };
+
+  // Détermine si une ligne doit être mise en évidence
+  const isRowHighlighted = (rowId) => {
+    return highlightSelected && isRowOpen(rowId);
+  };
+
   return (
     <Box sx={{border:'1px solid rgba(224, 224, 224, .9)', borderRadius:'16px', overflow:'hidden'}}>
       <TableContainer>
@@ -247,7 +307,9 @@ export default function CollapsibleTable({
                 columns={columns} 
                 detailTables={getRowDetailTables(row)}
                 arrowPosition={arrowPosition}
-                isOpen={expandedRows[row.id] || false}
+                isOpen={isRowOpen(row.id)}
+                onToggle={handleRowToggle}
+                isHighlighted={isRowHighlighted(row.id)}
               />
             ))}
           </TableBody>
@@ -289,4 +351,7 @@ CollapsibleTable.propTypes = {
   ).isRequired,
   arrowPosition: PropTypes.oneOf(['left', 'right']),
   expandedRows: PropTypes.object,
+  accordion: PropTypes.bool,
+  highlightSelected: PropTypes.bool,
+  highlightColor: PropTypes.string,
 };
