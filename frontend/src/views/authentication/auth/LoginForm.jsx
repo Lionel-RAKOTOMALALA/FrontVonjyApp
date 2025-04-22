@@ -8,7 +8,7 @@ import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
-import { useAuthStore } from "../../../store/auth"
+import useUserStore from "../../../store/userStore" // Utilisation du store utilisateur
 
 function LoginForm({ onNavigate }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,7 +20,7 @@ function LoginForm({ onNavigate }) {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { setAuthData } = useAuthStore()
+  const { setAccessToken, fetchUser } = useUserStore() // Import des actions du store utilisateur
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target
@@ -41,16 +41,19 @@ function LoginForm({ onNavigate }) {
         password: formData.password,
       })
 
-      // Stockage des données d'authentification dans le store et localStorage
-      setAuthData({
-        access: response.data.access,
-        refresh: response.data.refresh,
-        user: response.data.user,
-      })
+      // Stockage du token d'accès dans le store
+      setAccessToken(response.data.access)
 
+      // Récupération des informations utilisateur
+      await fetchUser()
 
-      // Redirection après connexion réussie
-      navigate("/map")
+      // Redirection après connexion réussie en fonction du rôle utilisateur
+      const { user } = useUserStore.getState() // Récupération de l'utilisateur depuis le store
+      if (user?.role === "simple") {
+        navigate("/map")
+      } else if (user?.role === "super") {
+        navigate("/commune")
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Email ou mot de passe incorrect")
       console.error("Login error:", err)
