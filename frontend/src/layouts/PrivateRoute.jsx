@@ -1,10 +1,15 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../store/auth';
+import { Navigate } from "react-router-dom";
+import useUserStore from "../store/userStore"; // Import du store utilisateur
 
 const PrivateRoute = ({ children }) => {
-    const loggedIn = useAuthStore((state) => state.isLoggedIn)();
+  const { accessToken } = useUserStore();
 
-    return loggedIn ? <>{children}</> : <Navigate to="/auth/login" />;
+  // Si l'utilisateur n'est pas connecté, redirige vers la page de connexion
+  if (!accessToken) {
+    return <Navigate to="/auth/login" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;
