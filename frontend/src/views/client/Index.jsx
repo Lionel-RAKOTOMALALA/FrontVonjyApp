@@ -6,6 +6,7 @@ import AppHeader from "./AppHeader"
 import AmpanihyData from "./maps/data/Ampanihy.json"
 import useCommuneStore from '../../store/communeStore'
 import MapMainContent from "./maps/Index"
+import jwtDecode from "jwt-decode"
 
 function MapViews() {
   const [scrolled, setScrolled] = useState(false)
@@ -26,6 +27,20 @@ function MapViews() {
   }, [])
 
   useEffect(() => {
+    const token = localStorage.getItem("access_token"); // ou sessionStorage selon ton cas
+
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log(decoded);
+      console.log("Rôle :", decoded.role);
+    
+      // Tu peux aussi gérer des conditions selon le rôle
+      if (decoded.role === "admin") {
+        // Afficher des éléments réservés à l'admin
+      } else {
+        // Accès utilisateur classique
+      }
+    }
     const timer = setTimeout(() => {
       try {
         if (!AmpanihyData || !AmpanihyData.features) {

@@ -1,20 +1,24 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Modal from "../../../components/ui/Modal"
 import { Tabs, Tab, Box } from "@mui/material"
 import ProfilTab from "./tab/Profile"
 import SecuriteTab from "./tab/Securite"
 import SnackbarAlert from "../../../components/ui/SnackbarAlert"
+import useUserStore from "../../../store/userStore"
 
 const Parametre = ({ isOpen, onClose }) => {
   const [tabValue, setTabValue] = useState(0)
+  const { fetchUser, user } = useUserStore()
 
-  const initialProfileData = {
-    nom: "Mihobisoa",
-    prenom: "Hardiot",
-    email: "hobyhardiot1@gmail.com",
-  }
+  useEffect(() => {
+    // Ne fetch les informations utilisateur qu'une seule fois si elles ne sont pas déjà présentes
+    if (!user) {
+      fetchUser()
+    }
+    console.log("Informations de l'utilisateur connecté dans profile:", user)
+  }, [user, fetchUser])
 
   const initialPasswordData = {
     ancienMotDePasse: "",
@@ -22,7 +26,10 @@ const Parametre = ({ isOpen, onClose }) => {
     confirmationMotDePasse: "",
   }
 
-  const [profileData, setProfileData] = useState(initialProfileData)
+  const [profileData, setProfileData] = useState({
+    nom_complet: "",
+    email: "",
+  })
   const [passwordData, setPasswordData] = useState(initialPasswordData)
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState({
@@ -36,6 +43,16 @@ const Parametre = ({ isOpen, onClose }) => {
     severity: 'success',
     message: '',
   })
+
+  // Mettre à jour `profileData` lorsque `user` change
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        nom_complet: user.namefull || "",
+        email: user.email || "",
+      })
+    }
+  }, [user])
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue)
@@ -121,7 +138,6 @@ const Parametre = ({ isOpen, onClose }) => {
       setTabValue(0)
     }, 200)
   }
-  
 
   return (
     <>
@@ -150,7 +166,10 @@ const Parametre = ({ isOpen, onClose }) => {
           {tabValue === 0 && (
             <ProfilTab
               formData={profileData}
-              initialFormData={initialProfileData}
+              initialFormData={{
+                nom_complet: user?.namefull || "",
+                email: user?.email || "",
+              }}
               handleChange={handleProfileChange}
               onClose={handleCloseModal}
               onSnackbar={handleSnackbar}

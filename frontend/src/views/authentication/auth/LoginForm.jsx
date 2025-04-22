@@ -48,8 +48,9 @@ function LoginForm({ onNavigate }) {
         user: response.data.user,
       })
 
+
       // Redirection après connexion réussie
-      navigate("/commune")
+      navigate("/map")
     } catch (err) {
       setError(err.response?.data?.message || "Email ou mot de passe incorrect")
       console.error("Login error:", err)

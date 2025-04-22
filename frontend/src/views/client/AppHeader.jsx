@@ -1,16 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 import { AppBar, Toolbar, Typography, Box, IconButton, Avatar, Menu, MenuItem, Divider } from "@mui/material"
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 import VonjyLogo from "../../assets/VonjyLogo.svg"
 import Parametre from "./settings/Index" // Import du modal
 import { Paragraphe } from "../../components/ui/TypographyVariants"
+import useUserStore from "../../store/userStore"
 
 function AppHeader({ scrolled }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openParametre, setOpenParametre] = useState(false) // Pour gérer le modal
+  const { fetchUser, user } = useUserStore()
 
   const open = Boolean(anchorEl)
 
@@ -30,6 +32,14 @@ function AppHeader({ scrolled }) {
   const handleCloseParametre = () => {
     setOpenParametre(false)
   }
+
+  useEffect(() => {
+    // Ne fetch les informations utilisateur qu'une seule fois si elles ne sont pas déjà présentes
+    if (!user) {
+      fetchUser()
+    }
+    console.log("Informations de l'utilisateur connecté :", user)
+  }, [user, fetchUser])
 
   return (
     <>
@@ -57,7 +67,7 @@ function AppHeader({ scrolled }) {
 
           <Box display="flex" alignItems="center">
             <Paragraphe sx={{ marginRight: 1, fontSize: '1.05rem', display: { xs: 'none', md: 'block' }, }}>
-              bryan@gmail.com
+            {user?.namefull?.charAt(0).toUpperCase() + user?.namefull?.slice(1) || "Nom indisponible"}
             </Paragraphe>
             <IconButton
               onClick={handleMenuClick}
@@ -66,7 +76,7 @@ function AppHeader({ scrolled }) {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ bgcolor: "#fbc02d" }}>B</Avatar>
+            <Avatar sx={{ bgcolor: "#fbc02d" }}>{user?.namefull?.charAt(0).toUpperCase() || "?"}</Avatar>
               <ArrowDropDownIcon className="rounded-circle border" sx={{ position: 'absolute', top: '34px', right: '8px', width: '16px', height: '16px', backgroundColor: "#fff" }} />
             </IconButton>
             <Menu
@@ -92,9 +102,9 @@ function AppHeader({ scrolled }) {
               }}
             >
               <Paragraphe className="mx-3 my-3" sx={{ marginRight: 1, fontSize: '1.05rem', display: { xs: 'block', md: 'none' }, }}>
-                bryan@gmail.com
+                {user?.email || "Email non disponible"}
               </Paragraphe>
-              <Divider sx={{display:{ xs: 'block', md: 'none' }}}/>
+              <Divider sx={{ display: { xs: 'block', md: 'none' } }} />
               <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleOpenParametre}>
                 Paramètres
               </MenuItem>
