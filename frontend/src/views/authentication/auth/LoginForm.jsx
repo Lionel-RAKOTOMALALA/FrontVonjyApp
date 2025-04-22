@@ -36,7 +36,7 @@ function LoginForm({ onNavigate }) {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/login/", {
+      const response = await axios.post("https://www.admin.com/api/auth/login/", {
         email: formData.email,
         password: formData.password,
       })
@@ -74,7 +74,7 @@ function LoginForm({ onNavigate }) {
         {error && (
           <Paragraphe
             sx={{
-              color: "error.main",
+              color: "#fff",
               textAlign: "center",
               mb: 2,
               bgcolor: "error.light",

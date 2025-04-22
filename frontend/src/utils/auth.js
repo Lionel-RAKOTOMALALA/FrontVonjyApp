@@ -49,9 +49,9 @@ export const register = async (username, password, password2) => {
 };
 
 export const logout = () => {
-    Cookies.remove('access_token');
-    Cookies.remove('refresh_token');
-    useAuthStore.getState().setUser(null);
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    // useAuthStore.getState().setUser(null);
 };
 
 export const checkAndRefreshToken = async () => {
