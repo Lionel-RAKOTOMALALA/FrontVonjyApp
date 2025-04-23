@@ -24,7 +24,7 @@
         set({ loading: true, error: null });
 
         try {
-        const response = await axios.get('https://www.admin.com/api/user/info/', {
+        const response = await axios.get('http://127.0.0.1:8000/api/user/info/', {
             headers: {
             Authorization: `Bearer ${accessToken}`,
             },

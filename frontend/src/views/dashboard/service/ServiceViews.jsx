@@ -38,7 +38,12 @@ function ServiceViews() {
     {
       id: "fokotany",
       label: "Fokontany",
-      render: (row) => highlightText(row.fokotany.nomFokotany, searchQuery),
+      render: (row) => (
+        <>
+          <div>{highlightText(row.fokotany.nomFokotany, searchQuery)}</div>
+          <div className="fw-bold text-secondary"><span className="">CU</span> {highlightText(row.fokotany.commune.nomCommune, searchQuery)}</div>
+        </>
+      ),
     },
     { 
       id: "nomService", 
@@ -122,7 +127,7 @@ function ServiceViews() {
         <FilterBar
           showSearch={true}
           showFilter={false}
-          filterCriteria={{ filterBy: null, searchFields: ['nomService', 'description', 'offre', 'membre'] }}
+          filterCriteria={{ filterBy: null, searchFields: ['nomService','fokotany.commune.nomCommune', 'description', 'offre', 'membre'] }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           data={services}

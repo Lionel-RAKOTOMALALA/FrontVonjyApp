@@ -10,7 +10,7 @@ const useFokotanyStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('https://www.admin.com/api/fokotany/', {
+      const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ const useFokotanyStore = create((set) => ({
       console.log('Token utilisé:', token);
       console.log('Payload envoyé:', JSON.stringify(fokotany));
 
-      const response = await fetch('https://www.admin.com/api/fokotany/', {
+      const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -70,7 +70,7 @@ const useFokotanyStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Données envoyées pour la mise à jour :', updatedFokotany); // Debug
   
-      const response = await fetch(`https://www.admin.com/api/fokotany/${id}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/fokotany/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -106,7 +106,7 @@ const useFokotanyStore = create((set) => ({
   deleteFokotany: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      await fetch(`https://www.admin.com/api/fokotany/${id}/`, {
+      await fetch(`http://127.0.0.1:8000/api/fokotany/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

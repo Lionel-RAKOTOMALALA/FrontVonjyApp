@@ -35,10 +35,20 @@ const inactiveStyle = {
   fillColor: "#dddddd",
 }
 
+// Style pour l'export PDF (contours plus visibles)
+const exportStyle = {
+  weight: 4,
+  color: "#000000",
+  dashArray: "",
+  fillOpacity: 0.5,
+  fillColor: "#3388ff",
+}
+
 function MapController({ selectedCommuneId, resetView, onCommuneClick, resetViewToDefault }) {
   const map = useMap()
   const geoJsonLayerRef = useRef(null)
   const [isInitialized, setIsInitialized] = useState(false)
+  const selectedLayerRef = useRef(null)
 
   // Fonction pour appliquer une transition CSS aux styles de la couche
   const applyStyleWithTransition = (layer, style, duration = 0.5) => {
@@ -76,7 +86,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
             if (onCommuneClick) {
               onCommuneClick(communeId)
             }
-          }
+          },
         })
       },
     }).addTo(map)
@@ -92,13 +102,78 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
 
     setIsInitialized(true)
 
+    // Exposer une méthode pour préparer la carte pour l'export PDF
+    window.prepareMapForExport = (communeId) => {
+      return prepareMapForExport(communeId)
+    }
+
     // Nettoyer lors du démontage
     return () => {
       if (geoJsonLayerRef.current) {
         map.removeLayer(geoJsonLayerRef.current)
       }
+      delete window.prepareMapForExport
     }
   }, [map]) // Dépendance uniquement à map pour s'assurer que cela ne se réexécute pas inutilement
+
+  // Fonction pour préparer la carte pour l'export PDF
+  const prepareMapForExport = (communeId) => {
+    if (!geoJsonLayerRef.current) return null
+
+    // Trouver la couche de la commune sélectionnée
+    let selectedLayer = null
+    geoJsonLayerRef.current.eachLayer((layer) => {
+      if (layer.feature.properties.id === communeId) {
+        selectedLayer = layer
+      }
+    })
+
+    if (!selectedLayer) return null
+
+    // Créer une nouvelle carte temporaire pour l'export avec un fond blanc
+    const exportContainer = document.createElement("div")
+    exportContainer.style.width = "800px" // Plus large pour un meilleur rendu
+    exportContainer.style.height = "600px" // Plus haut pour un meilleur rendu
+    exportContainer.style.position = "absolute"
+    exportContainer.style.left = "-9999px"
+    exportContainer.style.backgroundColor = "#ffffff" // Fond blanc
+    document.body.appendChild(exportContainer)
+
+    const exportMap = L.map(exportContainer, {
+      attributionControl: false,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+    })
+
+    // Ne pas ajouter de fond de carte OpenStreetMap
+    // Ajouter un fond blanc en CSS
+    const mapContainer = exportMap.getContainer()
+    mapContainer.style.backgroundColor = "#ffffff"
+
+    // Créer une copie du GeoJSON pour la commune sélectionnée uniquement
+    const selectedFeature = JSON.parse(JSON.stringify(selectedLayer.feature))
+    const exportGeoJson = L.geoJSON(selectedFeature, {
+      style: exportStyle,
+    }).addTo(exportMap)
+
+    // Ajuster la vue sur la commune avec un padding plus important pour dézoomer
+    const bounds = exportGeoJson.getBounds()
+    exportMap.fitBounds(bounds, {
+      padding: [80, 80], // Padding plus important pour dézoomer
+      maxZoom: 10, // Limiter le niveau de zoom pour s'assurer que tout est visible
+    })
+
+    return {
+      map: exportMap,
+      container: exportContainer,
+      cleanup: () => {
+        exportMap.remove()
+        document.body.removeChild(exportContainer)
+      },
+    }
+  }
 
   // Mise à jour des styles quand une commune est sélectionnée
   useEffect(() => {
@@ -111,6 +186,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
       if (selectedCommuneId) {
         if (communeId === selectedCommuneId) {
           applyStyleWithTransition(layer, selectedStyle)
+          selectedLayerRef.current = layer
 
           // Zoom sur la commune sélectionnée
           const bounds = layer.getBounds()
@@ -147,6 +223,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
       } else {
         // Si aucune commune n'est sélectionnée, réinitialiser tous les styles
         applyStyleWithTransition(layer, featureStyle)
+        selectedLayerRef.current = null
       }
     })
 

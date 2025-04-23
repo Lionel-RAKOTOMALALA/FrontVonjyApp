@@ -7,6 +7,7 @@ import BackToOverviewButton from "./features/BackToOverviewButton"
 import MapCard from "./features/MapCard"
 import StatistiqueGlobal from "./features/StatistiqueGlobal"
 import CommuneDetailsCard from "./features/CommuneDetailsCard"
+import CommuneActeursCard from "./features/CommuneActeursCard"
 
 const MapMainContent = ({
   selectedCommune,
@@ -97,6 +98,19 @@ const MapMainContent = ({
         </Box>
       </Box>
 
+      <AnimatePresence>
+        {selectedCommune && (
+          <motion.div
+            key="commune-details"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <CommuneActeursCard />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {selectedCommune && (
           <motion.div

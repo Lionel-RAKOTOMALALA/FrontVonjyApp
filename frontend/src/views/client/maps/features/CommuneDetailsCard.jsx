@@ -10,6 +10,8 @@ import SchoolIcon from "@mui/icons-material/School"
 import WorkIcon from "@mui/icons-material/Work"
 import LocationCityIcon from "@mui/icons-material/LocationCity"
 import PeopleIcon from "@mui/icons-material/People"
+import CustomButton from "../../../../components/ui/CustomButton"
+import CommunePDFExporter from "./CommunePDFExporter"
 
 const getServiceIcon = (serviceName) => {
   if (serviceName.toLowerCase().includes("santé")) return <LocalHospitalIcon color="primary" />
@@ -107,6 +109,32 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
     },
   }
 
+  // Fonction pour exporter les données en PDF
+  const handleExportPDF = async () => {
+    if (communeDetails) {
+      await CommunePDFExporter.exportCommune(communeDetails)
+    }
+  }
+
+  // Fonction pour exporter un fokotany spécifique
+  const handleExportFokotany = async (fokotany) => {
+    if (fokotany && communeDetails) {
+      await CommunePDFExporter.exportFokotany(fokotany, communeDetails.nomCommune, communeDetails.id)
+    }
+  }
+
+  // Options additionnelles pour CollapsibleTable
+  const tableActions = {
+    label: "Actions",
+    actions: [
+      {
+        label: "Exporter Fokotany",
+        onClick: (row) => handleExportFokotany(row),
+        icon: "PictureAsPdf", // Si vous avez une gestion d'icônes dans CollapsibleTable
+      },
+    ],
+  }
+
   return (
     <motion.div initial="hidden" animate="visible" exit="exit" variants={cardVariants}>
       <Box className="row mt-4">
@@ -115,7 +143,7 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
             elevation={3}
             sx={{ borderRadius: 5, overflow: "hidden", bgcolor: "#fff", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
           >
-            <CardContent>
+            <CardContent className="pt-0">
               {!communeDetails ? (
                 <Box
                   sx={{
@@ -132,14 +160,20 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
                 </Box>
               ) : (
                 <motion.div variants={contentVariants}>
-                  <Box sx={{ mt: 3 }}>
-                    <H4 sx={{ mb: 2 }}>Fokotany de {communeDetails.nomCommune}</H4>
+                  <Box sx={{ mt: 3, p: 0 }}>
+                    <Box className="d-flex justify-content-between align-items-center mb-4">
+                      <H4 sx={{ m: 0 }}>Fokotany de {communeDetails.nomCommune}</H4>
+                      <CustomButton color="warning" onClick={handleExportPDF}>
+                        Exporter PDF
+                      </CustomButton>
+                    </Box>
                     <CollapsibleTable
                       columns={fokotanyColumns}
                       rows={communeDetails.fokotanys}
                       detailTables={detailTables}
                       arrowPosition="left"
                       accordion={true}
+                      actions={tableActions} // Si votre CollapsibleTable supporte cette prop
                     />
                   </Box>
                 </motion.div>

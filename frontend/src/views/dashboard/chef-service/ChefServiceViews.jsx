@@ -7,6 +7,7 @@ import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ChefServiceEdit from "./ChefServiceEdit";
 import ChefServiceCreate from "./ChefServiceCreate";
 import useChefServiceStore from "../../../store/chefServiceStore";
+import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ChefServiceViews() {
   const { chefServices, fetchChefServices, loading, deleteChefService, error } = useChefServiceStore();
@@ -33,30 +34,35 @@ function ChefServiceViews() {
 
   const columns = [
     { id: "id", label: "ID" },
-    { 
-      id: "nomChef", 
-      label: "Nom Chef",
+    {
+      id: "fokotany",
+      label: "Fokontany",
+      render: (row) => (
+        <>
+          <div>FKT {highlightText(row.service.fokotany.nomFokotany, searchQuery)}</div>
+          <div className="fw-bold text-secondary"><span className="">CU</span> {highlightText(row.service.fokotany.commune.nomCommune, searchQuery)}</div>
+        </>
+      ),
+    },
+    {
+      id: "nomChef",
+      label: "Nom",
       render: (row) => highlightText(row.nomChef, searchQuery)
     },
-    { 
-      id: "prenomChef", 
-      label: "Prénom Chef",
+    {
+      id: "prenomChef",
+      label: "Prénom",
       render: (row) => highlightText(row.prenomChef, searchQuery)
     },
-    { 
-      id: "contact", 
+    {
+      id: "contact",
       label: "Contact",
       render: (row) => highlightText(row.contact, searchQuery)
     },
-    { 
-      id: "adresse", 
+    {
+      id: "adresse",
       label: "Adresse",
       render: (row) => highlightText(row.adresse, searchQuery)
-    },
-    { 
-      id: "sexe", 
-      label: "Sexe",
-      render: (row) => highlightText(row.sexe, searchQuery)
     },
     {
       id: "service",
@@ -121,16 +127,16 @@ function ChefServiceViews() {
         <FilterBar
           showSearch={true}
           showFilter={false}
-          filterCriteria={{ 
+          filterCriteria={{
             filterBy: null, 
-            searchFields: ['nomChef', 'prenomChef', 'contact', 'adresse', 'sexe', 'service.nomService'] 
+            searchFields: ['service.fokotany.nomFokotany','service.fokotany.commune.nomCommune','nomChef', 'prenomChef', 'contact', 'adresse', 'sexe', 'service.nomService']
           }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           data={chefServices}
           onFilteredData={setFilteredData}
         />
-        
+
         <TableView
           data={filteredData} // Utilisation des données filtrées
           columns={columns}
@@ -161,16 +167,14 @@ function ChefServiceViews() {
         title="Suppression"
         content="Êtes-vous sûr de vouloir supprimer ce chef de service ?"
       />
-      <Snackbar
+      <SnackbarAlert
         open={openSnackbar}
-        autoHideDuration={6000}
+        setOpen={setOpenSnackbar}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      />
     </>
   );
 }

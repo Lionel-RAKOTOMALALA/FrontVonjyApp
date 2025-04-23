@@ -10,7 +10,7 @@ const useChefServiceStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('https://www.admin.com/api/chefs/', {
+      const response = await fetch('http://127.0.0.1:8000/api/chefs/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const useChefServiceStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Payload envoyé:', JSON.stringify(chefService));
 
-      const response = await fetch('https://www.admin.com/api/chefs/', {
+      const response = await fetch('http://127.0.0.1:8000/api/chefs/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -85,7 +85,7 @@ const useChefServiceStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Données envoyées pour la mise à jour :', updatedChefService);
 
-      const response = await fetch(`https://www.admin.com/api/chefs/${id}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/chefs/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -121,7 +121,7 @@ const useChefServiceStore = create((set) => ({
   deleteChefService: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`https://www.admin.com/api/chefs/${id}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/chefs/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
