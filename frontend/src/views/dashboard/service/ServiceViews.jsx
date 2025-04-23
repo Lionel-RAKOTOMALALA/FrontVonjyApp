@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Box, Snackbar, Alert } from "@mui/material";
-import TableView from "../../../components/ui-table/TableView";
+import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ServiceEdit from "./ServiceEdit";
 import ServiceCreate from "./ServiceCreate";
-import useServiceStore from "../../../store/serviceStore"; // Import du store
+import useServiceStore from "../../../store/serviceStore";
 import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ServiceViews() {
-  const { services, fetchServices, loading, deleteService, error } = useServiceStore(); // Utilisation du store
+  const { services, fetchServices, loading, deleteService, error } = useServiceStore();
   const [selectedService, setSelectedService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -18,24 +19,52 @@ function ServiceViews() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  // Ajouter ces états pour la fonctionnalité de recherche
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   // Charger les services au montage du composant
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
+  // Mettre à jour les données filtrées quand les services changent
+  useEffect(() => {
+    setFilteredData(services);
+  }, [services]);
+
   const columns = [
     { id: "id", label: "ID" },
     {
       id: "fokotany",
       label: "Fokontany",
-      render: (row) => row.fokotany.nomFokotany,
+      render: (row) => highlightText(row.fokotany.nomFokotany, searchQuery),
     },
-    { id: "nomService", label: "Service" },
-    { id: "description", label: "Description" },
-    { id: "offre", label: "Offre" },
-    { id: "nombre_membre", label: "Nombre de Membres", render: (row) => <div className="text-center">{row.nombre_membre}</div> },
-    { id: "membre", label: "Responsable" },
+    { 
+      id: "nomService", 
+      label: "Service", 
+      render: (row) => highlightText(row.nomService, searchQuery) 
+    },
+    { 
+      id: "description", 
+      label: "Description", 
+      render: (row) => highlightText(row.description, searchQuery) 
+    },
+    { 
+      id: "offre", 
+      label: "Offre", 
+      render: (row) => highlightText(row.offre, searchQuery) 
+    },
+    { 
+      id: "nombre_membre", 
+      label: "Nombre de Membres", 
+      render: (row) => <div className="text-center">{row.nombre_membre}</div> 
+    },
+    { 
+      id: "membre", 
+      label: "Responsable", 
+      render: (row) => highlightText(row.membre, searchQuery) 
+    },
   ];
 
   const handleCreate = () => {
@@ -90,8 +119,17 @@ function ServiceViews() {
         onCreate={handleCreate}
       />
       <Box className="card">
-        <TableView
+        <FilterBar
+          showSearch={true}
+          showFilter={false}
+          filterCriteria={{ filterBy: null, searchFields: ['nomService', 'description', 'offre', 'membre'] }}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           data={services}
+          onFilteredData={setFilteredData}
+        />
+        <TableView
+          data={filteredData}
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}

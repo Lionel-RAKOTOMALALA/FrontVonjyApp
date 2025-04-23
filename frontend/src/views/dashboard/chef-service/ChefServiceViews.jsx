@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box, Snackbar, Alert } from "@mui/material";
-import TableView from "../../../components/ui-table/TableView";
+import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ChefServiceEdit from "./ChefServiceEdit";
 import ChefServiceCreate from "./ChefServiceCreate";
-import useChefServiceStore from "../../../store/chefServiceStore"; // Import du store
+import useChefServiceStore from "../../../store/chefServiceStore";
 
 function ChefServiceViews() {
-  const { chefServices, fetchChefServices, loading, deleteChefService, error } = useChefServiceStore(); // Utilisation du store
+  const { chefServices, fetchChefServices, loading, deleteChefService, error } = useChefServiceStore();
   const [selectedChefService, setSelectedChefService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -17,22 +18,50 @@ function ChefServiceViews() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  // Ajout des états pour la recherche
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     fetchChefServices();
   }, [fetchChefServices]);
 
+  // Mettre à jour les données filtrées quand les chefs de service changent
+  useEffect(() => {
+    setFilteredData(chefServices);
+  }, [chefServices]);
+
   const columns = [
     { id: "id", label: "ID" },
-    { id: "nomChef", label: "Nom Chef" },
-    { id: "prenomChef", label: "Prénom Chef" },
-    { id: "contact", label: "Contact" },
-    { id: "adresse", label: "Adresse" },
-    { id: "sexe", label: "Sexe" },
+    { 
+      id: "nomChef", 
+      label: "Nom Chef",
+      render: (row) => highlightText(row.nomChef, searchQuery)
+    },
+    { 
+      id: "prenomChef", 
+      label: "Prénom Chef",
+      render: (row) => highlightText(row.prenomChef, searchQuery)
+    },
+    { 
+      id: "contact", 
+      label: "Contact",
+      render: (row) => highlightText(row.contact, searchQuery)
+    },
+    { 
+      id: "adresse", 
+      label: "Adresse",
+      render: (row) => highlightText(row.adresse, searchQuery)
+    },
+    { 
+      id: "sexe", 
+      label: "Sexe",
+      render: (row) => highlightText(row.sexe, searchQuery)
+    },
     {
       id: "service",
       label: "Service",
-      render: (row) => row.service.nomService,
+      render: (row) => highlightText(row.service.nomService, searchQuery),
     },
   ];
 
@@ -88,8 +117,22 @@ function ChefServiceViews() {
         onCreate={handleCreate}
       />
       <Box className="card">
-        <TableView
+        {/* Ajout du composant FilterBar pour la recherche */}
+        <FilterBar
+          showSearch={true}
+          showFilter={false}
+          filterCriteria={{ 
+            filterBy: null, 
+            searchFields: ['nomChef', 'prenomChef', 'contact', 'adresse', 'sexe', 'service.nomService'] 
+          }}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           data={chefServices}
+          onFilteredData={setFilteredData}
+        />
+        
+        <TableView
+          data={filteredData} // Utilisation des données filtrées
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}

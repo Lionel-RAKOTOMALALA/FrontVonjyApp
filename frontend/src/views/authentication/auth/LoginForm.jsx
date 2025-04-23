@@ -55,11 +55,19 @@ function LoginForm({ onNavigate }) {
         navigate("/commune")
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Email ou mot de passe incorrect")
+      if (!err.response) {
+        // Erreur réseau ou CORS
+        setError("Erreur de connexion. Veuillez vérifier votre réseau ou réessayer plus tard.")
+      } else if (err.response.status === 401) {
+        // Authentification incorrecte
+        setError("Email ou mot de passe incorrect.")
+      } else {
+        // Autre erreur côté serveur
+        setError(err.response.data?.message || "Une erreur est survenue.")
+      }
       console.error("Login error:", err)
-    } finally {
-      setIsLoading(false)
     }
+    
   }
 
   return (

@@ -136,6 +136,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
                 label: fokotany.nomFokotany,
               }))}
               placeholder="Choisissez un fokotany"
+              autocomplete={true}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>

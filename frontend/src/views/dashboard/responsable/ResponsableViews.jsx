@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Box, Snackbar, Alert } from "@mui/material";
-import TableView from "../../../components/ui-table/TableView";
+import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
 import ResponsableEdit from "./ResponsableEdit";
 import ResponsableCreate from "./ResponsableCreate";
-import useResponsableStore from "../../../store/responsableStore"; // Import du store
+import useResponsableStore from "../../../store/responsableStore";
 import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ResponsableViews() {
-  const { responsables, fetchResponsables, loading,deleteResponsable, error } = useResponsableStore(); // Utilisation du store
+  const { responsables, fetchResponsables, loading, deleteResponsable, error } = useResponsableStore();
   const [selectedResponsable, setSelectedResponsable] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -18,46 +19,63 @@ function ResponsableViews() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  // Nouveaux états pour la recherche
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   // Charger les responsables au montage du composant
   useEffect(() => {
     fetchResponsables();
   }, [fetchResponsables]);
 
-  // Colonnes du tableau adaptées aux champs du modèle Responsable
+  // Mettre à jour les données filtrées quand les responsables changent
+  useEffect(() => {
+    setFilteredData(responsables);
+  }, [responsables]);
+
+  // Colonnes du tableau adaptées aux champs du modèle Responsable avec highlight
   const columns = [
     { id: "id", label: "ID" },
     {
       id: "fokotany",
       label: "Fokontany",
-      render: (row) => row.fokotany.nomFokotany,
+      render: (row) => highlightText(row.fokotany.nomFokotany, searchQuery),
     },
     {
       id: "classe_responsable",
       label: "Classe",
+      render: (row) => highlightText(row.classe_responsable, searchQuery),
     },
     {
       id: "nom_responsable",
       label: "Nom",
+      render: (row) => highlightText(row.nom_responsable, searchQuery),
     },
     {
       id: "prenom_responsable",
       label: "Prénom",
-      render: (row) =>  (row.prenom_responsable ? <div className="text-center">{row.prenom_responsable}</div> : <div className="text-center">-</div>)
+      render: (row) => row.prenom_responsable ? 
+        <div className="text-center">{highlightText(row.prenom_responsable, searchQuery)}</div> : 
+        <div className="text-center">-</div>
     },
     {
       id: "fonction",
       label: "Fonction",
+      render: (row) => highlightText(row.fonction, searchQuery),
     },
     {
       id: "contact_responsable",
       label: "Contact",
-      render: (row) => (row.contact_responsable ? <div className="text-center">{row.contact_responsable}</div> : <div className="text-center">-</div>)
+      render: (row) => row.contact_responsable ? 
+        <div className="text-center">{highlightText(row.contact_responsable, searchQuery)}</div> : 
+        <div className="text-center">-</div>
     },
     {
       id: "formation_acquise",
       label: "Formation Acquise",
-      render: (row) => (row.formation_acquise ? <div className="text-center">Oui</div> : <div className="text-center">Non</div>),
+      render: (row) => (row.formation_acquise ? 
+        <div className="text-center">Oui</div> : 
+        <div className="text-center">Non</div>),
     },
   ];
 
@@ -73,7 +91,7 @@ function ResponsableViews() {
     setSnackbarMessage("Responsable créé avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
-    setOpenCreateModal(false); // Ferme le modal après la sauvegarde
+    setOpenCreateModal(false);
   };
 
   // Ouvre le modal d'édition avec les infos du responsable sélectionné
@@ -100,7 +118,7 @@ function ResponsableViews() {
   // Confirme la suppression d'un responsable
   const confirmDelete = async () => {
     try {
-      await deleteResponsable(responsableToDelete.id); // Appel à l'action du store
+      await deleteResponsable(responsableToDelete.id);
       setSnackbarMessage("Responsable supprimé avec succès!");
       setSnackbarSeverity("success");
     } catch (error) {
@@ -125,15 +143,29 @@ function ResponsableViews() {
 
       {/* Tableau principal affichant les responsables */}
       <Box className="card">
+        {/* Ajout du composant FilterBar */}
+        <FilterBar
+          showSearch={true}
+          showFilter={false}
+          filterCriteria={{ 
+            filterBy: null, 
+            searchFields: ['fokotany.nomFokotany','nom_responsable', 'prenom_responsable', 'fonction', 'contact_responsable', 'classe_responsable'] 
+          }}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          data={responsables}
+          onFilteredData={setFilteredData}
+        />
+        
         <TableView
-          data={responsables} // Les données dynamiques récupérées via le store
+          data={filteredData} // Utilisation des données filtrées
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
           showCheckboxes={false}
           showDeleteIcon={true}
           onDelete={handleDelete}
-          loading={loading} // Indicateur de chargement
+          loading={loading}
         />
       </Box>
 
