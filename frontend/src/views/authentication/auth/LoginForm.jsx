@@ -51,9 +51,12 @@ function LoginForm({ onNavigate }) {
       const { user } = useUserStore.getState() // Récupération de l'utilisateur depuis le store
       if (user?.role === "simple") {
         navigate("/map")
+        window.location.reload()
       } else if (user?.role === "super") {
         navigate("/commune")
+        window.location.reload()
       }
+      
     } catch (err) {
       if (!err.response) {
         // Erreur réseau ou CORS

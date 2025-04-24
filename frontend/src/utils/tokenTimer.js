@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useAuthStore } from '../store/auth';
 
-// Fonction pour récupérer l'expiration du token
 function getTokenExpiration(token) {
   if (!token) return null;
   try {
-    const payload = JSON.parse(atob(token.split(".")[1])); // Décoder la partie payload du JWT
-    return payload.exp ? payload.exp * 1000 : null; // Convertir en millisecondes
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp ? payload.exp * 1000 : null;
   } catch (e) {
     console.error("Erreur de décodage du token JWT", e);
     return null;
@@ -14,11 +14,32 @@ function getTokenExpiration(token) {
 
 function TokenTimer() {
   const [remainingTime, setRemainingTime] = useState(null);
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn());
+  const [token, setToken] = useState(localStorage.getItem('access_token'));
+  const intervalRef = useRef(null); // 🧠 Référence vers le timer
+
+  // Écouter les changements de token dans le localStorage (en cas de login via un autre onglet, par exemple)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const newToken = localStorage.getItem('access_token');
+      setToken(newToken);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');  // Récupère le token depuis localStorage
-    if (!token) {
-      console.log("Aucun token trouvé");
+    // Si déconnecté → on coupe le timer et reset l’état
+    if (!isLoggedIn || !token) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        console.log("⛔ TokenTimer arrêté (déconnexion)");
+      }
+      setRemainingTime(null);
       return;
     }
 
@@ -31,26 +52,29 @@ function TokenTimer() {
     const updateTime = () => {
       const now = Date.now();
       const remaining = expirationTime - now;
-      setRemainingTime(remaining); // Mettre à jour l'état avec la durée restante
-
-      // Afficher la durée restante dans la console
+      setRemainingTime(remaining);
       console.log(`Token expires in: ${Math.floor(remaining / 1000)} seconds`);
 
-      // Si le token est expiré, arrêter l'intervalle
       if (remaining <= 0) {
         console.log("Token expired");
-        clearInterval(intervalId);
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
 
-    // Mettre à jour chaque seconde
-    const intervalId = setInterval(updateTime, 1000);
-    updateTime(); // Affichage initial
+    intervalRef.current = setInterval(updateTime, 1000);
+    updateTime();
 
-    // Nettoyer l'intervalle quand le composant est démonté
-    return () => clearInterval(intervalId);
-  }, []); // L'effet ne dépend de rien (ne s'exécute qu'une fois)
-  
+    // Nettoyage si le composant se démonte ou si l’effet se relance
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isLoggedIn, token]);
+
+  return null;
 }
 
 export default TokenTimer;

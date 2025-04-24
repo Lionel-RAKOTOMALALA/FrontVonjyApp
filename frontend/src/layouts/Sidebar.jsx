@@ -12,6 +12,7 @@ const Sidebar = () => {
     const handleLogout = async () => {
         await logout(); // Appeler la fonction logout du store
         navigate('/auth/login'); // Rediriger vers la page de connexion
+        window.location.reload()
     };
 
     return (
