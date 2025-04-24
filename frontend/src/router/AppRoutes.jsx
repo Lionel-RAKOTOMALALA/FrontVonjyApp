@@ -88,11 +88,8 @@ const AppRoutes = () => {
 
             {/* Route pour les rôles "simple" */}
             <Route path="/map" element={
-                <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["simple"]}>
-                        <Client />
-                    </ProtectedRoute>
-                </PrivateRoute>
+              
+                        <Client /> 
             }/>
 
             {/* Route de connexion accessible uniquement aux utilisateurs non connectés */}

@@ -45,7 +45,7 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
       setLoadingFokotanys(true);
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://127.0.0.1:8000/api/fokotany/', {
+        const response = await fetch('https://www.admin.com/api/fokotany/', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',

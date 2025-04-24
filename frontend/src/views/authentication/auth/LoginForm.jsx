@@ -36,7 +36,7 @@ function LoginForm({ onNavigate }) {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/login/", {
+      const response = await axios.post("https://www.admin.com/api/auth/login/", {
         email: formData.email,
         password: formData.password,
       })
@@ -51,10 +51,8 @@ function LoginForm({ onNavigate }) {
       const { user } = useUserStore.getState() // Récupération de l'utilisateur depuis le store
       if (user?.role === "simple") {
         navigate("/map")
-        window.location.reload()
       } else if (user?.role === "super") {
         navigate("/commune")
-        window.location.reload()
       }
       
     } catch (err) {

@@ -27,7 +27,7 @@ const Parametre = ({ isOpen, onClose }) => {
   }
 
   const [profileData, setProfileData] = useState({
-    nom_complet: "",
+    namefull: "",
     email: "",
   })
   const [passwordData, setPasswordData] = useState(initialPasswordData)
@@ -48,7 +48,7 @@ const Parametre = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (user) {
       setProfileData({
-        nom_complet: user.namefull || "",
+        namefull: user.namefull || "",
         email: user.email || "",
       })
     }
@@ -159,7 +159,7 @@ const Parametre = ({ isOpen, onClose }) => {
               TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
             >
               <Tab sx={tabStyle} label="Profile" />
-              <Tab sx={tabStyle} label="Sécurité" />
+              {/* <Tab sx={tabStyle} label="Sécurité" /> */}
             </Tabs>
           </Box>
 
@@ -167,7 +167,7 @@ const Parametre = ({ isOpen, onClose }) => {
             <ProfilTab
               formData={profileData}
               initialFormData={{
-                nom_complet: user?.namefull || "",
+                namefull: user?.namefull || "",
                 email: user?.email || "",
               }}
               handleChange={handleProfileChange}

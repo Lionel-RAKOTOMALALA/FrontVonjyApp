@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Paper } from "@mui/material"
+import { Box, Paper, Typography } from "@mui/material"
 import { H1, Paragraphe } from "../../components/ui/TypographyVariants"
 import { AnimatePresence } from "framer-motion"
 
@@ -61,6 +61,7 @@ export default function Login() {
         minHeight: "100vh",
         width: "100%",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         background: 'linear-gradient(rgba(245, 245, 245, 0.9), rgba(245, 245, 245, 0.9)), url("/map-background.svg")',
@@ -125,6 +126,24 @@ export default function Login() {
           {renderView()}
         </Box>
       </Paper>
+      
+      {/* Copyright footer */}
+      <Typography
+        variant="body2"
+        sx={{
+          position: "absolute",
+          bottom: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          textAlign: "center",
+          color: "text.secondary",
+          zIndex: 2,
+          fontSize: "0.75rem",
+          opacity: 0.8,
+        }}
+      >
+        © {new Date().getFullYear()} EducTech Toliara. Tous droits réservés.
+      </Typography>
     </Box>
   )
 }

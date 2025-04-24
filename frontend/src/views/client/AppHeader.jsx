@@ -113,9 +113,9 @@ function AppHeader({ scrolled }) {
               <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleOpenParametre}>
                 Paramètres
               </MenuItem>
-              <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleLogout}>
+              {/* <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleLogout}>
                 Déconnexion
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </Box>
         </Toolbar>

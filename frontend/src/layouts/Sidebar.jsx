@@ -11,15 +11,14 @@ const Sidebar = () => {
 
     const handleLogout = async () => {
         await logout(); // Appeler la fonction logout du store
-        navigate('/auth/login'); // Rediriger vers la page de connexion
-        window.location.reload()
+        navigate('/auth/login'); // Rediriger vers la page de connexion 
     };
-
+ 
     return (
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
             <div className="app-brand demo">
                 <span className="app-brand-logo demo">
-                    <img src={VonjyLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
+                    <img src={VonjyLogo} width="78useUserStorepx" alt="sneat-logo" aria-label='Sneat logo image' />
                 </span>
             </div>
 

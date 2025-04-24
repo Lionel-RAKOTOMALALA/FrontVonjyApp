@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Box } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import AppHeader from "./AppHeader"
 import AmpanihyData from "./maps/data/Ampanihy.json"
 import useCommuneStore from '../../store/communeStore'
@@ -148,6 +148,7 @@ function MapViews() {
         justifyContent: "center",
         flexDirection: "column",
         paddingTop: 2,
+        position: "relative",
       }}
     >
       <AppHeader scrolled={scrolled} />
@@ -162,6 +163,25 @@ function MapViews() {
         handleBackToOverview={handleBackToOverview}
         totals={totals} // Passage des totaux à MapMainContent
       />
+
+      {/* Copyright footer */}
+      <Typography
+        variant="body2"
+        sx={{
+          mt: 2,
+          position: "absolute",
+          bottom: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          textAlign: "center",
+          color: "text.secondary",
+          zIndex: 10,
+          fontSize: "0.75rem",
+          opacity: 0.8,
+        }}
+      >
+        © {new Date().getFullYear()} EducTech Toliara. Tous droits réservés.
+      </Typography>
     </Box>
   )
 }
