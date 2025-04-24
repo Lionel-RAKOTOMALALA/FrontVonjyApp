@@ -8,6 +8,7 @@ import MapCard from "./features/MapCard"
 import StatistiqueGlobal from "./features/StatistiqueGlobal"
 import CommuneDetailsCard from "./features/CommuneDetailsCard"
 import CommuneActeursCard from "./features/CommuneActeursCard"
+import DistrictDetailCard from "./features/DistrictsDetailCard"
 
 const MapMainContent = ({
   selectedCommune,
@@ -18,7 +19,7 @@ const MapMainContent = ({
   handleCommuneClick,
   handleBackToOverview,
   totals,
-}) => { 
+}) => {
   return (
     <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
       <div
@@ -121,6 +122,19 @@ const MapMainContent = ({
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <CommuneDetailsCard selectedCommune={selectedCommune} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {!selectedCommune && (
+          <motion.div
+            key="commune-details"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <DistrictDetailCard />
           </motion.div>
         )}
       </AnimatePresence>

@@ -46,12 +46,12 @@ function ChefServiceViews() {
     },
     {
       id: "nomChef",
-      label: "Nom",
+      label: "Nom Chef",
       render: (row) => highlightText(row.nomChef, searchQuery)
     },
     {
       id: "prenomChef",
-      label: "Prénom",
+      label: "Prénom Chef",
       render: (row) => highlightText(row.prenomChef, searchQuery)
     },
     {
@@ -128,7 +128,7 @@ function ChefServiceViews() {
           showSearch={true}
           showFilter={false}
           filterCriteria={{
-            filterBy: null, 
+            filterBy: null,
             searchFields: ['service.fokotany.nomFokotany','service.fokotany.commune.nomCommune','nomChef', 'prenomChef', 'contact', 'adresse', 'sexe', 'service.nomService']
           }}
           searchQuery={searchQuery}
@@ -136,17 +136,18 @@ function ChefServiceViews() {
           data={chefServices}
           onFilteredData={setFilteredData}
         />
-
-        <TableView
-          data={filteredData} // Utilisation des données filtrées
-          columns={columns}
-          rowsPerPage={5}
-          onEdit={handleEdit}
-          showCheckboxes={true}
-          showDeleteIcon={true}
-          onDelete={handleDelete}
-          loading={loading}
-        />
+        {filteredData.length > 0 && (
+          <TableView
+            data={filteredData}
+            columns={columns}
+            rowsPerPage={5}
+            onEdit={handleEdit}
+            showCheckboxes={false}
+            showDeleteIcon={true}
+            onDelete={handleDelete}
+            loading={loading}
+          />
+        )}
       </Box>
       <ChefServiceCreate
         isOpen={openCreateModal}

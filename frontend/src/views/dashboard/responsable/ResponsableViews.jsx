@@ -54,8 +54,8 @@ function ResponsableViews() {
     {
       id: "prenom_responsable",
       label: "Prénom",
-      render: (row) => row.prenom_responsable ? 
-        <div className="text-center">{highlightText(row.prenom_responsable, searchQuery)}</div> : 
+      render: (row) => row.prenom_responsable ?
+        <div className="text-center">{highlightText(row.prenom_responsable, searchQuery)}</div> :
         <div className="text-center">-</div>
     },
     {
@@ -66,15 +66,15 @@ function ResponsableViews() {
     {
       id: "contact_responsable",
       label: "Contact",
-      render: (row) => row.contact_responsable ? 
-        <div className="text-center">{highlightText(row.contact_responsable, searchQuery)}</div> : 
+      render: (row) => row.contact_responsable ?
+        <div className="text-center">{highlightText(row.contact_responsable, searchQuery)}</div> :
         <div className="text-center">-</div>
     },
     {
       id: "formation_acquise",
       label: "Formation Acquise",
-      render: (row) => (row.formation_acquise ? 
-        <div className="text-center">Oui</div> : 
+      render: (row) => (row.formation_acquise ?
+        <div className="text-center">Oui</div> :
         <div className="text-center">Non</div>),
     },
   ];
@@ -138,7 +138,7 @@ function ResponsableViews() {
         mainText="Listes"
         subText="Responsables"
         showCreateButton={true}
-        onCreate={handleCreate} 
+        onCreate={handleCreate}
       />
 
       {/* Tableau principal affichant les responsables */}
@@ -147,26 +147,28 @@ function ResponsableViews() {
         <FilterBar
           showSearch={true}
           showFilter={false}
-          filterCriteria={{ 
-            filterBy: null, 
-            searchFields: ['fokotany.nomFokotany','nom_responsable', 'prenom_responsable', 'fonction', 'contact_responsable', 'classe_responsable'] 
+          filterCriteria={{
+            filterBy: null,
+            searchFields: ['fokotany.nomFokotany', 'nom_responsable', 'prenom_responsable', 'fonction', 'contact_responsable', 'classe_responsable']
           }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           data={responsables}
           onFilteredData={setFilteredData}
         />
-        
-        <TableView
-          data={filteredData} // Utilisation des données filtrées
-          columns={columns}
-          rowsPerPage={5}
-          onEdit={handleEdit}
-          showCheckboxes={false}
-          showDeleteIcon={true}
-          onDelete={handleDelete}
-          loading={loading}
-        />
+
+        {filteredData.length > 0 && (
+          <TableView
+            data={filteredData} // Utilisation des données filtrées
+            columns={columns}
+            rowsPerPage={5}
+            onEdit={handleEdit}
+            showCheckboxes={false}
+            showDeleteIcon={true}
+            onDelete={handleDelete}
+            loading={loading}
+          />
+        )}
       </Box>
 
       {/* Modal de création */}
@@ -198,7 +200,7 @@ function ResponsableViews() {
         setOpen={setOpenSnackbar}
         severity={snackbarSeverity}
         message={snackbarMessage}
-        anchorOrigin={{vertical:'top', horizontal:'right'}}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       />
     </>
   );

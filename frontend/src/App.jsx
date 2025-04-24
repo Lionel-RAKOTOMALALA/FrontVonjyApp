@@ -2,11 +2,10 @@ import './index.css';
 import React, { useEffect } from 'react';
 import MainWrapper from './layouts/MainWrapper';
 import { useLocation, Navigate } from "react-router-dom";
-import Layout from "./layouts/Layout";
+import { useAuthStore } from './store/auth'; 
 import AppRoutes from "./router/AppRoutes";
 import { Blank } from "./layouts/Blank";  
-import { useAuthStore } from './store/auth';
-import { checkAndRefreshToken } from './utils/auth';
+import TokenTimer from './utils/tokenTimer';
 
 function App() {
   const location = useLocation();
@@ -17,28 +16,19 @@ function App() {
     isLoggedIn: state.isLoggedIn(),
   })); 
 
-  useEffect(() => {
-    const initializeAuth = async () => { 
-      const success = await checkAndRefreshToken();  
-    };
-
-    initializeAuth();
-  }, [ isAuthPath]);
   return (
-  <MainWrapper>
-    {isAuthPath ? (
-      <AppRoutes user={user} isLoggedIn={isLoggedIn}>
-        <Blank/>
-      </AppRoutes>
-    ) : (
-    //  isLoggedIn ? (
-          <AppRoutes user={user} isLoggedIn={isLoggedIn} />
-   //   ) : (
-    //    <Navigate to="/auth/login" />
-   //   )
-    )}
-  </MainWrapper>
+    <MainWrapper>
+      {/* TokenTimer affichera et suivra la durée restante du token */}
+      <TokenTimer />
 
+      {isAuthPath ? (
+        <AppRoutes user={user} isLoggedIn={isLoggedIn}>
+          <Blank />
+        </AppRoutes>
+      ) : (
+        <AppRoutes user={user} isLoggedIn={isLoggedIn} />
+      )}
+    </MainWrapper>
   );
 }
 

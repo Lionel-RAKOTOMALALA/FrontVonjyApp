@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TableSortLabel, IconButton,
@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import PaginationComponent from './PaginationComponent';
-import BpCheckbox from './BpCheckbox';  // Importation du composant BpCheckbox
+import BpCheckbox from './BpCheckbox';
 
 export function highlightText(text, query) {
   if (!query) return text;
@@ -31,7 +31,10 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Référence pour le conteneur externe pour animation
+  const containerRef = useRef(null);
 
   // Sorting and pagination handlers
   const handleRequestSort = (event, property) => {
@@ -41,7 +44,18 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage - 1);
+    // Déclencher l'animation
+    setIsTransitioning(true);
+    
+    // Changer la page avec un léger délai pour permettre à l'animation de commencer
+    setTimeout(() => {
+      setPage(newPage - 1);
+      
+      // Fin de la transition après un court délai
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 50);
   };
 
   const handleSelectAllClick = (event) => {
@@ -72,7 +86,6 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
 
     setSelected(newSelected);
   };
-
 
   // Sorting and filtering
   const descendingComparator = (a, b, orderBy) => {
@@ -106,6 +119,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   };
 
   const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  
   // Rendu du message "Aucun résultat"
   const renderEmptyState = () => (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
@@ -122,18 +136,24 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
     </Box>
   );
 
+ 
 
   return (
-    <Box sx={{ border: '1px solid rgba(224, 224, 224, .6)', borderRadius: '16px', overflow: 'hidden' }}>
+    <Box 
+      sx={{ 
+        border: '1px solid rgba(224, 224, 224, .6)', 
+        borderRadius: '16px', 
+        overflow: 'hidden',
+        transition: 'height 0.5s ease-in-out'
+      }}
+      ref={containerRef}
+    >
       <TableContainer>
         {loading ? (
-          // État de chargement
           renderLoadingState()
         ) : data.length === 0 ? (
-          // État vide
           renderEmptyState()
         ) : (
-          // État avec données
           <div style={{ position: 'relative' }}>
             {/* Header personnalisé pour les éléments sélectionnés */}
             {selected.length > 0 && (
@@ -142,7 +162,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                 top: 0,
                 left: 0,
                 right: 0,
-                zIndex: 1,  // Assure-toi que le header personnalisé est au-dessus
+                zIndex: 1,
                 backgroundColor: '#d5edf3',
                 padding: '10px',
                 display: 'flex',
@@ -167,11 +187,10 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
 
             {/* Table */}
             <Table>
-              {/* En-tête standard */}
               <TableHead
                 sx={{
                   backgroundColor: 'rgba(255, 255, 0, 0.08)',
-                  position: 'relative',  // Assure-toi que le header standard est en dessous
+                  position: 'relative',
                   zIndex: 0
                 }}
               >
@@ -200,7 +219,8 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                         {column.label}
                       </TableSortLabel>
                     </TableCell>
-                  ))}{showActionsColumn && (
+                  ))}
+                  {showActionsColumn && (
                     <TableCell className='text-end' sx={{ color: '#637381', fontWeight: '800' }}>
                       Actions
                     </TableCell>
@@ -208,7 +228,6 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                 </TableRow>
               </TableHead>
 
-              {/* Corps du tableau */}
               <TableBody>
                 {paginatedData.map((row) => {
                   const isItemSelected = selected.indexOf(row.id) !== -1;
@@ -250,7 +269,6 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
                 })}
               </TableBody>
             </Table>
-
           </div>
         )}
       </TableContainer>
@@ -263,7 +281,6 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
       )}
     </Box>
   );
-
 }
 
 export default TableView;

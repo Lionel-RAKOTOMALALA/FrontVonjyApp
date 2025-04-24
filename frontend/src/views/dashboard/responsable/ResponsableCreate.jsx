@@ -133,7 +133,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
               onChange={handleChange}
               options={fokotanys.map((fokotany) => ({
                 value: fokotany.id.toString(),
-                label: fokotany.nomFokotany,
+                label: `${fokotany.nomFokotany} (${fokotany.commune.nomCommune})`,
               }))}
               placeholder="Choisissez un fokotany"
               autocomplete={true}

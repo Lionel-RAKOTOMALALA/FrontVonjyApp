@@ -81,12 +81,10 @@ function FokotanyViews() {
       setOpenSnackbar(true);
     }
   };
-
   const handleDelete = (row) => {
     setFokotanyToDelete(row);
     setOpenDialog(true);
   };
-
   const confirmDelete = async () => {
     try {
       // Appel à deleteFokotany via le store
@@ -139,7 +137,6 @@ function FokotanyViews() {
         onSave={handleSaveCreate}
         onClose={() => setOpenCreateModal(false)}
       />
-
       <FokotanyEdit
         isOpen={openEditModal}
         fokotany={selectedFokotany}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import menuData from '../data/menuData.json';
-import sneatLogo from '../assets/VonjyLogo.svg';
+import menuData from '../data/menuData.json'
+import VonjyLogo from '../assets/VonjyLogo.svg';
 import { Avatar } from '@mui/material';
 import useUserStore from '../store/userStore'; // Import du store utilisateur
 
@@ -18,7 +18,7 @@ const Sidebar = () => {
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
             <div className="app-brand demo">
                 <span className="app-brand-logo demo">
-                    <img src={sneatLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
+                    <img src={VonjyLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
                 </span>
             </div>
 

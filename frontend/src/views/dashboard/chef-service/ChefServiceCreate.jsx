@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
-import useChefServiceStore from "../../../store/chefServiceStore"; // Importer le store des chefs de service
+import useChefServiceStore from "../../../store/chefServiceStore";
+import useFokotanyStore from "../../../store/fokotanyStore";
 
-const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
+const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
   const [chefService, setChefService] = useState({
     service_id: "",
+    fokotany_id: "",
     nomChef: "",
     prenomChef: "",
     contact: "",
@@ -14,42 +16,74 @@ const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
     sexe: "",
   });
 
-  const [services, setServices] = useState([]);
+  const [filteredServices, setFilteredServices] = useState([]);
+  const [fokotanyDetails, setFokotanyDetails] = useState(null);
   const [error, setError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { createChefService } = useChefServiceStore(); // Utiliser l'action `createChefService` du store
+  const [loadingServices, setLoadingServices] = useState(false);
 
-  // Charger les services depuis l'API
+  const { createChefService } = useChefServiceStore();
+  const { fokotanys, fetchFokotanys } = useFokotanyStore();
+
+  // Charger les fokotanys au montage du composant
   useEffect(() => {
-    const fetchServices = async () => {
+    const loadFokotanys = async () => {
       setLoading(true);
       try {
+        await fetchFokotanys();
+      } catch (err) {
+        console.error("Erreur lors de la récupération des fokotanys :", err);
+        setError("Impossible de charger les fokotanys.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFokotanys();
+  }, [fetchFokotanys]);
+
+  // Charger les détails du fokotany lorsqu'un fokotany est sélectionné
+  useEffect(() => {
+    const fetchFokotanyDetails = async (fokotanyId) => {
+      if (!fokotanyId) {
+        setFilteredServices([]);
+        return;
+      }
+
+      setLoadingServices(true);
+      try {
         const token = localStorage.getItem("access_token");
-        const response = await fetch("http://127.0.0.1:8000/api/services/", {
+        const response = await fetch(`http://127.0.0.1:8000/api/fokotany/${fokotanyId}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
         if (!response.ok) {
-          throw new Error("Erreur lors du chargement des services.");
+          throw new Error("Erreur lors du chargement des détails du fokotany.");
         }
         const data = await response.json();
-        setServices(data);
+        console.log("Détails du fokotany:", data);
+
+        setFokotanyDetails(data);
+        // Mettre à jour les services filtrés avec la liste des services du fokotany
+        setFilteredServices(data.services || []);
       } catch (err) {
-        console.error("Erreur lors de la récupération des services :", err);
-        setError("Impossible de charger les services.");
+        console.error("Erreur lors de la récupération des détails du fokotany:", err);
+        setError("Impossible de charger les services pour ce fokotany.");
+        setFilteredServices([]);
       } finally {
-        setLoading(false);
+        setLoadingServices(false);
       }
     };
 
-    fetchServices();
-  }, []);
+    fetchFokotanyDetails(chefService.fokotany_id);
+  }, [chefService.fokotany_id]);
 
   const isFormValid =
+    chefService.fokotany_id !== "" &&
     chefService.service_id !== "" &&
     chefService.nomChef.trim() !== "" &&
     chefService.prenomChef.trim() !== "" &&
@@ -61,6 +95,7 @@ const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
   const resetForm = () => {
     setChefService({
       service_id: "",
+      fokotany_id: "",
       nomChef: "",
       prenomChef: "",
       contact: "",
@@ -70,11 +105,19 @@ const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
     setError("");
     setSubmitError("");
     setInputDisabled(false);
+    setFilteredServices([]);
+    setFokotanyDetails(null);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setChefService((prev) => ({ ...prev, [name]: value }));
+    setChefService((prev) => {
+      // Si nous changeons de fokotany, réinitialiser le service_id
+      if (name === "fokotany_id" && value !== prev.fokotany_id) {
+        return { ...prev, [name]: value, service_id: "" };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSave = async () => {
@@ -88,14 +131,14 @@ const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
 
       // Appel au store pour créer un chef de service
       await createChefService(chefService);
-      if (onSuccess) onSuccess("Chef de service créé avec succès !");
+      if (onSave) onSave("Chef de service créé avec succès !");
 
       resetForm();
       onClose();
     } catch (err) {
       console.error("Erreur lors de l'enregistrement du chef de service :", err);
       setSubmitError(err.message || "Une erreur est survenue lors de la création.");
-      if (onSuccess) onSuccess(err.message || "Erreur lors de la création.", "error");
+      if (onSave) onSave(err.message || "Erreur lors de la création.", "error");
     }
   };
 
@@ -115,26 +158,50 @@ const ChefServiceCreate = ({ isOpen, onClose, onSuccess }) => {
     >
       <div className="row">
         <div className="col mb-3 mt-2">
-          <label htmlFor="service_id" className="form-label">
-            Service
-          </label>
           {loading ? (
-            <p>Chargement des services...</p>
-          ) : services.length > 0 ? (
+            <p>Chargement des fokotanys...</p>
+          ) : fokotanys && fokotanys.length > 0 ? (
             <SelectField
               required
-              label="Sélectionnez un service"
-              name="service_id"
-              value={chefService.service_id}
+              label="Sélectionnez un fokotany"
+              name="fokotany_id"
+              value={chefService.fokotany_id}
               onChange={handleChange}
-              options={services.map((service) => ({
-                value: service.id.toString(),
-                label: service.nomService,
+              options={fokotanys.map((fokotany) => ({
+                value: fokotany.id.toString(),
+                label: `${fokotany.nomFokotany} (${fokotany.commune?.nomCommune || "Commune inconnue"})`,
               }))}
-              placeholder="Choisissez un service"
+              placeholder="Choisissez un fokotany"
+              autocomplete={true}
             />
           ) : (
-            <p className="text-danger">Aucun service disponible.</p>
+            <p className="text-danger">Aucun fokotany disponible.</p>
+          )}
+        </div>
+      </div>
+      <div className="row">
+        <div className="col mb-3 mt-2">
+          {loadingServices ? (
+            <p>Chargement des services...</p>
+          ) : chefService.fokotany_id ? (
+            filteredServices.length > 0 ? (
+              <SelectField
+                required
+                label="Sélectionnez un service"
+                name="service_id"
+                value={chefService.service_id}
+                onChange={handleChange}
+                options={filteredServices.map((service) => ({
+                  value: service.id.toString(),
+                  label: service.nomService,
+                }))}
+                placeholder="Choisissez un service"
+              />
+            ) : (
+              <p className="text-warning">Aucun service disponible pour ce fokotany.</p>
+            )
+          ) : (
+            <p className="text-info">Veuillez d'abord sélectionner un fokotany.</p>
           )}
         </div>
       </div>

@@ -4,7 +4,7 @@ import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
 import useServiceStore from "../../../store/serviceStore"; // Importer le store des services
 
-const ServiceCreate = ({ isOpen, onClose, onSuccess }) => {
+const ServiceCreate = ({ isOpen, onClose, onSave }) => {
   const [service, setService] = useState({
     fokotany_id: "",
     nomService: "",
@@ -42,13 +42,16 @@ const ServiceCreate = ({ isOpen, onClose, onSuccess }) => {
     fetchFokotanys();
   }, []);
 
-  const isFormValid =
-    service.fokotany_id &&
-    service.nomService.trim() &&
-    service.description.trim() &&
-    service.offre.trim() &&
-    service.membre.trim() &&
-    service.nombre_membre;
+const isFormValid =
+  service.fokotany_id &&
+  service.nomService.trim() &&
+  service.description.trim() &&
+  service.offre.trim() &&
+  service.membre.trim() &&
+  service.nombre_membre !== "" &&
+  !isNaN(service.nombre_membre);
+
+
 
   const resetForm = () => {
     setService({
@@ -81,7 +84,7 @@ const ServiceCreate = ({ isOpen, onClose, onSuccess }) => {
       };
 
       await createService(payload);
-      if (onSuccess) onSuccess("Service créé avec succès !");
+      if (onSave) onSave("Service créé avec succès !");
       resetForm();
       onClose();
     } catch (err) {
@@ -114,9 +117,10 @@ const ServiceCreate = ({ isOpen, onClose, onSuccess }) => {
               onChange={handleChange}
               options={fokotanys.map((fokotany) => ({
                 value: fokotany.id.toString(),
-                label: fokotany.nomFokotany,
+                label: `${fokotany.nomFokotany} (${fokotany.commune?.nomCommune || "Commune inconnue"})`,
               }))}
               placeholder="Choisissez un fokotany"
+              autocomplete={true}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>

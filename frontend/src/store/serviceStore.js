@@ -37,7 +37,9 @@ const useServiceStore = create((set) => ({
       !service.description ||
       !service.offre ||
       !service.membre ||
-      !service.nombre_membre ||
+      !service.membre ||
+      service.nombre_membre === undefined ||
+      service.nombre_membre === null ||
       !service.fokotany_id
     ) {
       throw new Error('Les données du service sont manquantes ou invalides.');

@@ -127,7 +127,7 @@ function ServiceViews() {
         <FilterBar
           showSearch={true}
           showFilter={false}
-          filterCriteria={{ filterBy: null, searchFields: ['nomService','fokotany.commune.nomCommune', 'description', 'offre', 'membre'] }}
+          filterCriteria={{ filterBy: null, searchFields: ['fokotany.nomFokotany','nomService','fokotany.commune.nomCommune', 'description', 'offre', 'membre'] }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           data={services}
