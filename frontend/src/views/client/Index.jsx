@@ -115,6 +115,7 @@ function MapViews() {
               responsables_count: fokotany.responsables_count,
               services_count: fokotany.services_count,
               responsables: fokotany.responsables || [],
+              chef_service: fokotany.chef_service || [],
               services: fokotany.services || []
             }))
           : [] // Si fokotanys n'est pas un tableau, utilisez un tableau vide
@@ -166,13 +167,10 @@ function MapViews() {
 
       {/* Copyright footer */}
       <Typography
-        variant="body2"
+        variant="body2" 
         sx={{
-          mt: 2,
-          position: "absolute",
-          bottom: 16,
-          left: "50%",
-          transform: "translateX(-50%)",
+          my: 3, 
+          mt: 0,
           textAlign: "center",
           color: "text.secondary",
           zIndex: 10,

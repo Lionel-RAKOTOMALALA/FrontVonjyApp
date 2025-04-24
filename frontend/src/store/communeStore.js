@@ -12,7 +12,7 @@ const useCommuneStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://localhost:8000/api/communes/${id}/details/`, {
+      const response = await fetch(`https://www.admin.com/api/communes/${id}/details/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const useCommuneStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/api/communes/', {
+      const response = await fetch('https://www.admin.com/api/communes/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const useCommuneStore = create((set) => ({
       console.log('Token utilisé:', token);
       console.log('Payload envoyé:', JSON.stringify(commune));
   
-      const response = await fetch('http://localhost:8000/api/communes/', {
+      const response = await fetch('https://www.admin.com/api/communes/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -91,7 +91,7 @@ const useCommuneStore = create((set) => ({
   updateCommune: async (id, updatedCommune) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://localhost:8000/api/communes/${id}/`, {
+      const response = await fetch(`https://www.admin.com/api/communes/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -115,7 +115,7 @@ const useCommuneStore = create((set) => ({
   deleteCommune: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      await fetch(`http://localhost:8000/api/communes/${id}/`, {
+      await fetch(`https://www.admin.com/api/communes/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -134,7 +134,7 @@ const useCommuneStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/api/totals/', {
+      const response = await fetch('https://www.admin.com/api/totals/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

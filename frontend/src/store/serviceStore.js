@@ -10,7 +10,7 @@ const useServiceStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/api/services/', {
+      const response = await fetch('https://www.admin.com/api/services/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const useServiceStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Payload envoyé:', JSON.stringify(service));
 
-      const response = await fetch('http://localhost:8000/api/services/', {
+      const response = await fetch('https://www.admin.com/api/services/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -87,7 +87,7 @@ const useServiceStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Données envoyées pour la mise à jour :', updatedService);
 
-      const response = await fetch(`http://localhost:8000/api/services/${id}/`, {
+      const response = await fetch(`https://www.admin.com/api/services/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -123,7 +123,7 @@ const useServiceStore = create((set) => ({
   deleteService: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://localhost:8000/api/services/${id}/`, {
+      const response = await fetch(`https://www.admin.com/api/services/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

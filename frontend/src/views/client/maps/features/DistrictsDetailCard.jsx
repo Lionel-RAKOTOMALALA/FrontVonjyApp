@@ -64,10 +64,7 @@ function DistrictDetailCard() {
             <CardContent className="pt-0">
               <motion.div variants={contentVariants}>
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Acteurs dans le district</H4>
-                  {loading && <p>Chargement en cours...</p>}
-                  {error && <p style={{ color: 'red' }}>Erreur : {error}</p>}
-                  {!loading && !error && (
+                  <H4 sx={{ m: 0, mb: 4 }}>Informations globale</H4> 
                     <TableView
                       data={districts}
                       columns={columns}
@@ -76,7 +73,6 @@ function DistrictDetailCard() {
                       showDeleteIcon={true}
                       showActionsColumn={false}
                     />
-                  )}
                 </Box>
               </motion.div>
             </CardContent>

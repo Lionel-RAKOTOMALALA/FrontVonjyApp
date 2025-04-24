@@ -108,7 +108,7 @@ const MapMainContent = ({
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <CommuneActeursCard />
+            <CommuneActeursCard selectedCommune={selectedCommune} />
           </motion.div>
         )}
       </AnimatePresence>

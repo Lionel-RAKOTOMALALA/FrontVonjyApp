@@ -22,7 +22,7 @@ const getServiceIcon = (serviceName) => {
 }
 
 const CommuneDetailsCard = ({ selectedCommune }) => {
-  console.log(selectedCommune)
+  console.log("fory", selectedCommune)
   const [communeDetails, setCommuneDetails] = useState(null)
 
   useEffect(() => {
@@ -37,6 +37,7 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
           responsables: fokotany.responsables,
           responsables_count: fokotany.responsables_count,
           services: fokotany.services,
+          chef_service: fokotany.chef_service,
           services_count: fokotany.services_count,
         })),
       })
@@ -69,6 +70,14 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
     { field: "nombre_membre", label: "Nombre", align: "center" },
   ]
 
+  const ChefServiceColumns = [
+    { field: "nomChef", label: "Nom chef" },
+    { field: "prenomChef", label: "Prénom chef" },
+    { field: "contact", label: "Contact" },
+    { field: "adresse", label: "Adresse" },
+    { field: "service_name", label: "service_name", align: "center" },
+  ]
+
   const detailTables = [
     {
       title: "Responsables du Fokotany",
@@ -79,6 +88,11 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
       title: "Services disponibles",
       columns: serviceColumns,
       getData: (row) => row.services || [],
+    },
+    {
+      title: "Chef services",
+      columns: ChefServiceColumns,
+      getData: (row) => row.chef_service || [],
     },
   ]
 

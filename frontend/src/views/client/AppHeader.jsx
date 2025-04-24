@@ -8,12 +8,14 @@ import VonjyLogo from "../../assets/VonjyLogo.svg"
 import Parametre from "./settings/Index" // Import du modal
 import { Paragraphe } from "../../components/ui/TypographyVariants"
 import useUserStore from "../../store/userStore"
+import { useNavigate } from 'react-router-dom'
 
 function AppHeader({ scrolled }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openParametre, setOpenParametre] = useState(false) // Pour gérer le modal
   const { fetchUser, user, logout } = useUserStore() // Ajout de logout depuis le store
-
+  const navigate = useNavigate()
+  
   const open = Boolean(anchorEl)
 
   const handleMenuClick = (event) => {
@@ -36,6 +38,7 @@ function AppHeader({ scrolled }) {
   const handleLogout = async () => {
     await logout() // Appel à la fonction logout du store
     handleClose() // Fermer le menu après déconnexion
+    navigate('/auth/login')
   }
 
   useEffect(() => {
@@ -113,9 +116,9 @@ function AppHeader({ scrolled }) {
               <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleOpenParametre}>
                 Paramètres
               </MenuItem>
-              {/* <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleLogout}>
+              <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleLogout}>
                 Déconnexion
-              </MenuItem> */}
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

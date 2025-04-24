@@ -130,11 +130,8 @@ export default function Login() {
       {/* Copyright footer */}
       <Typography
         variant="body2"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: "50%",
-          transform: "translateX(-50%)",
+        sx={{  
+          my:3, mb:1,
           textAlign: "center",
           color: "text.secondary",
           zIndex: 2,

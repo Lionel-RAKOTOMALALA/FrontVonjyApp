@@ -10,7 +10,7 @@ const useDistrictStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/api/annuaire/', {
+      const response = await fetch('https://www.admin.com/api/annuaire/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const useDistrictStore = create((set) => ({
     }
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8000/api/annuaire/', {
+      const response = await fetch('https://www.admin.com/api/annuaire/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -59,7 +59,7 @@ const useDistrictStore = create((set) => ({
   updateDistrict: async (id, updatedDistrict) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://localhost:8000/api/annuaire/${id}/`, {
+      const response = await fetch(`https://www.admin.com/api/annuaire/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -85,7 +85,7 @@ const useDistrictStore = create((set) => ({
   deleteDistrict: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      await fetch(`http://localhost:8000/api/annuaire/${id}/`, {
+      await fetch(`https://www.admin.com/api/annuaire/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
