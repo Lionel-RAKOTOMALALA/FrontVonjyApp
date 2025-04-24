@@ -10,7 +10,7 @@ const useResponsableStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('https://www.admin.com/api/responsables/', {
+      const response = await fetch('http://localhost:8000/api/responsables/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const useResponsableStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Payload envoyé:', JSON.stringify(responsable));
 
-      const response = await fetch('https://www.admin.com/api/responsables/', {
+      const response = await fetch('http://localhost:8000/api/responsables/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -81,7 +81,7 @@ const useResponsableStore = create((set) => ({
       const token = localStorage.getItem('access_token');
       console.log('Données envoyées pour la mise à jour :', updatedResponsable);
 
-      const response = await fetch(`https://www.admin.com/api/responsables/${id}/`, {
+      const response = await fetch(`http://localhost:8000/api/responsables/${id}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -117,7 +117,7 @@ const useResponsableStore = create((set) => ({
   deleteResponsable: async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`https://www.admin.com/api/responsables/${id}/`, {
+      const response = await fetch(`http://localhost:8000/api/responsables/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

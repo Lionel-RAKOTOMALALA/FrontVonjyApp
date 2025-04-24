@@ -33,7 +33,7 @@ const useUserStore = create((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const response = await axios.get('https://www.admin.com/api/user/info/', {
+      const response = await axios.get('http://localhost:8000/api/user/info/', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -54,7 +54,7 @@ const useUserStore = create((set, get) => ({
     try {
       if (accessToken) {
         // Appel à l'API de déconnexion
-        await axios.post('https://www.admin.com/api/auth/logout/', {}, {
+        await axios.post('http://localhost:8000/api/auth/logout/', {}, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -88,7 +88,7 @@ const useUserStore = create((set, get) => ({
 
     try {
       const response = await axios.put(
-        `https://www.admin.com/api/auth/update-profile/${uid}/`, // Appel API avec UID inclus dans l'URL
+        `http://localhost:8000/api/auth/update-profile/${uid}/`, // Appel API avec UID inclus dans l'URL
         updatedData,
         {
           headers: {

@@ -50,7 +50,7 @@ const ChefServiceEdit = ({ isOpen, chefService, onChange, onSave, onClose }) => 
       setLoading(true);
       try {
         const token = localStorage.getItem("access_token");
-        const response = await fetch("https://www.admin.com/api/services/", {
+        const response = await fetch("http://localhost:8000/api/services/", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
