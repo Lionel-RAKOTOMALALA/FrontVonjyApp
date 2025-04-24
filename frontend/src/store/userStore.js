@@ -39,10 +39,26 @@
     },
 
     // Déconnexion de l'utilisateur
-    logout: () => {
-        localStorage.removeItem('access_token');
-        set({ user: null, accessToken: null });
-    },
+    logout: async () => {
+        const { accessToken } = get();
+    
+        try {
+          if (accessToken) {
+            // Appel à l'API de déconnexion
+            await axios.post('http://127.0.0.1:8000/api/auth/logout/', {}, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Erreur lors de la déconnexion :', error.response?.data?.message || error.message);
+        } finally {
+          // Nettoyage des données locales après la déconnexion
+          localStorage.removeItem('access_token');
+          set({ user: null, accessToken: null });
+        }
+      },
     }));
-
+    
     export default useUserStore;

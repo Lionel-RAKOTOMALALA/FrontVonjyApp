@@ -31,13 +31,6 @@
                 "icon": "bx bxs-user-pin",
                 "available": true,
                 "link": "/chef-service"
-            },
-            {
-                "text": "Sortir",
-                "icon": "bx bx-log-out",
-                "available": true,
-                "link": "/logout",
-                "isBottom": true
             }
         ]
     }

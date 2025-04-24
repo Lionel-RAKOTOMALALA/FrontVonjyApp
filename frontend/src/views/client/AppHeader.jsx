@@ -12,7 +12,7 @@ import useUserStore from "../../store/userStore"
 function AppHeader({ scrolled }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openParametre, setOpenParametre] = useState(false) // Pour gérer le modal
-  const { fetchUser, user } = useUserStore()
+  const { fetchUser, user, logout } = useUserStore() // Ajout de logout depuis le store
 
   const open = Boolean(anchorEl)
 
@@ -31,6 +31,11 @@ function AppHeader({ scrolled }) {
 
   const handleCloseParametre = () => {
     setOpenParametre(false)
+  }
+
+  const handleLogout = async () => {
+    await logout() // Appel à la fonction logout du store
+    handleClose() // Fermer le menu après déconnexion
   }
 
   useEffect(() => {
@@ -108,7 +113,7 @@ function AppHeader({ scrolled }) {
               <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleOpenParametre}>
                 Paramètres
               </MenuItem>
-              <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleClose}>
+              <MenuItem className="mx-2 my-1" sx={{ borderRadius: "10px" }} onClick={handleLogout}>
                 Déconnexion
               </MenuItem>
             </Menu>

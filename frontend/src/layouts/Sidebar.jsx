@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import menuData from '../data/menuData.json'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import menuData from '../data/menuData.json';
 import sneatLogo from '../assets/VonjyLogo.svg';
 import { Avatar } from '@mui/material';
+import useUserStore from '../store/userStore'; // Import du store utilisateur
 
 const Sidebar = () => {
+    const { logout } = useUserStore(); // Récupération de la fonction logout depuis le store
+    const navigate = useNavigate(); // Hook pour la navigation
+
+    const handleLogout = async () => {
+        await logout(); // Appeler la fonction logout du store
+        navigate('/auth/login'); // Rediriger vers la page de connexion
+    };
+
     return (
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
             <div className="app-brand demo">
                 <span className="app-brand-logo demo">
                     <img src={sneatLogo} width="78px" alt="sneat-logo" aria-label='Sneat logo image' />
                 </span>
-
-                {/* <a
-                    href="#"
-                    className="layout-menu-toggle menu-link text-large ms-auto" 
-                >
-                    <i className="bx bx-chevron-left bx-sm align-middle"></i>
-                </a> */}
             </div>
 
             <div className="menu-inner-shadow"></div>
-            <div className='px-3 mx-3 rounded-3 my-3 d-flex align-items-center' style={{backgroundColor:'#F1F3F5'}}>
-                 <Avatar sx={{ bgcolor: "#C3CDD5",color:'#697988' }}>SU</Avatar>
+            <div className='px-3 mx-3 rounded-3 my-3 d-flex align-items-center' style={{ backgroundColor: '#F1F3F5' }}>
+                <Avatar sx={{ bgcolor: "#C3CDD5", color: '#697988' }}>SU</Avatar>
                 <p className='p-4 text-dark fw-bold m-0'>Super admin</p>
             </div>
             <ul className="menu-inner py-1">
@@ -36,6 +38,24 @@ const Sidebar = () => {
                         {section.items.map(MenuItem)}
                     </React.Fragment>
                 ))}
+
+                {/* Bouton de Déconnexion */}
+                <li className="menu-item mt-auto">
+                    <button
+                        onClick={handleLogout}
+                        className="menu-link"
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <i className="menu-icon tf-icons bx bx-power-off"></i>
+                        <div>Déconnexion</div>
+                    </button>
+                </li>
             </ul>
         </aside>
     );
@@ -74,6 +94,5 @@ const MenuItem = (item) => {
         </li>
     );
 };
-
 
 export default Sidebar;
