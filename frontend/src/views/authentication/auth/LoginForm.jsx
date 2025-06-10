@@ -36,7 +36,7 @@ function LoginForm({ onNavigate }) {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("https://www.admin.com/api/auth/login/", {
+      const response = await axios.post("http://localhost:8000/api/auth/login/", {
         email: formData.email,
         password: formData.password,
       })

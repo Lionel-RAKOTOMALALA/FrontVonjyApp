@@ -11,7 +11,7 @@ const useActeursCommuneStore = create((set, get) => ({
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
-      const response = await axios.get(`https://www.admin.com/api/acteurs_commune/${idCommune}/`, {
+      const response = await axios.get(`http://localhost:8000/api/acteurs_commune/${idCommune}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },
@@ -30,7 +30,7 @@ const useActeursCommuneStore = create((set, get) => ({
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
-      const response = await axios.post('https://www.admin.com/api/acteurs-commune/', newActeur, {
+      const response = await axios.post('http://localhost:8000/api/acteurs-commune/', newActeur, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },
@@ -51,7 +51,7 @@ const useActeursCommuneStore = create((set, get) => ({
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
-      const response = await axios.put(`https://www.admin.com/api/acteurs-commune/${id}/`, updatedData, {
+      const response = await axios.put(`http://localhost:8000/api/acteurs-commune/${id}/`, updatedData, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },
@@ -77,7 +77,7 @@ const useActeursCommuneStore = create((set, get) => ({
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
-      await axios.delete(`https://www.admin.com/api/acteurs-commune/${id}/`, {
+      await axios.delete(`http://localhost:8000/api/acteurs-commune/${id}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },
