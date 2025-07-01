@@ -1,55 +1,43 @@
 import React, { useState } from 'react';
+import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import useCommuneStore from '../../../store/communeStore';
 
-const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onSave
+const communeSchema = z.object({
+  nomCommune: z.string().min(1, "Le nom est requis"),
+});
+
+const CommuneCreate = ({ isOpen, onClose, onSuccess }) => {
   const [commune, setCommune] = useState({ nomCommune: '' });
-  const [error, setError] = useState(''); 
-  const [inputDisabled, setInputDisabled] = useState(false);
+  const [error, setError] = useState('');
   const { createCommune } = useCommuneStore();
 
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
-
-  const isFormValid = commune.nomCommune.trim() !== '' && 
-                     isValidName(commune.nomCommune.trim()) && 
-                     !inputDisabled;
+  const isFormValid = communeSchema.safeParse(commune).success;
 
   const resetForm = () => {
     setCommune({ nomCommune: '' });
-    setError(''); 
-    setInputDisabled(false);
+    setError('');
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    
-    if (!isValidName(value)) {
-      setError("Caractères non autorisés détectés");
-      setInputDisabled(true);
-      return;
-    }
-
-    setError('');
-    setInputDisabled(false);
     setCommune(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
+    const result = communeSchema.safeParse(commune);
+    if (!result.success) {
+      setError(result.error.errors[0].message);
+      return;
+    }
     try {
-      if (!isFormValid) { 
-        return;
-      } 
-      
-      // 2. Appel unique au store
       await createCommune(commune);
       if (onSuccess) onSuccess('Commune créée avec succès !');
-      
-      // 3. Fermeture et reset
       resetForm();
-      onClose(); // Appel direct sans callback intermédiaire
+      onClose();
     } catch (err) {
-      console.error("Erreur:", err); 
+      setError(err.message || "Erreur lors de la création");
       if (onSuccess) onSuccess(err.message || "Erreur lors de la création", 'error');
     }
   };
@@ -75,7 +63,9 @@ const CommuneCreate = ({ isOpen, onClose,  onSuccess }) => { // 1. Supprimez onS
             label="Nom"
             name="nomCommune"
             value={commune.nomCommune}
-            onChange={handleChange} 
+            onChange={handleChange}
+            error={!!error}
+            helperText={error}
           />
         </div>
       </div>

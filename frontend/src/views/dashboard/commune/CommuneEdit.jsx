@@ -1,64 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import useCommuneStore from '../../../store/communeStore';
 
+const communeSchema = z.object({
+  nomCommune: z.string().min(1, "Le nom est requis"),
+});
+
 const CommuneEdit = ({ isOpen, commune: initialCommune, onClose, onSuccess }) => {
   const [commune, setCommune] = useState(initialCommune || { nomCommune: '' });
   const [error, setError] = useState('');
-  const [submitError, setSubmitError] = useState('');
-  const [inputDisabled, setInputDisabled] = useState(false);
   const { updateCommune } = useCommuneStore();
 
-  console.log(commune);
-  
+  // Synchronise l'état local avec la commune sélectionnée
+  useEffect(() => {
+    setCommune(initialCommune || { nomCommune: '' });
+    setError('');
+  }, [initialCommune, isOpen]);
 
-  // Regex : lettres, chiffres, chiffres romains, espaces, tirets
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
-
-  const isFormValid = commune.nomCommune?.trim() !== '' && 
-                     isValidName(commune.nomCommune?.trim()) && 
-                     !inputDisabled;
+  const isFormValid = communeSchema.safeParse(commune).success;
 
   const resetForm = () => {
     setCommune(initialCommune || { nomCommune: '' });
     setError('');
-    setSubmitError('');
-    setInputDisabled(false);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    if (!isValidName(value)) {
-      setError("Caractères non autorisés détectés");
-      setInputDisabled(true);
-      return;
-    }
-
-    setError('');
-    setInputDisabled(false);
     setCommune(prev => ({ ...prev, [name]: value }));
+    // Ne pas reset l'erreur ici pour garder l'affichage si besoin
   };
 
   const handleSave = async () => {
+    const result = communeSchema.safeParse(commune);
+    if (!result.success) {
+      setError(result.error.errors[0].message);
+      return;
+    }
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
-
-      setSubmitError('');
-      
       await updateCommune(commune.id, commune);
-      
       if (onSuccess) onSuccess('Commune modifiée avec succès !');
-      
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur:", err);
-      setSubmitError(err.message || "Erreur lors de la modification");
+      setError(err.message || "Erreur lors de la modification");
       if (onSuccess) onSuccess(err.message || "Erreur lors de la modification", 'error');
     }
   };
@@ -85,13 +71,9 @@ const CommuneEdit = ({ isOpen, commune: initialCommune, onClose, onSuccess }) =>
             name="nomCommune"
             value={commune.nomCommune || ''}
             onChange={handleChange}
-            error={!!error} 
+            error={!!error}
+            helperText={error}
           />
-          {submitError && (
-            <p className="text-danger mt-2 text-sm">
-              {submitError}
-            </p>
-          )}
         </div>
       </div>
     </Modal>
