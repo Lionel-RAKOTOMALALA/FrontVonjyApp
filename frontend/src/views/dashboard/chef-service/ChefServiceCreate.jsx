@@ -1,57 +1,65 @@
 import React, { useState, useEffect } from "react";
+import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
 import useChefServiceStore from "../../../store/chefServiceStore";
 import useFokotanyStore from "../../../store/fokotanyStore";
 
-const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
-  const [chefService, setChefService] = useState({
-    service_id: "",
-    fokotany_id: "",
-    nomChef: "",
-    prenomChef: "",
-    contact: "",
-    adresse: "",
-    sexe: "",
-  });
+// Schéma Zod pour valider le formulaire ChefService
+const chefServiceSchema = z.object({
+  fokotany_id: z.string().trim().min(1, "Fokotany requis"),
+  service_id: z.string().trim().min(1, "Service requis"),
+  nomChef: z.string().trim().min(1, "Nom requis"),
+  prenomChef: z.string().trim().min(1, "Prénom requis"),
+  contact: z.string().trim().min(1, "Contact requis"),
+  adresse: z.string().trim().min(1, "Adresse requise"),
+  sexe: z.string().optional(),
+});
+// ...existing code...
 
+const initialChefService = {
+  service_id: "",
+  fokotany_id: "",
+  nomChef: "",
+  prenomChef: "",
+  contact: "",
+  adresse: "",
+  sexe: "null",
+};
+
+const ChefServiceCreate = ({ isOpen, onClose, onSave, onError }) => {
+  const [chefService, setChefService] = useState(initialChefService);
   const [filteredServices, setFilteredServices] = useState([]);
-  const [fokotanyDetails, setFokotanyDetails] = useState(null);
-  const [error, setError] = useState("");
-  const [submitError, setSubmitError] = useState("");
-  const [inputDisabled, setInputDisabled] = useState(false);
+  const [errors, setErrors] = useState({}); 
   const [loading, setLoading] = useState(false);
   const [loadingServices, setLoadingServices] = useState(false);
 
   const { createChefService } = useChefServiceStore();
   const { fokotanys, fetchFokotanys } = useFokotanyStore();
 
-  // Charger les fokotanys au montage du composant
+  // Charger les fokotanys au montage
   useEffect(() => {
     const loadFokotanys = async () => {
       setLoading(true);
       try {
         await fetchFokotanys();
-      } catch (err) {
-        console.error("Erreur lors de la récupération des fokotanys :", err);
-        setError("Impossible de charger les fokotanys.");
+      } catch {
+        setErrors((prev) => ({ ...prev, fokotany_id: "Impossible de charger les fokotanys." }));
       } finally {
         setLoading(false);
       }
     };
-
     loadFokotanys();
   }, [fetchFokotanys]);
 
-  // Charger les détails du fokotany lorsqu'un fokotany est sélectionné
+  // Charger les services du fokotany sélectionné
   useEffect(() => {
     const fetchFokotanyDetails = async (fokotanyId) => {
       if (!fokotanyId) {
         setFilteredServices([]);
         return;
       }
-
       setLoadingServices(true);
       try {
         const token = localStorage.getItem("access_token");
@@ -61,84 +69,68 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
-          throw new Error("Erreur lors du chargement des détails du fokotany.");
-        }
+        if (!response.ok) throw new Error();
         const data = await response.json();
-        console.log("Détails du fokotany:", data);
-
-        setFokotanyDetails(data);
-        // Mettre à jour les services filtrés avec la liste des services du fokotany
         setFilteredServices(data.services || []);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des détails du fokotany:", err);
-        setError("Impossible de charger les services pour ce fokotany.");
+      } catch {
         setFilteredServices([]);
+        setErrors((prev) => ({ ...prev, service_id: "Impossible de charger les services." }));
       } finally {
         setLoadingServices(false);
       }
     };
-
     fetchFokotanyDetails(chefService.fokotany_id);
   }, [chefService.fokotany_id]);
 
-  const isFormValid =
-    chefService.fokotany_id !== "" &&
-    chefService.service_id !== "" &&
-    chefService.nomChef.trim() !== "" &&
-    chefService.prenomChef.trim() !== "" &&
-    chefService.contact.trim() !== "" &&
-    chefService.adresse.trim() !== "" &&
-    chefService.sexe.trim() !== "" &&
-    !inputDisabled;
-
-  const resetForm = () => {
-    setChefService({
-      service_id: "",
-      fokotany_id: "",
-      nomChef: "",
-      prenomChef: "",
-      contact: "",
-      adresse: "",
-      sexe: "",
-    });
-    setError("");
-    setSubmitError("");
-    setInputDisabled(false);
-    setFilteredServices([]);
-    setFokotanyDetails(null);
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      chefServiceSchema.pick({ [name]: true }).parse({ [name]: value });
+      return "";
+    } catch (err) {
+      return err.errors?.[0]?.message || "";
+    }
   };
 
+  // Gestion du changement de champ
   const handleChange = (event) => {
     const { name, value } = event.target;
     setChefService((prev) => {
-      // Si nous changeons de fokotany, réinitialiser le service_id
       if (name === "fokotany_id" && value !== prev.fokotany_id) {
         return { ...prev, [name]: value, service_id: "" };
       }
       return { ...prev, [name]: value };
     });
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+  };
+
+  // Validation globale du formulaire
+  const isFormValid = chefServiceSchema.safeParse(chefService).success;
+
+  const resetForm = () => {
+    setChefService(initialChefService);
+    setErrors({});
+    setFilteredServices([]);
   };
 
   const handleSave = async () => {
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
-
-      setSubmitError("");
-
-      // Appel au store pour créer un chef de service
+      chefServiceSchema.parse(chefService);
       await createChefService(chefService);
       if (onSave) onSave("Chef de service créé avec succès !");
-
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement du chef de service :", err);
-      setSubmitError(err.message || "Une erreur est survenue lors de la création.");
-      if (onSave) onSave(err.message || "Erreur lors de la création.", "error");
+      if (err.errors) {
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        const msg = err.message || "Erreur lors de la création. Vérifiez vos données.";
+        if (onError) onError(msg);
+      }
     }
   };
 
@@ -173,6 +165,8 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
               }))}
               placeholder="Choisissez un fokotany"
               autocomplete={true}
+              error={!!errors.fokotany_id}
+              helperText={errors.fokotany_id}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>
@@ -196,6 +190,8 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
                   label: service.nomService,
                 }))}
                 placeholder="Choisissez un service"
+                error={!!errors.service_id}
+                helperText={errors.service_id}
               />
             ) : (
               <p className="text-warning">Aucun service disponible pour ce fokotany.</p>
@@ -213,6 +209,8 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
             name="nomChef"
             value={chefService.nomChef}
             onChange={handleChange}
+            error={!!errors.nomChef}
+            helperText={errors.nomChef}
           />
         </div>
       </div>
@@ -224,6 +222,8 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
             name="prenomChef"
             value={chefService.prenomChef}
             onChange={handleChange}
+            error={!!errors.prenomChef}
+            helperText={errors.prenomChef}
           />
         </div>
       </div>
@@ -235,6 +235,8 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
             name="contact"
             value={chefService.contact}
             onChange={handleChange}
+            error={!!errors.contact}
+            helperText={errors.contact}
           />
         </div>
       </div>
@@ -246,23 +248,11 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave }) => {
             name="adresse"
             value={chefService.adresse}
             onChange={handleChange}
+            error={!!errors.adresse}
+            helperText={errors.adresse}
           />
         </div>
       </div>
-      <div className="row">
-        <div className="col mb-3">
-          <InputField
-            required
-            label="Sexe"
-            name="sexe"
-            value={chefService.sexe}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-      {submitError && (
-        <p className="text-danger mt-2 text-sm">{submitError}</p>
-      )}
     </Modal>
   );
 };

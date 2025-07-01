@@ -114,6 +114,12 @@ function ChefServiceViews() {
     }
   };
 
+  const handleModalError = (msg) => {
+    setSnackbarMessage(msg);
+    setSnackbarSeverity("error");
+    setOpenSnackbar(true);
+  };
+
   return (
     <>
       <Breadcrumb
@@ -149,17 +155,19 @@ function ChefServiceViews() {
           />
         )}
       </Box>
-      <ChefServiceCreate
-        isOpen={openCreateModal}
-        onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)}
-      />
       <ChefServiceEdit
         isOpen={openEditModal}
         chefService={selectedChefService}
         onChange={(updatedChefService) => setSelectedChefService(updatedChefService)}
         onSave={handleSaveEdit}
         onClose={() => setOpenEditModal(false)}
+        onError={handleModalError} // Ajout ici
+      />
+      <ChefServiceCreate
+        isOpen={openCreateModal}
+        onSave={handleSaveCreate}
+        onClose={() => setOpenCreateModal(false)}
+        onError={handleModalError} // Ajout ici si besoin
       />
       <ConfirmationDialog
         open={openDialog}
