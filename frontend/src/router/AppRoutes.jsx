@@ -14,6 +14,7 @@ import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
 import User from '../views/dashboard/user/UserViews';
 import Annuaire from '../views/dashboard/annuaire/AnnuaireViews';
 
+import Acteur from '../views/dashboard/acteur/ActeurViews';
 import Client from '../views/client/Index'; 
 import Composant from '../views/userInterface';
 
@@ -72,6 +73,15 @@ const AppRoutes = () => {
                     <ProtectedRoute allowedRoles={["super"]}>
                         <Layout>
                             <ChefService />
+                        </Layout>
+                    </ProtectedRoute>
+                </PrivateRoute>
+            }/>
+            <Route path="/acteur" element={
+                <PrivateRoute>
+                    <ProtectedRoute allowedRoles={["super"]}>
+                        <Layout>
+                            <Acteur />
                         </Layout>
                     </ProtectedRoute>
                 </PrivateRoute>
