@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
 import RadioGroupField from "../../../components/ui/form/RadioGroupField";
-import useResponsableStore from '../../../store/responsableStore'; // Import du store des responsables
+import useResponsableStore from '../../../store/responsableStore';
+
+// Schéma zod pour la validation
+const responsableSchema = z.object({
+  fokotany_id: z.string().min(1, "Le fokotany est requis"),
+  classe_responsable: z.string().min(1, "La classe est requise"),
+  nom_responsable: z.string().min(1, "Le nom est requis"),
+  prenom_responsable: z.string().optional(),
+  contact_responsable: z.string().optional(),
+  fonction: z.string().min(1, "La fonction est requise"),
+  formation_acquise: z.enum(["true", "false"]),
+});
 
 const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => {
-  const { updateResponsable } = useResponsableStore(); // Utilisation de la méthode updateResponsable du store
+  const { updateResponsable } = useResponsableStore();
   const [fokotanys, setFokotanys] = useState([]);
-  const [communes, setCommunes] = useState([]);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [loadingFokotanys, setLoadingFokotanys] = useState(false);
-  const [loadingCommunes, setLoadingCommunes] = useState(false);
 
   const [localResponsable, setLocalResponsable] = useState({
     fokotany_id: '',
@@ -36,6 +46,9 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
         fonction: responsable.fonction || '',
         formation_acquise: responsable.formation_acquise ? 'true' : 'false',
       });
+      // Reset errors when new responsable is loaded
+      setErrors({});
+      setSubmitError('');
     }
   }, [responsable]);
 
@@ -58,7 +71,7 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
         setFokotanys(data);
       } catch (err) {
         console.error('Erreur lors de la récupération des fokotanys :', err);
-        setError('Impossible de charger les fokotanys.');
+        setErrors((prev) => ({ ...prev, fokotany_id: 'Impossible de charger les fokotanys.' }));
       } finally {
         setLoadingFokotanys(false);
       }
@@ -67,25 +80,34 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
     fetchFokotanys();
   }, []);
 
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      responsableSchema.pick({ [name]: true }).parse({ [name]: value });
+      return "";
+    } catch (err) {
+      return err.errors?.[0]?.message || "";
+    }
+  };
 
-
+  // Gestion du changement de champ
   const handleChange = (event) => {
     const { name, value } = event.target;
     setLocalResponsable((prev) => ({ ...prev, [name]: value }));
+    
+    // Validation en temps réel
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError('');
   };
 
-  const handleSave = async () => {
-    if (
-      !localResponsable.nom_responsable || 
-      !localResponsable.classe_responsable ||
-      !localResponsable.fonction ||
-      !localResponsable.fokotany_id 
-    ) {
-      setSubmitError("Tous les champs sont requis. Veuillez les remplir.");
-      return;
-    }
+  // Validation globale du formulaire
+  const isFormValid = responsableSchema.safeParse(localResponsable).success;
 
+  const handleSave = async () => {
     try {
+      // Validation complète avant sauvegarde
+      responsableSchema.parse(localResponsable);
+
       const payload = {
         ...localResponsable,
         formation_acquise: localResponsable.formation_acquise === 'true',
@@ -97,8 +119,17 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
       if (onSave) onSave('Responsable modifié avec succès !');
       onClose();
     } catch (err) {
-      console.error('Erreur lors de la mise à jour du responsable :', err);
-      setSubmitError(err.message || 'Une erreur est survenue lors de la modification.');
+      if (err.errors) {
+        // Erreurs zod
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        console.error('Erreur lors de la mise à jour du responsable :', err);
+        setSubmitError(err.message || 'Une erreur est survenue lors de la modification.');
+      }
     }
   };
 
@@ -109,16 +140,16 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
       isOpen={isOpen}
       onSave={handleSave}
       onClose={onClose}
-      isFormValid
+      isFormValid={isFormValid}
       maxWidth="435px"
     >
-
       <div className="row">
         <div className="col mb-3 mt-2">
           {loadingFokotanys ? (
             <p>Chargement des fokotanys...</p>
           ) : fokotanys.length > 0 ? (
             <SelectField
+              required
               label="Sélectionnez un fokotany"
               name="fokotany_id"
               value={localResponsable.fokotany_id}
@@ -128,6 +159,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
                 label: fokotany.nomFokotany,
               }))}
               placeholder="Choisissez un fokotany"
+              error={!!errors.fokotany_id}
+              helperText={errors.fokotany_id}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>
@@ -142,6 +175,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             name="classe_responsable"
             value={localResponsable.classe_responsable}
             onChange={handleChange}
+            error={!!errors.classe_responsable}
+            helperText={errors.classe_responsable}
           />
         </div>
       </div>
@@ -153,6 +188,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             name="nom_responsable"
             value={localResponsable.nom_responsable}
             onChange={handleChange}
+            error={!!errors.nom_responsable}
+            helperText={errors.nom_responsable}
           />
         </div>
         <div className="col mb-3">
@@ -162,6 +199,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             name="prenom_responsable"
             value={localResponsable.prenom_responsable}
             onChange={handleChange}
+            error={!!errors.prenom_responsable}
+            helperText={errors.prenom_responsable}
           />
         </div>
       </div> 
@@ -173,6 +212,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             name="fonction"
             value={localResponsable.fonction}
             onChange={handleChange}
+            error={!!errors.fonction}
+            helperText={errors.fonction}
           />
         </div>
       </div>
@@ -184,6 +225,8 @@ const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => 
             name="contact_responsable"
             value={localResponsable.contact_responsable}
             onChange={handleChange}
+            error={!!errors.contact_responsable}
+            helperText={errors.contact_responsable}
           />
         </div>
       </div>

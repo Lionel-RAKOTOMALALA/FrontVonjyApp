@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
 import RadioGroupField from "../../../components/ui/form/RadioGroupField";
-import useResponsableStore from "../../../store/responsableStore"; // Importer le store des responsables
+import useResponsableStore from "../../../store/responsableStore";
 
-const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
+// Schéma zod pour la validation
+const responsableSchema = z.object({
+  fokotany_id: z.string().min(1, "Le fokotany est requis"),
+  classe_responsable: z.string().min(1, "La classe est requise"),
+  nom_responsable: z.string().min(1, "Le nom est requis"),
+  prenom_responsable: z.string().optional(),
+  contact_responsable: z.string().optional(),
+  fonction: z.string().min(1, "La fonction est requise"),
+  formation_acquise: z.enum(["true", "false"]),
+});
+
+const ResponsableCreate = ({ isOpen, onClose, onSave }) => {
   const [responsable, setResponsable] = useState({
     fokotany_id: "",
     classe_responsable: "",
@@ -13,15 +25,15 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
     prenom_responsable: "",
     contact_responsable: "",
     fonction: "",
-    formation_acquise: "true", // Valeur par défaut
+    formation_acquise: "true",
   });
 
   const [fokotanys, setFokotanys] = useState([]);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { createResponsable } = useResponsableStore(); // Utiliser l'action `createResponsable` du store
+  const { createResponsable } = useResponsableStore();
 
   // Charger les fokotanys depuis l'API
   useEffect(() => {
@@ -41,8 +53,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
         const data = await response.json();
         setFokotanys(data);
       } catch (err) {
-        console.error("Erreur lors de la récupération des fokotanys :", err);
-        setError("Impossible de charger les fokotanys.");
+        setErrors((prev) => ({ ...prev, fokotany_id: "Impossible de charger les fokotanys." }));
       } finally {
         setLoading(false);
       }
@@ -51,12 +62,26 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
     fetchFokotanys();
   }, []);
 
-  const isFormValid =
-    responsable.fokotany_id !== "" &&
-    responsable.classe_responsable.trim() !== "" &&
-    responsable.nom_responsable.trim() !== "" && 
-    responsable.fonction.trim() !== "" && 
-    !inputDisabled;
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      responsableSchema.pick({ [name]: true }).parse({ [name]: value });
+      return "";
+    } catch (err) {
+      return err.errors?.[0]?.message || "";
+    }
+  };
+
+  // Gestion du changement de champ
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setResponsable((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError("");
+  };
+
+  // Validation globale du formulaire
+  const isFormValid = responsableSchema.safeParse(responsable).success && !inputDisabled;
 
   const resetForm = () => {
     setResponsable({
@@ -68,41 +93,37 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
       fonction: "",
       formation_acquise: "true",
     });
-    setError("");
+    setErrors({});
     setSubmitError("");
     setInputDisabled(false);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setResponsable((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSave = async () => {
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
+      responsableSchema.parse(responsable);
 
       setSubmitError("");
-
-      // Transformation de formation_acquise en booléen avant l'envoi
       const payload = {
         ...responsable,
         formation_acquise: responsable.formation_acquise === "true",
       };
 
-      // Appel au store pour créer un responsable
       await createResponsable(payload);
-      if (onSuccess) onSuccess("Responsable créé avec succès !");
-
+      if (onSave) onSave("Responsable créé avec succès !");
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement du responsable :", err);
-      setSubmitError(err.message || "Une erreur est survenue lors de la création.");
-      if (onSuccess) onSuccess(err.message || "Erreur lors de la création.", "error");
+      if (err.errors) {
+        // Erreurs zod
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setSubmitError(err.message || "Une erreur est survenue lors de la création.");
+        if (onSave) onSave(err.message || "Erreur lors de la création.", "error");
+      }
     }
   };
 
@@ -121,7 +142,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
       maxWidth="435px"
     >
       <div className="row">
-        <div className="col mb-3 mt-2"> 
+        <div className="col mb-3 mt-2">
           {loading ? (
             <p>Chargement des fokotanys...</p>
           ) : fokotanys.length > 0 ? (
@@ -137,6 +158,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
               }))}
               placeholder="Choisissez un fokotany"
               autocomplete={true}
+              error={!!errors.fokotany_id}
+              helperText={errors.fokotany_id}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>
@@ -151,6 +174,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             name="classe_responsable"
             value={responsable.classe_responsable}
             onChange={handleChange}
+            error={!!errors.classe_responsable}
+            helperText={errors.classe_responsable}
           />
         </div>
       </div>
@@ -162,6 +187,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             name="nom_responsable"
             value={responsable.nom_responsable}
             onChange={handleChange}
+            error={!!errors.nom_responsable}
+            helperText={errors.nom_responsable}
           />
         </div>
         <div className="col mb-3">
@@ -171,9 +198,11 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             name="prenom_responsable"
             value={responsable.prenom_responsable}
             onChange={handleChange}
+            error={!!errors.prenom_responsable}
+            helperText={errors.prenom_responsable}
           />
         </div>
-      </div> 
+      </div>
       <div className="row">
         <div className="col mb-3">
           <InputField
@@ -182,6 +211,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             name="fonction"
             value={responsable.fonction}
             onChange={handleChange}
+            error={!!errors.fonction}
+            helperText={errors.fonction}
           />
         </div>
       </div>
@@ -193,6 +224,8 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
             name="contact_responsable"
             value={responsable.contact_responsable}
             onChange={handleChange}
+            error={!!errors.contact_responsable}
+            helperText={errors.contact_responsable}
           />
         </div>
       </div>
@@ -214,4 +247,4 @@ const ResponsableCreate = ({ isOpen, onClose, onSuccess }) => {
   );
 };
 
-export default ResponsableCreate; 
+export default ResponsableCreate;
