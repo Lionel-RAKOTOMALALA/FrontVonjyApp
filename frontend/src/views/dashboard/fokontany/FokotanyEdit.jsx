@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
 import useFokotanyStore from '../../../store/fokotanyStore';
 
+// Schéma zod pour le fokotany (identique à FokotanyCreate)
+const fokotanySchema = z.object({
+  commune_id: z.string().min(1, "La commune est requise"),
+  nomFokotany: z.string().min(1, "Le nom est requis"),
+});
+
 const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
   const { updateFokotany } = useFokotanyStore();
   const [communes, setCommunes] = useState([]);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
-  const [inputDisabled, setInputDisabled] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
   // Préparation des données du fokotany avec une valeur par défaut pour commune_id
@@ -22,7 +27,6 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
   // Charger les communes depuis l'API
   useEffect(() => {
     const fetchCommunes = async () => {
-      setLoading(true);
       try {
         const token = localStorage.getItem('access_token');
         const response = await fetch('http://localhost:8000/api/communes/', {
@@ -36,8 +40,8 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
         }
         const data = await response.json();
         setCommunes(data);
-        
-        // Après avoir chargé les communes, initialiser commune_id si on a un fokotany
+
+        // Initialiser commune_id si on a un fokotany
         if (!initialized && fokotany && fokotany.commune && fokotany.commune.id) {
           onChange({
             ...fokotany,
@@ -46,79 +50,71 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
           setInitialized(true);
         }
       } catch (err) {
-        console.error('Erreur lors de la récupération des communes :', err);
-        setError('Impossible de charger les communes.');
-      } finally {
-        setLoading(false);
+        setSubmitError('Impossible de charger les communes.');
       }
     };
 
     fetchCommunes();
+    // eslint-disable-next-line
   }, [fokotany, onChange, initialized]);
 
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      fokotanySchema.pick({ [name]: true }).parse({ [name]: value });
+      return '';
+    } catch (err) {
+      return err.errors?.[0]?.message || '';
+    }
+  };
 
-  const isFormValid =
-    validFokotany.nomFokotany?.trim() !== '' &&
-    validFokotany.commune_id && 
-    isValidName(validFokotany.nomFokotany?.trim()) &&
-    !inputDisabled;
+  // Gestion du changement de champ
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    onChange({ ...validFokotany, [name]: value });
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError('');
+  };
+
+  // Validation globale du formulaire
+  const isFormValid = fokotanySchema.safeParse(validFokotany).success;
+
+  // Sauvegarde
+  const handleSave = async () => {
+    try {
+      fokotanySchema.parse(validFokotany);
+      const payload = {
+        id: validFokotany.id,
+        commune_id: validFokotany.commune_id,
+        nomFokotany: validFokotany.nomFokotany
+      };
+      await updateFokotany(validFokotany.id, payload);
+      if (onSave) onSave('Fokotany modifié avec succès !');
+      resetForm();
+      onClose();
+    } catch (err) {
+      if (err.errors) {
+        // Erreurs zod
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setSubmitError(err.message || "Une erreur est survenue lors de la modification.");
+        if (onSave) onSave(err.message || "Erreur lors de la modification.", 'error');
+      }
+    }
+  };
 
   const resetForm = () => {
     onChange({
       commune_id: '',
       nomFokotany: ''
     });
-    setError('');
+    setErrors({});
     setSubmitError('');
-    setInputDisabled(false);
     setInitialized(false);
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    // Valider le champ nomFokotany
-    if (name === 'nomFokotany' && !isValidName(value)) {
-      setError("Caractères non autorisés détectés");
-      setInputDisabled(true);
-      return;
-    }
-
-    setError('');
-    setInputDisabled(false);
-    onChange({ ...validFokotany, [name]: value });
-  };
-
-  const handleSave = async () => {
-    try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
-
-      setSubmitError('');
-
-      // Préparation des données pour l'API
-      const payload = {
-        id: validFokotany.id,
-        commune_id: validFokotany.commune_id,
-        nomFokotany: validFokotany.nomFokotany
-      };
-
-      console.log('Données envoyées pour la mise à jour :', payload);
-
-      // Appel au store pour mettre à jour le fokotany
-      await updateFokotany(validFokotany.id, payload);
-      if (onSave) onSave('Fokotany modifié avec succès !');
-
-      resetForm();
-      onClose();
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour du fokotany :", err);
-      setSubmitError(err.message || "Une erreur est survenue lors de la modification.");
-      if (onSave) onSave(err.message || "Erreur lors de la modification.", 'error');
-    }
   };
 
   // S'assurer que la valeur par défaut est '' si undefined ou non disponible
@@ -142,18 +138,19 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
     >
       <div className="row mt-2">
         <div className="col mb-4">
-            <SelectField
-              label="Commune"
-              name="commune_id"
-              value={safeCommune}
-              onChange={handleChange}
-              options={communes.map((commune) => ({
-                label: commune.nomCommune,
-                value: commune.id.toString(),
-              }))}
-              placeholder="Choisissez une commune"
-            />
-       
+          <SelectField
+            label="Commune"
+            name="commune_id"
+            value={safeCommune}
+            onChange={handleChange}
+            options={communes.map((commune) => ({
+              label: commune.nomCommune,
+              value: commune.id.toString(),
+            }))}
+            error={!!errors.commune_id}
+            helperText={errors.commune_id}
+            placeholder="Choisissez une commune"
+          />
         </div>
       </div>
       <div className="row">
@@ -164,7 +161,8 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
             name="nomFokotany"
             value={validFokotany.nomFokotany || ''}
             onChange={handleChange}
-            error={!!error} 
+            error={!!errors.nomFokotany}
+            helperText={errors.nomFokotany}
           />
         </div>
       </div>

@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField';
-import useFokotanyStore from '../../../store/fokotanyStore'; // Importer le store des fokotanys
+import useFokotanyStore from '../../../store/fokotanyStore';
+
+// Schéma zod pour le fokotany
+const fokotanySchema = z.object({
+  commune_id: z.string().min(1, "La commune est requise"),
+  nomFokotany: z.string().min(1, "Le nom est requis"),
+});
 
 const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
   const [fokotany, setFokotany] = useState({ commune_id: '', nomFokotany: '' });
   const [communes, setCommunes] = useState([]);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
-  const [inputDisabled, setInputDisabled] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { createFokotany } = useFokotanyStore(); // Utiliser l'action `createFokotany` du store
-  const communeOptions = communes.map((commune) => `${commune.id}-${commune.nomCommune}`);
-
+  const { createFokotany } = useFokotanyStore();
 
   // Charger les communes depuis l'API
   useEffect(() => {
     const fetchCommunes = async () => {
-      setLoading(true);
       try {
         const token = localStorage.getItem('access_token');
         const response = await fetch('http://localhost:8000/api/communes/', {
@@ -33,67 +35,58 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
         const data = await response.json();
         setCommunes(data);
       } catch (err) {
-        console.error('Erreur lors de la récupération des communes :', err);
         setError('Impossible de charger les communes.');
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchCommunes();
   }, []);
 
-  const isValidName = (value) => /^[a-zA-ZÀ-ÿ0-9IVXLCDM\s-]*$/i.test(value);
-
-  const isFormValid =
-    fokotany.nomFokotany.trim() !== '' &&
-    fokotany.commune_id !== '' &&
-    isValidName(fokotany.nomFokotany.trim()) &&
-    !inputDisabled;
-
-  const resetForm = () => {
-    setFokotany({ commune_id: '', nomFokotany: '' });
-    setError('');
-    setSubmitError('');
-    setInputDisabled(false);
+  const validateField = (name, value) => {
+    try {
+      fokotanySchema.pick({ [name]: true }).parse({ [name]: value });
+      return '';
+    } catch (err) {
+      return err.errors?.[0]?.message || '';
+    }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
-    // Valider le champ nomFokotany
-    if (name === 'nomFokotany' && !isValidName(value)) {
-      setError("Caractères non autorisés détectés");
-      setInputDisabled(true);
-      return;
-    }
-
-    setError('');
-    setInputDisabled(false);
     setFokotany((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError('');
   };
 
   const handleSave = async () => {
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
-
-      setSubmitError('');
-
-      // Appel au store pour créer un fokotany
+      fokotanySchema.parse(fokotany);
       await createFokotany(fokotany);
       if (onSuccess) onSuccess('Fokotany créé avec succès !');
-
       resetForm();
       onClose();
     } catch (err) {
-      console.error("Erreur lors de l'enregistrement du fokotany :", err);
-      setSubmitError(err.message || "Une erreur est survenue lors de la création.");
-      if (onSuccess) onSuccess(err.message || "Erreur lors de la création.", 'error');
+      if (err.errors) {
+        // Zod errors
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setSubmitError(err.message || "Une erreur est survenue lors de la création.");
+        if (onSuccess) onSuccess(err.message || "Erreur lors de la création.", 'error');
+      }
     }
   };
+
+  const resetForm = () => {
+    setFokotany({ commune_id: '', nomFokotany: '' });
+    setErrors({});
+    setSubmitError('');
+  };
+
+  const isFormValid = fokotanySchema.safeParse(fokotany).success;
 
   return (
     <Modal
@@ -117,9 +110,11 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
             value={fokotany.commune_id}
             onChange={handleChange}
             options={communes.map((commune) => ({
-              label: commune.nomCommune, // ou autre champ pour le nom
-              value: commune.id.toString(), // assure que value est une string
+              label: commune.nomCommune,
+              value: commune.id.toString(),
             }))}
+            error={!!errors.commune_id}
+            helperText={errors.commune_id}
           />
         </div>
       </div>
@@ -131,10 +126,14 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
             name="nomFokotany"
             value={fokotany.nomFokotany}
             onChange={handleChange}
-            error={!!error}
+            error={!!errors.nomFokotany}
+            helperText={errors.nomFokotany}
           />
         </div>
       </div>
+      {submitError && (
+        <div className="alert alert-danger">{submitError}</div>
+      )}
     </Modal>
   );
 };
