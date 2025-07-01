@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
-import useServiceStore from "../../../store/serviceStore"; // Importer le store des services
+import useServiceStore from "../../../store/serviceStore";
+
+// Schéma Zod pour valider le formulaire
+const serviceSchema = z.object({
+  fokotany_id: z.string().min(1, "Fokotany requis"),
+  nomService: z.string().min(1, "Nom requis"),
+  description: z.string().min(1, "Description requise"),
+  offre: z.string().min(1, "Offre requise"),
+  membre: z.string().min(1, "Membre requis"),
+  nombre_membre: z
+    .string()
+    .min(1, "Nombre requis")
+    .refine((val) => !isNaN(Number(val)), "Doit être un nombre"),
+});
+
+const initialService = {
+  fokotany_id: "",
+  nomService: "",
+  description: "",
+  offre: "",
+  membre: "",
+  nombre_membre: "",
+};
 
 const ServiceCreate = ({ isOpen, onClose, onSave }) => {
-  const [service, setService] = useState({
-    fokotany_id: "",
-    nomService: "",
-    description: "",
-    offre: "",
-    membre: "",
-    nombre_membre: "",
-  });
-
+  const [service, setService] = useState(initialService);
   const [fokotanys, setFokotanys] = useState([]);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const { createService } = useServiceStore();
 
@@ -29,66 +44,66 @@ const ServiceCreate = ({ isOpen, onClose, onSave }) => {
             "Content-Type": "application/json",
           },
         });
-        if (!response.ok) {
-          throw new Error("Erreur lors du chargement des fokotanys.");
-        }
+        if (!response.ok) throw new Error();
         const data = await response.json();
         setFokotanys(data);
-      } catch (err) {
-        setError("Impossible de charger les fokotanys.");
+      } catch {
+        setErrors((prev) => ({ ...prev, fokotany_id: "Impossible de charger les fokotanys." }));
       }
     };
-
     fetchFokotanys();
   }, []);
 
-const isFormValid =
-  service.fokotany_id &&
-  service.nomService.trim() &&
-  service.description.trim() &&
-  service.offre.trim() &&
-  service.membre.trim() &&
-  service.nombre_membre !== "" &&
-  !isNaN(service.nombre_membre);
-
-
-
-  const resetForm = () => {
-    setService({
-      fokotany_id: "",
-      nomService: "",
-      description: "",
-      offre: "",
-      membre: "",
-      nombre_membre: "",
-    });
-    setError("");
-    setSubmitError("");
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      serviceSchema.pick({ [name]: true }).parse({ [name]: value });
+      return "";
+    } catch (err) {
+      return err.errors?.[0]?.message || "";
+    }
   };
 
+  // Gestion du changement de champ
   const handleChange = (event) => {
     const { name, value } = event.target;
     setService((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError("");
+  };
+
+  // Validation globale du formulaire
+  const isFormValid = serviceSchema.safeParse(service).success;
+
+  const resetForm = () => {
+    setService(initialService);
+    setErrors({});
+    setSubmitError("");
   };
 
   const handleSave = async () => {
     try {
-      if (!isFormValid) {
-        setSubmitError("Formulaire invalide");
-        return;
-      }
-
+      serviceSchema.parse(service);
+      setSubmitError("");
       const payload = {
         ...service,
         nombre_membre: parseInt(service.nombre_membre, 10),
       };
-
       await createService(payload);
       if (onSave) onSave("Service créé avec succès !");
       resetForm();
       onClose();
     } catch (err) {
-      setSubmitError("Erreur lors de la création du service.");
+      if (err.errors) {
+        // Erreurs zod
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setSubmitError(err.message || "Erreur lors de la création du service.");
+      }
     }
   };
 
@@ -121,6 +136,8 @@ const isFormValid =
               }))}
               placeholder="Choisissez un fokotany"
               autocomplete={true}
+              error={!!errors.fokotany_id}
+              helperText={errors.fokotany_id}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>
@@ -135,6 +152,8 @@ const isFormValid =
             name="nomService"
             value={service.nomService}
             onChange={handleChange}
+            error={!!errors.nomService}
+            helperText={errors.nomService}
           />
         </div>
       </div>
@@ -146,6 +165,8 @@ const isFormValid =
             name="description"
             value={service.description}
             onChange={handleChange}
+            error={!!errors.description}
+            helperText={errors.description}
           />
         </div>
       </div>
@@ -157,6 +178,8 @@ const isFormValid =
             name="offre"
             value={service.offre}
             onChange={handleChange}
+            error={!!errors.offre}
+            helperText={errors.offre}
           />
         </div>
       </div>
@@ -168,6 +191,8 @@ const isFormValid =
             name="membre"
             value={service.membre}
             onChange={handleChange}
+            error={!!errors.membre}
+            helperText={errors.membre}
           />
         </div>
       </div>
@@ -180,6 +205,8 @@ const isFormValid =
             type="number"
             value={service.nombre_membre}
             onChange={handleChange}
+            error={!!errors.nombre_membre}
+            helperText={errors.nombre_membre}
           />
         </div>
       </div>

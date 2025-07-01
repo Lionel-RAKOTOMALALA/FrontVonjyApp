@@ -1,31 +1,46 @@
 import React, { useState, useEffect } from "react";
+import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
 import SelectField from "../../../components/ui/form/SelectField";
 import useServiceStore from "../../../store/serviceStore"; // Import du store des services
 
+// Schéma Zod pour valider le formulaire
+const serviceSchema = z.object({
+  fokotany_id: z.string().min(1, "Fokotany requis"),
+  nomService: z.string().min(1, "Nom requis"),
+  description: z.string().min(1, "Description requise"),
+  offre: z.string().min(1, "Offre requise"),
+  membre: z.string().min(1, "Membre requis"),
+  nombre_membre: z
+    .string()
+    .min(1, "Nombre requis")
+    .refine((val) => !isNaN(Number(val)), "Doit être un nombre"),
+});
+
+const initialService = {
+  fokotany_id: "",
+  nomService: "",
+  description: "",
+  offre: "",
+  membre: "",
+  nombre_membre: "",
+};
+
 const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
   const { updateService } = useServiceStore();
   const [fokotanys, setFokotanys] = useState([]);
-  const [localService, setLocalService] = useState({
-    fokotany_id: "",
-    nomService: "",
-    description: "",
-    offre: "",
-    membre: "",
-    nombre_membre: "",
-  });
+  const [localService, setLocalService] = useState(initialService);
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
 
   const resetForm = () => {
-    onChange({
-      fokotany_id: '',
-      nomService: '',
-      description: "",
-      offre: "",
-      membre: "",
-      nombre_membre: "",
-    });
+    setLocalService(initialService);
+    setErrors({});
+    setSubmitError("");
+    if (onChange) {
+      onChange(initialService);
+    }
   };
 
   useEffect(() => {
@@ -38,6 +53,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
         membre: service.membre || "",
         nombre_membre: service.nombre_membre?.toString() || "",
       });
+      setErrors({});
+      setSubmitError("");
     }
   }, [service]);
 
@@ -57,42 +74,59 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
         const data = await response.json();
         setFokotanys(data);
       } catch (err) {
-        console.error("Erreur lors de la récupération des fokotanys :", err);
+        setErrors((prev) => ({
+          ...prev,
+          fokotany_id: "Impossible de charger les fokotanys.",
+        }));
       }
     };
 
     fetchFokotanys();
   }, []);
 
+  // Validation d'un champ individuel
+  const validateField = (name, value) => {
+    try {
+      serviceSchema.pick({ [name]: true }).parse({ [name]: value });
+      return "";
+    } catch (err) {
+      return err.errors?.[0]?.message || "";
+    }
+  };
+
+  // Gestion du changement de champ
   const handleChange = (event) => {
     const { name, value } = event.target;
     setLocalService((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+    setSubmitError("");
   };
 
-  const handleSave = async () => {
-    if (
-      !localService.nomService ||
-      !localService.description ||
-      !localService.offre ||
-      !localService.membre ||
-      !localService.nombre_membre ||
-      !localService.fokotany_id
-    ) {
-      setSubmitError("Tous les champs sont requis. Veuillez les remplir.");
-      return;
-    }
+  // Validation globale du formulaire
+  const isFormValid = serviceSchema.safeParse(localService).success;
 
+  const handleSave = async () => {
     try {
+      serviceSchema.parse(localService);
+      setSubmitError("");
       const payload = {
         ...localService,
         nombre_membre: parseInt(localService.nombre_membre, 10),
       };
-
       await updateService(service.id, payload);
       if (onSave) onSave("Service modifié avec succès !");
       onClose();
     } catch (err) {
-      setSubmitError("Erreur lors de la mise à jour du service.");
+      if (err.errors) {
+        // Erreurs zod
+        const fieldErrors = {};
+        err.errors.forEach(e => {
+          fieldErrors[e.path[0]] = e.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setSubmitError(err.message || "Erreur lors de la mise à jour du service.");
+      }
     }
   };
 
@@ -103,7 +137,7 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
       isOpen={isOpen}
       onSave={handleSave}
       onClose={onClose}
-      isFormValid
+      isFormValid={isFormValid}
       maxWidth="435px"
       resetForm={resetForm}
     >
@@ -111,15 +145,19 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
         <div className="col mb-3 mt-2">
           {fokotanys.length > 0 ? (
             <SelectField
+              required
               label="Sélectionnez un fokotany"
               name="fokotany_id"
               value={localService.fokotany_id}
               onChange={handleChange}
               options={fokotanys.map((fokotany) => ({
                 value: fokotany.id.toString(),
-                label: fokotany.nomFokotany,
+                label: `${fokotany.nomFokotany} (${fokotany.commune?.nomCommune || "Commune inconnue"})`,
               }))}
               placeholder="Choisissez un fokotany"
+              autocomplete={true}
+              error={!!errors.fokotany_id}
+              helperText={errors.fokotany_id}
             />
           ) : (
             <p className="text-danger">Aucun fokotany disponible.</p>
@@ -134,6 +172,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
             name="nomService"
             value={localService.nomService}
             onChange={handleChange}
+            error={!!errors.nomService}
+            helperText={errors.nomService}
           />
         </div>
       </div>
@@ -145,6 +185,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
             name="description"
             value={localService.description}
             onChange={handleChange}
+            error={!!errors.description}
+            helperText={errors.description}
           />
         </div>
       </div>
@@ -156,6 +198,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
             name="offre"
             value={localService.offre}
             onChange={handleChange}
+            error={!!errors.offre}
+            helperText={errors.offre}
           />
         </div>
       </div>
@@ -167,6 +211,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
             name="membre"
             value={localService.membre}
             onChange={handleChange}
+            error={!!errors.membre}
+            helperText={errors.membre}
           />
         </div>
       </div>
@@ -179,6 +225,8 @@ const ServiceEdit = ({ isOpen, service, onChange, onSave, onClose }) => {
             type="number"
             value={localService.nombre_membre}
             onChange={handleChange}
+            error={!!errors.nombre_membre}
+            helperText={errors.nombre_membre}
           />
         </div>
       </div>
