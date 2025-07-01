@@ -13,6 +13,7 @@ import Fokontany from '../views/dashboard/fokontany/FokontanyViews';
 import Responsable from '../views/dashboard/responsable/ResponsableViews';
 import Service from '../views/dashboard/service/ServiceViews';
 import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
+import Acteur from '../views/dashboard/acteur/ActeurViews';
 import Client from '../views/client/Index'; 
 import Composant from '../views/userInterface';
 
@@ -72,6 +73,15 @@ const AppRoutes = () => {
                     <ProtectedRoute allowedRoles={["super"]}>
                         <Layout>
                             <ChefService />
+                        </Layout>
+                    </ProtectedRoute>
+                </PrivateRoute>
+            }/>
+            <Route path="/acteur" element={
+                <PrivateRoute>
+                    <ProtectedRoute allowedRoles={["super"]}>
+                        <Layout>
+                            <Acteur />
                         </Layout>
                     </ProtectedRoute>
                 </PrivateRoute>

@@ -31,6 +31,12 @@
                 "icon": "bx bxs-user-pin",
                 "available": true,
                 "link": "/chef-service"
+            },
+            {
+                "text": "Acteur",
+                "icon": "bx bxs-user-pin",
+                "available": true,
+                "link": "/acteur"
             }
         ]
     }
