@@ -7,13 +7,13 @@ import useServiceStore from "../../../store/serviceStore";
 
 // Schéma Zod pour valider le formulaire
 const serviceSchema = z.object({
-  fokotany_id: z.string().min(1, "Fokotany requis"),
-  nomService: z.string().min(1, "Nom requis"),
-  description: z.string().min(1, "Description requise"),
-  offre: z.string().min(1, "Offre requise"),
-  membre: z.string().min(1, "Membre requis"),
+  fokotany_id: z.string().trim().min(1, "Fokotany requis"),
+  nomService: z.string().trim().min(1, "Nom requis"),
+  description: z.string().trim().min(1, "Description requise"),
+  offre: z.string().trim().min(1, "Offre requise"),
+  membre: z.string().trim().min(1, "Membre requis"),
   nombre_membre: z
-    .string()
+    .string().trim()
     .min(1, "Nombre requis")
     .refine((val) => !isNaN(Number(val)), "Doit être un nombre"),
 });

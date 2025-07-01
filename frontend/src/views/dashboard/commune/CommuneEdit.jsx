@@ -5,7 +5,7 @@ import InputField from '../../../components/ui/form/InputField';
 import useCommuneStore from '../../../store/communeStore';
 
 const communeSchema = z.object({
-  nomCommune: z.string().min(1, "Le nom est requis"),
+  nomCommune: z.string().trim().min(1, "Le nom est requis"),
 });
 
 const CommuneEdit = ({ isOpen, commune: initialCommune, onClose, onSuccess }) => {

@@ -7,8 +7,8 @@ import useFokotanyStore from '../../../store/fokotanyStore';
 
 // Schéma zod pour le fokotany
 const fokotanySchema = z.object({
-  commune_id: z.string().min(1, "La commune est requise"),
-  nomFokotany: z.string().min(1, "Le nom est requis"),
+  commune_id: z.string().trim().min(1, "La commune est requise"),
+  nomFokotany: z.string().trim().min(1, "Le nom est requis"),
 });
 
 const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
