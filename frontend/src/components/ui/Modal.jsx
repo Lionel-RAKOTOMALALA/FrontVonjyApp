@@ -16,7 +16,7 @@ const Modal = ({
   title,
   btnLabel,
   maxWidth,
-  fullWidth=true,
+  fullWidth = true,
   customActionsContent, // 👈 pour ajouter du contenu
   hideDefaultActions = false, // 👈 pour désactiver les boutons par défaut
 }) => {
@@ -27,21 +27,19 @@ const Modal = ({
   }, [isFormValid]);
 
   const handleSave = () => {
+    onSave(); // Toujours appeler onSave pour afficher l'erreur
     if (localFormValid) {
-      onSave();
       handleClose();
     }
   };
 
   const handleClose = () => {
-    if (resetForm) {
-      resetForm();
-    }
+    document.activeElement?.blur();
     onClose();
   };
 
   return (
-    <Dialog 
+    <Dialog
       open={isOpen}
       onClose={handleClose}
       fullWidth
@@ -51,7 +49,7 @@ const Modal = ({
         '& .MuiDialog-container': {
           '& .MuiPaper-root': {
             borderRadius: '16px',
-            maxWidth: {maxWidth}
+            maxWidth: { maxWidth }
           },
         },
       }}
@@ -86,7 +84,6 @@ const Modal = ({
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={!localFormValid}
               sx={{
                 bgcolor: '#1C252E',
                 textTransform: 'none',

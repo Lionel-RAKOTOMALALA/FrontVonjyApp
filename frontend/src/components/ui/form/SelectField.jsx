@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import { Autocomplete, TextField } from '@mui/material';
 
 const SelectField = ({ 
@@ -11,6 +11,8 @@ const SelectField = ({
   required = true, 
   fullWidth = true, 
   autocomplete = false, // Nouveau prop pour activer l'autocomplete
+  error = false,
+  helperText = '',
   ...props 
 }) => {
   
@@ -79,7 +81,7 @@ const SelectField = ({
   // Si autocomplete est activé, on utilise le composant Autocomplete de MUI
   if (autocomplete) {
     return (
-      <FormControl fullWidth={fullWidth}>
+      <FormControl fullWidth={fullWidth} error={error}>
         <Autocomplete
           value={value ? options.find(option => option.value === value) || null : null}
           onChange={(event, newValue) => {
@@ -98,15 +100,14 @@ const SelectField = ({
               name={name}
               label={label}
               required={required}
+              error={error}
+              helperText={helperText}
               InputLabelProps={{
                 sx: labelStyle
               }}
               sx={inputStyle}
             />
-          )}
-          PaperProps={{
-            sx: menuStyle
-          }}
+          )} 
           sx={{
             '& .MuiOutlinedInput-root': {
               ...inputStyle
@@ -126,7 +127,7 @@ const SelectField = ({
 
   // Sinon on garde le Select d'origine
   return (
-    <FormControl fullWidth={fullWidth}>
+    <FormControl fullWidth={fullWidth} error={error}>
       <InputLabel
         required={required}
         sx={labelStyle}
@@ -144,6 +145,7 @@ const SelectField = ({
             sx: menuStyle
           },
         }}
+        error={error}
         {...props}
       >
         {options.map((option) => (
@@ -152,6 +154,9 @@ const SelectField = ({
           </MenuItem>
         ))}
       </Select>
+      {helperText && (
+        <FormHelperText>{helperText}</FormHelperText>
+      )}
     </FormControl>
   );
 };

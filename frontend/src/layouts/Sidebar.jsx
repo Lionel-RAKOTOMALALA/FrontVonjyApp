@@ -41,20 +41,17 @@ const Sidebar = () => {
 
                 {/* Bouton de Déconnexion */}
                 <li className="menu-item mt-auto">
-                    <button
+                    <div
                         onClick={handleLogout}
                         className="menu-link"
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
+                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label="Déconnexion"
                     >
                         <i className="menu-icon tf-icons bx bx-power-off"></i>
                         <div>Déconnexion</div>
-                    </button>
+                    </div>
                 </li>
             </ul>
         </aside>
@@ -80,9 +77,7 @@ const MenuItem = (item) => {
                 target={item.link.includes('http') ? '_blank' : undefined}
             >
                 <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                <div>{item.text}</div> {item.available === false && (
-                    <div className="badge bg-label-primary fs-tiny rounded-pill ms-auto">Pro</div>
-                )}
+                <div>{item.text}</div> 
             </NavLink>
             {item.submenu && (
                 <ul className="menu-sub">
