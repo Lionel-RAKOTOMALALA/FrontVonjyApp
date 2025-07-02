@@ -32,7 +32,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   const [selected, setSelected] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
   // Référence pour le conteneur externe pour animation
   const containerRef = useRef(null);
 
@@ -46,11 +46,11 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   const handleChangePage = (event, newPage) => {
     // Déclencher l'animation
     setIsTransitioning(true);
-    
+
     // Changer la page avec un léger délai pour permettre à l'animation de commencer
     setTimeout(() => {
       setPage(newPage - 1);
-      
+
       // Fin de la transition après un court délai
       setTimeout(() => {
         setIsTransitioning(false);
@@ -88,11 +88,26 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   };
 
   // Sorting and filtering
+  const getNestedValue = (obj, path) => {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  };
+
   const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) {
+    let aValue = getNestedValue(a, orderBy);
+    let bValue = getNestedValue(b, orderBy);
+
+    // Conversion en string pour la comparaison si nécessaire
+    if (typeof aValue === 'object' && aValue !== null) {
+      aValue = JSON.stringify(aValue);
+    }
+    if (typeof bValue === 'object' && bValue !== null) {
+      bValue = JSON.stringify(bValue);
+    }
+
+    if (bValue < aValue) {
       return -1;
     }
-    if (b[orderBy] > a[orderBy]) {
+    if (bValue > aValue) {
       return 1;
     }
     return 0;
@@ -119,7 +134,7 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
   };
 
   const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  
+
   // Rendu du message "Aucun résultat"
   const renderEmptyState = () => (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
@@ -136,13 +151,13 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
     </Box>
   );
 
- 
+
 
   return (
-    <Box 
-      sx={{ 
-        border: '1px solid rgba(224, 224, 224, .6)', 
-        borderRadius: '16px', 
+    <Box
+      sx={{
+        border: '1px solid rgba(224, 224, 224, .6)',
+        borderRadius: '16px',
         overflow: 'hidden',
         transition: 'height 0.5s ease-in-out'
       }}
