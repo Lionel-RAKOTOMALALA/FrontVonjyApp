@@ -1,8 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { DashboardPage } from "../views/DashboardPage";  
-import Login from '../views/authentication'; 
-import Profile from '../views/account/profile';
-import Security from '../views/account/security';
+import Login from '../views/authentication';
 import Logout from '../views/logout';
 import NotFound from '../views/misc/notfound';
 import Layout from "../layouts/Layout";

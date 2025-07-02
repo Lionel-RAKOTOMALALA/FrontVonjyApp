@@ -1,36 +1,57 @@
 import { create } from 'zustand';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode'; // Bibliothèque pour décoder les tokens JWT
+import jwtDecode from 'jwt-decode';
+
+const getStoredToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('access_token') || null;
+  }
+  return null;
+};
+
+const setStoredToken = (token) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('access_token', token);
+  }
+};
+
+const removeStoredToken = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('access_token');
+  }
+};
 
 const useUserStore = create((set, get) => ({
   user: null,
-  accessToken: localStorage.getItem('access_token') || null,
+  accessToken: getStoredToken(),
   loading: false,
   error: null,
+  // Nouveau flag pour distinguer les types de chargement
+  isAuthLoading: false,
+  isProfileLoading: false,
 
-  // Définir le token d'accès
   setAccessToken: (token) => {
-    localStorage.setItem('access_token', token);
+    setStoredToken(token);
     set({ accessToken: token });
 
-    // Décoder le token pour récupérer l'UID
     try {
       const decodedToken = jwtDecode(token);
-      set({ user: { ...get().user, uid: decodedToken.uid } }); // Ajouter l'UID au user dans le store
+      set({ user: { ...get().user, uid: decodedToken.uid } });
     } catch (error) {
       console.error('Erreur lors du décodage du token :', error);
+      set({ error: 'Token invalide' });
     }
   },
 
-  // Récupérer les informations utilisateur
   fetchUser: async () => {
     const { accessToken } = get();
     if (!accessToken) {
-      set({ error: 'Token non disponible', loading: false });
+      set({ error: 'Token non disponible', isAuthLoading: false });
       return;
     }
 
-    set({ loading: true, error: null });
+    // Utiliser isAuthLoading pour le chargement initial
+    set({ isAuthLoading: true, error: null });
 
     try {
       const response = await axios.get('http://localhost:8000/api/user/info/', {
@@ -38,22 +59,29 @@ const useUserStore = create((set, get) => ({
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      set({ user: response.data, loading: false });
-    } catch (error) {
-      set({
-        error: error.response?.data?.message || 'Erreur de récupération des données utilisateur',
-        loading: false,
+      set({ 
+        user: response.data, 
+        isAuthLoading: false,
+        // Maintenir la compatibilité avec l'ancien loading
+        loading: false 
       });
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erreur de récupération des données utilisateur';
+      set({
+        error: errorMessage,
+        isAuthLoading: false,
+        loading: false
+      });
+      return { success: false, error: errorMessage };
     }
   },
 
-  // Déconnexion de l'utilisateur
   logout: async () => {
     const { accessToken } = get();
 
     try {
       if (accessToken) {
-        // Appel à l'API de déconnexion
         await axios.post('http://localhost:8000/api/auth/logout/', {}, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -63,50 +91,73 @@ const useUserStore = create((set, get) => ({
     } catch (error) {
       console.error('Erreur lors de la déconnexion :', error.response?.data?.message || error.message);
     } finally {
-      // Nettoyage des données locales après la déconnexion
-      localStorage.removeItem('access_token');
-      set({ user: null, accessToken: null });
+      removeStoredToken();
+      set({ 
+        user: null, 
+        accessToken: null, 
+        error: null,
+        isAuthLoading: false,
+        isProfileLoading: false,
+        loading: false
+      });
     }
   },
 
-  // Mettre à jour les informations utilisateur
   updateUser: async (updatedData) => {
     const { accessToken, user } = get();
 
     if (!accessToken) {
       set({ error: 'Token non disponible' });
-      return;
+      return { success: false, error: 'Non authentifié' };
     }
 
     const uid = user?.uid;
     if (!uid) {
       set({ error: 'UID non disponible dans l\'utilisateur' });
-      return;
+      return { success: false, error: 'Utilisateur non identifié' };
     }
 
-    set({ loading: true, error: null });
+    // Utiliser isProfileLoading pour les mises à jour de profil
+    set({ isProfileLoading: true, error: null });
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/auth/update-profile/${uid}/`, // Appel API avec UID inclus dans l'URL
+        `http://localhost:8000/api/auth/update-profile/${uid}/`,
         updatedData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      // Mettre à jour les informations utilisateur dans le store
-      set({ user: { ...user, ...updatedData }, loading: false });
-      return { success: true };
-    } catch (error) {
-      set({
-        error: error.response?.data?.message || 'Erreur lors de la mise à jour des informations utilisateur',
-        loading: false,
+      const updatedUser = { ...user, ...response.data };
+      set({ 
+        user: updatedUser, 
+        isProfileLoading: false,
+        // Ne pas modifier loading pour éviter d'affecter ProtectedRoute
+        loading: false
       });
-      return { success: false, error: error.response?.data };
+      
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de la mise à jour des informations utilisateur';
+      set({
+        error: errorMessage,
+        isProfileLoading: false,
+        loading: false
+      });
+      return { 
+        success: false, 
+        error: errorMessage,
+        details: error.response?.data 
+      };
     }
+  },
+
+  clearError: () => {
+    set({ error: null });
   },
 }));
 

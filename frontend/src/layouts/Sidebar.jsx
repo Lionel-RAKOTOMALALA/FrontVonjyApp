@@ -22,11 +22,11 @@ const Sidebar = () => {
                 </span>
             </div>
 
-            <div className="menu-inner-shadow"></div>
+            {/* <div className="menu-inner-shadow"></div>
             <div className='px-3 mx-3 rounded-3 my-3 d-flex align-items-center' style={{ backgroundColor: '#F1F3F5' }}>
                 <Avatar sx={{ bgcolor: "#C3CDD5", color: '#697988' }}>SU</Avatar>
                 <p className='p-4 text-dark fw-bold m-0'>Super admin</p>
-            </div>
+            </div> */}
             <ul className="menu-inner py-1">
                 {menuData.map((section) => (
                     <React.Fragment key={section.header}>
@@ -40,7 +40,7 @@ const Sidebar = () => {
                 ))}
 
                 {/* Bouton de Déconnexion */}
-                <li className="menu-item mt-auto">
+                {/* <li className="menu-item mt-auto">
                     <div
                         onClick={handleLogout}
                         className="menu-link"
@@ -52,7 +52,7 @@ const Sidebar = () => {
                         <i className="menu-icon tf-icons bx bx-power-off"></i>
                         <div>Déconnexion</div>
                     </div>
-                </li>
+                </li> */}
             </ul>
         </aside>
     );
