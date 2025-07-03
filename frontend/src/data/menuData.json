@@ -3,6 +3,12 @@
         "header": "Gestion",
         "items": [
             {
+                "text": "Utilisateur",
+                "icon": "bx bxs-user",
+                "available": true,
+                "link": "/users"
+            },
+            {
                 "text": "Commune",
                 "icon": "bx bx-sitemap",
                 "available": true,

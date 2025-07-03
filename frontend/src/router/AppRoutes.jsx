@@ -11,6 +11,8 @@ import Fokontany from '../views/dashboard/fokontany/FokontanyViews';
 import Responsable from '../views/dashboard/responsable/ResponsableViews';
 import Service from '../views/dashboard/service/ServiceViews';
 import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
+import User from '../views/dashboard/user/UserViews';
+
 import Client from '../views/client/Index'; 
 import Composant from '../views/userInterface';
 
@@ -27,7 +29,6 @@ const AppRoutes = () => {
                     </Layout>
                 </PrivateRoute>
             }/>
-
             {/* Routes pour les rôles "super" */}
             <Route path="/commune" element={
                 <PrivateRoute>
@@ -79,6 +80,15 @@ const AppRoutes = () => {
                     <ProtectedRoute allowedRoles={["super"]}>
                         <Layout>
                             <Composant />
+                        </Layout>
+                    </ProtectedRoute>
+                </PrivateRoute>
+            }/>
+            <Route path="/users" element={
+                <PrivateRoute>
+                    <ProtectedRoute allowedRoles={["super"]}>
+                        <Layout>
+                            <User />
                         </Layout>
                     </ProtectedRoute>
                 </PrivateRoute>
