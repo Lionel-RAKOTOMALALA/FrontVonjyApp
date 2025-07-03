@@ -36,6 +36,10 @@ const Modal = ({
   const handleClose = () => {
     document.activeElement?.blur();
     onClose();
+    onClose();
+    if (typeof resetForm === 'function') {
+      resetForm();
+    }
   };
 
   return (
