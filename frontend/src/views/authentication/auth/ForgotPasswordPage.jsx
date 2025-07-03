@@ -6,11 +6,17 @@ import { useState } from "react"
 import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
+import { z } from "zod"
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email({ message: "Adresse e-mail invalide" }),
+})
 
 function ForgotPasswordPage({ onNavigate }) {
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: "",
   })
+  const [errors, setErrors] = useState({})
 
   const handleForgotPasswordChange = (e) => {
     const { name, value } = e.target
@@ -18,13 +24,23 @@ function ForgotPasswordPage({ onNavigate }) {
       ...prev,
       [name]: value,
     }))
+    setErrors((prev) => ({ ...prev, [name]: undefined }))
   }
 
   const handleForgotPasswordSubmit = (e) => {
     e.preventDefault()
-    console.log("Forgot password submitted:", forgotPasswordData)
-    // Now use the passed prop to navigate
+    const result = forgotPasswordSchema.safeParse(forgotPasswordData)
+    if (!result.success) {
+      const fieldErrors = {}
+      result.error.errors.forEach((err) => {
+        fieldErrors[err.path[0]] = err.message
+      })
+      setErrors(fieldErrors)
+      return
+    }
+    setErrors({})
     onNavigate("verification")
+    console.log("Forgot password submitted:", forgotPasswordData)
   }
 
   return (
@@ -47,12 +63,13 @@ function ForgotPasswordPage({ onNavigate }) {
           onChange={handleForgotPasswordChange}
           fullWidth
           required
-          type="email"
           InputProps={{
             sx: { bgcolor: "white" },
           }}
           size="small"
           InputLabelProps={{ shrink: true }}
+          error={Boolean(errors.email)}
+          helperText={errors.email}
         />
       </Box>
 
