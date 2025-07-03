@@ -159,7 +159,7 @@ function LoginForm({ onNavigate }) {
             }
             label={<Paragraphe sx={{ fontSize: "0.75rem" }}>Se souvenir de moi</Paragraphe>}
           />
-          {/* <Paragraphe
+          <Paragraphe
             component="a"
             href="#"
             onClick={(e) => {
@@ -176,7 +176,7 @@ function LoginForm({ onNavigate }) {
             }}
           >
             Mot de passe oublié?
-          </Paragraphe> */}
+          </Paragraphe>
         </Box>
         <CustomButton type="submit" fullWidth color="warning" size="medium" loading={isLoading} disabled={isLoading}>
           {isLoading ? "Connexion en cours..." : "Se Connecter"}
