@@ -28,6 +28,11 @@ const colorPalette = {
     hover: "#B71C1C",
     contrastText: "#ffffff",
   },
+  black: {
+    main: "rgba(28,37,46,1)",
+    hover: "rgba(28,37,46,0.90)",
+    contrastText: "#ffffff",
+  },
 };
 const sizeStyleMap = {
   small: {
