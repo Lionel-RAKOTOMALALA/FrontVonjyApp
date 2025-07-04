@@ -9,6 +9,12 @@
                 "link": "/users"
             },
             {
+                "text": "Annuaire",
+                "icon": "bx bx-book-alt",
+                "available": true,
+                "link": "/annuaire"
+            },
+            {
                 "text": "Commune",
                 "icon": "bx bx-sitemap",
                 "available": true,
