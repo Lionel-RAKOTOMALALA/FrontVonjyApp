@@ -12,6 +12,7 @@ import Responsable from '../views/dashboard/responsable/ResponsableViews';
 import Service from '../views/dashboard/service/ServiceViews';
 import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
 import User from '../views/dashboard/user/UserViews';
+import Annuaire from '../views/dashboard/annuaire/AnnuaireViews';
 
 import Client from '../views/client/Index'; 
 import Composant from '../views/userInterface';
@@ -89,6 +90,15 @@ const AppRoutes = () => {
                     <ProtectedRoute allowedRoles={["super"]}>
                         <Layout>
                             <User />
+                        </Layout>
+                    </ProtectedRoute>
+                </PrivateRoute>
+            }/>
+            <Route path="/annuaire" element={
+                <PrivateRoute>
+                    <ProtectedRoute allowedRoles={["super"]}>
+                        <Layout>
+                            <Annuaire />
                         </Layout>
                     </ProtectedRoute>
                 </PrivateRoute>
