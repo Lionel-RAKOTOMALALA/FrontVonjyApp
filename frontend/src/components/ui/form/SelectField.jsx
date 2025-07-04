@@ -8,6 +8,8 @@ const SelectField = ({
   value, 
   onChange, 
   options, 
+  error,
+  helperText,
   required = true, 
   fullWidth = true, 
   autocomplete = false, // Nouveau prop pour activer l'autocomplete
@@ -81,6 +83,7 @@ const SelectField = ({
     return (
       <FormControl fullWidth={fullWidth}>
         <Autocomplete
+        
           value={value ? options.find(option => option.value === value) || null : null}
           onChange={(event, newValue) => {
             onChange({

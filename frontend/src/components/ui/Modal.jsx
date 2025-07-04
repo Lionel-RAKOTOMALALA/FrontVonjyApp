@@ -86,7 +86,7 @@ const Modal = ({
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={!localFormValid}
+              
               sx={{
                 bgcolor: '#1C252E',
                 textTransform: 'none',
