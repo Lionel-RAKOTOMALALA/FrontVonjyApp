@@ -22,18 +22,23 @@ const MapMainContent = ({
 }) => {
   return (
     <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
-      <div
+      <Box
         className="z-2 mx-auto"
-        style={{
-          position: "sticky",
+        sx={{
+          position: {
+            xs: "static",
+            md: "sticky",
+          },
           top: 0,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "1rem",
-          // maxWidth:'350px'
+          gap: 2,
+          margin: "0 auto",
+          width: "fit-content",
         }}
       >
+
         <AnimatePresence mode="wait">
           {selectedCommune ? (
             <>
@@ -71,7 +76,7 @@ const MapMainContent = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </Box>
 
       <Box className="row mt-2 flex-wrap-reverse justify-content-center">
         <Box className="col-12 col-md-8">
