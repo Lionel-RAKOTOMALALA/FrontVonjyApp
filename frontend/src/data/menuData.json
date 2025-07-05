@@ -46,7 +46,7 @@
             },
             {
                 "text": "Acteur",
-                "icon": "bx bxs-user-pin",
+                "icon": "bx bx-user-pin",
                 "available": true,
                 "link": "/acteur"
             }

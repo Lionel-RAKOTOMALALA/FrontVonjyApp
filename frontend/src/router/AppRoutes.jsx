@@ -34,7 +34,7 @@ const AppRoutes = () => {
             {/* Routes pour les rôles "super" */}
             <Route path="/commune" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Commune />
                         </Layout>
@@ -43,7 +43,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/fokontany" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Fokontany />
                         </Layout>
@@ -52,7 +52,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/responsable" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Responsable />
                         </Layout>
@@ -61,7 +61,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/service" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Service />
                         </Layout>
@@ -70,7 +70,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/chef-service" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <ChefService />
                         </Layout>
@@ -79,7 +79,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/acteur" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Acteur />
                         </Layout>
@@ -88,7 +88,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/composant" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Composant />
                         </Layout>
@@ -106,7 +106,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/annuaire" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Annuaire />
                         </Layout>
@@ -117,7 +117,7 @@ const AppRoutes = () => {
             {/* Route pour les rôles "simple" */}
             <Route path="/map" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["simple"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Client />
                     </ProtectedRoute>
                 </PrivateRoute>

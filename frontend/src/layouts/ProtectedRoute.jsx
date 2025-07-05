@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   // Si l'utilisateur n'a pas le rôle approprié, redirige en conséquence
   if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to={user?.role === "simple" ? "/map" : "/commune"} />;
+    return <Navigate to={user?.role === "simple" ? "/map" : "/users"} />;
   }
 
   return children;
