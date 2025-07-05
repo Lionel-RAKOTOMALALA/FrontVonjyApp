@@ -117,16 +117,6 @@ export default function UploadAvatar({ error, file, helperText, sx, user, ...oth
     validator: validateFile, // Validation personnalisée
     // S'assurer que other n'écrase pas nos paramètres critiques
     ...other,
-    // Réappliquer les paramètres critiques après other
-    multiple: false,
-    accept: {
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/png': ['.png'],
-      'image/gif': ['.gif'],
-      'image/webp': ['.webp'],
-      'image/bmp': ['.bmp'],
-      'image/svg+xml': ['.svg'],
-    },
   });
 
   const userInitial = useMemo(

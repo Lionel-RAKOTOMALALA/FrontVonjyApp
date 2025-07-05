@@ -8,13 +8,11 @@ const SelectField = ({
   value, 
   onChange, 
   options, 
-  error,
-  helperText,
+  error = false,
+  helperText = '',
   required = true, 
   fullWidth = true, 
   autocomplete = false, // Nouveau prop pour activer l'autocomplete
-  error = false,
-  helperText = '',
   ...props 
 }) => {
   

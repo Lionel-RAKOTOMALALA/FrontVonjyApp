@@ -6,8 +6,9 @@ import { useState } from "react"
 import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
+import usePasswordResetStore from '../../../store/passwordResetStore'
 
-function ResetPasswordPage({ onNavigate }) {
+function ResetPasswordPage({ onNavigate, otp }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -15,6 +16,9 @@ function ResetPasswordPage({ onNavigate }) {
     newPassword: "",
     confirmPassword: "",
   })
+
+  // Utiliser le store pour la réinitialisation de mot de passe
+  const { resetPassword, loading, resetStore } = usePasswordResetStore()
 
   const handleResetPasswordChange = (e) => {
     const { name, value } = e.target
@@ -24,15 +28,24 @@ function ResetPasswordPage({ onNavigate }) {
     }))
   }
 
-  const handleResetPasswordSubmit = (e) => {
+  const handleResetPasswordSubmit = async (e) => {
     e.preventDefault()
-    console.log("Reset password submitted:", resetPasswordData)
-    // Réinitialiser le mot de passe et revenir à la page de connexion
-    if (resetPasswordData.newPassword === resetPasswordData.confirmPassword) {
+    if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
+      alert("Les mots de passe ne correspondent pas.")
+      return
+    }
+
+    try {
+      // Réinitialiser l'état du store
+      resetStore()
+      
+      // Appeler l'API de réinitialisation de mot de passe
+      await resetPassword(email, otp, resetPasswordData.newPassword)
+      
       alert("Mot de passe réinitialisé avec succès!")
       onNavigate("login")
-    } else {
-      alert("Les mots de passe ne correspondent pas.")
+    } catch (error) {
+      alert(error.message || "Erreur lors de la réinitialisation du mot de passe.")
     }
   }
 
@@ -68,6 +81,7 @@ function ResetPasswordPage({ onNavigate }) {
           required
           size="small"
           type={showPassword ? "text" : "password"}
+          disabled={loading}
           InputProps={{
             sx: { bgcolor: "white" },
             endAdornment: (
@@ -92,6 +106,7 @@ function ResetPasswordPage({ onNavigate }) {
           fullWidth
           required
           type={showConfirmPassword ? "text" : "password"}
+          disabled={loading}
           InputProps={{
             sx: { bgcolor: "white" },
             endAdornment: (
@@ -105,8 +120,14 @@ function ResetPasswordPage({ onNavigate }) {
         />
       </Box>
 
-      <CustomButton size="medium" type="submit" fullWidth color="warning">
-        Réinitialiser mon mot de passe
+      <CustomButton 
+        size="medium" 
+        type="submit" 
+        fullWidth 
+        color="warning"
+        disabled={loading}
+      >
+        {loading ? "Réinitialisation..." : "Réinitialiser mon mot de passe"}
       </CustomButton>
     </Box>
   )

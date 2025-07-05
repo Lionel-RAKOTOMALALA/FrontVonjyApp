@@ -1,103 +1,98 @@
 import { create } from 'zustand'
+import axios from 'axios'
 
-const usePasswordResetStore = create((set, get) => ({
-  // État
+const usePasswordResetStore = create((set) => ({
+  // États
   loading: false,
   error: null,
-  success: false,
+  success: null,
+  email: '',
 
-  // Actions
-  resetPassword: async (newPassword, confirmPassword, otpCode) => {
-    set({ loading: true, error: null, success: false })
-    
+  // Actions d'état
+  setEmail: (email) => set({ email }),
+  clearError: () => set({ error: null }),
+  clearSuccess: () => set({ success: null }),
+
+  // 1. Demander la réinitialisation (envoi du code)
+  requestReset: async (email) => {
+    set({ loading: true, error: null, success: null })
     try {
-      const token = localStorage.getItem('token')
-      
-      const response = await fetch('http://localhost:8000/api/reset-password/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
-        },
-        body: JSON.stringify({
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-          otp_code: otpCode
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors de la réinitialisation du mot de passe')
-      }
-
-      set({ 
-        loading: false, 
-        success: true, 
-        error: null 
-      })
-
-      return { success: true, data }
+      const response = await axios.post('http://127.0.0.1:8000/api/request-reset/', { email })
+      set({ loading: false, success: response.data.message, email })
+      return { success: true, message: response.data.message }
     } catch (error) {
-      set({ 
-        loading: false, 
-        error: error.message, 
-        success: false 
-      })
-      throw error
+      const errorMessage = error.response?.data?.message || 'Erreur lors de l\'envoi du code'
+      set({ loading: false, error: errorMessage })
+      return { success: false, error: errorMessage }
     }
   },
 
+  // 2. Vérifier le code et définir le nouveau mot de passe
+  verifyCode: async (email, code, newPassword) => {
+    set({ loading: true, error: null, success: null })
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/verify-code/', {
+        email,
+        code,
+        new_password: newPassword
+      })
+      set({ loading: false, success: response.data.message })
+      return { success: true, message: response.data.message }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de la vérification du code'
+      set({ loading: false, error: errorMessage })
+      return { success: false, error: errorMessage }
+    }
+  },
+
+  // 3. Réinitialiser le mot de passe avec OTP
+  resetPassword: async (email, code, newPassword) => {
+    set({ loading: true, error: null, success: null })
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/reset-password/', {
+        email: email,
+        code: code,
+        new_password: newPassword
+      })
+      set({ loading: false, success: response.data.message, error: null })
+      return { success: true, data: response.data }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Erreur lors de la réinitialisation du mot de passe'
+      set({ loading: false, error: errorMessage, success: false })
+      throw new Error(errorMessage)
+    }
+  },
+
+  // 4. Changer le mot de passe (utilisateur connecté)
   changePassword: async (currentPassword, newPassword, confirmPassword) => {
-    set({ loading: true, error: null, success: false })
-    
+    set({ loading: true, error: null, success: null })
     try {
       const token = localStorage.getItem('token')
-      
-      if (!token) {
-        throw new Error('Token d\'authentification manquant')
-      }
-
-      const response = await fetch('http://localhost:8000/api/change-password/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_password: newPassword,
-          confirm_password: confirmPassword
-        })
+      if (!token) throw new Error('Token d\'authentification manquant')
+      const response = await axios.post('http://127.0.0.1:8000/api/change-password/', {
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors du changement de mot de passe')
-      }
-
-      set({ 
-        loading: false, 
-        success: true, 
-        error: null 
-      })
-
-      return { success: true, data }
+      set({ loading: false, success: response.data.message, error: null })
+      return { success: true, data: response.data }
     } catch (error) {
-      set({ 
-        loading: false, 
-        error: error.message, 
-        success: false 
-      })
-      throw error
+      const errorMessage = error.response?.data?.message || 'Erreur lors du changement de mot de passe'
+      set({ loading: false, error: errorMessage, success: false })
+      throw new Error(errorMessage)
     }
   },
 
-  // Reset state
-  resetState: () => {
-    set({ loading: false, error: null, success: false })
+  // Réinitialiser tout le store
+  resetStore: () => {
+    set({
+      loading: false,
+      error: null,
+      success: null,
+      email: ''
+    })
   }
 }))
 
