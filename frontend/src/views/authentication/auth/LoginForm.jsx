@@ -59,16 +59,19 @@ function LoginForm({ onNavigate }) {
       if (!err.response) {
         // Erreur réseau ou CORS
         setError("Erreur de connexion. Veuillez vérifier votre réseau ou réessayer plus tard.")
-      } else if (err.response.status === 401) {
-        // Authentification incorrecte
-        setError("Email ou mot de passe incorrect.")
+      } else if (err.response.status === 400 || err.response.status === 401) {
+        // Authentification incorrecte (400 ou 401)
+        const errorMessage = "Email ou mot de passe incorrect."
+        setError(errorMessage)
       } else {
         // Autre erreur côté serveur
-        setError(err.response.data?.message || "Une erreur est survenue.")
+        setError("Une erreur est survenue.")
       }
       console.error("Login error:", err)
+    } finally {
+      // Réinitialisation de l'état de chargement dans tous les cas
+      setIsLoading(false)
     }
-    
   }
 
   return (
