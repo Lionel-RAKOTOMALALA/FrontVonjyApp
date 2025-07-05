@@ -52,7 +52,7 @@ function LoginForm({ onNavigate }) {
       if (user?.role === "simple") {
         navigate("/map")
       } else if (user?.role === "super") {
-        navigate("/commune")
+        navigate("/users")
       }
       
     } catch (err) {
