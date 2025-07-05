@@ -184,10 +184,11 @@ function VerificationPage({ onNavigate }) {
         type="submit"
         fullWidth
         color="warning"
-
+        disabled={otp.length !== 6 || isSubmitting || loading} // ← Ajout ici
       >
         {isSubmitting || loading ? "Vérification..." : "Vérifier le code"}
       </CustomButton>
+
     </Box>
   )
 }
