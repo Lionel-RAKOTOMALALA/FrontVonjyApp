@@ -14,6 +14,7 @@ import ChefService from '../views/dashboard/chef-service/ChefServiceViews';
 import User from '../views/dashboard/user/UserViews';
 import Annuaire from '../views/dashboard/annuaire/AnnuaireViews';
 
+import Acteur from '../views/dashboard/acteur/ActeurViews';
 import Client from '../views/client/Index'; 
 import Composant from '../views/userInterface';
 
@@ -33,7 +34,7 @@ const AppRoutes = () => {
             {/* Routes pour les rôles "super" */}
             <Route path="/commune" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Commune />
                         </Layout>
@@ -42,7 +43,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/fokontany" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Fokontany />
                         </Layout>
@@ -51,7 +52,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/responsable" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Responsable />
                         </Layout>
@@ -60,7 +61,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/service" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Service />
                         </Layout>
@@ -69,16 +70,25 @@ const AppRoutes = () => {
             }/>
             <Route path="/chef-service" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <ChefService />
                         </Layout>
                     </ProtectedRoute>
                 </PrivateRoute>
             }/>
+            <Route path="/acteur" element={
+                <PrivateRoute>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
+                        <Layout>
+                            <Acteur />
+                        </Layout>
+                    </ProtectedRoute>
+                </PrivateRoute>
+            }/>
             <Route path="/composant" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Composant />
                         </Layout>
@@ -96,7 +106,7 @@ const AppRoutes = () => {
             }/>
             <Route path="/annuaire" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["super"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Layout>
                             <Annuaire />
                         </Layout>
@@ -107,7 +117,7 @@ const AppRoutes = () => {
             {/* Route pour les rôles "simple" */}
             <Route path="/map" element={
                 <PrivateRoute>
-                    <ProtectedRoute allowedRoles={["simple"]}>
+                    <ProtectedRoute allowedRoles={["super","simple"]}>
                         <Client />
                     </ProtectedRoute>
                 </PrivateRoute>
