@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, IconButton, InputAdornment } from "@mui/material"
+import { Box, IconButton, InputAdornment, Alert } from "@mui/material"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import InputField from "../../../components/ui/form/InputField"
@@ -9,8 +9,9 @@ import usePasswordResetStore from '../../../store/passwordResetStore'
 import axios from 'axios'
 
 function ResetPasswordPage({ onNavigate, otp }) {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPasswords, setShowPasswords] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
   const [resetPasswordData, setResetPasswordData] = useState({
     newPassword: "",
@@ -20,18 +21,53 @@ function ResetPasswordPage({ onNavigate, otp }) {
   // Récupérer email depuis le store Zustand
   const { email } = usePasswordResetStore()
 
+  // Fonction de validation du mot de passe
+  const validatePassword = (password) => {
+    const minLength = password.length >= 6
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    const hasLetter = /[a-zA-Z]/.test(password)
+    
+    return {
+      isValid: minLength && hasSpecialChar && hasLetter,
+      minLength,
+      hasSpecialChar,
+      hasLetter
+    }
+  }
+
   const handleResetPasswordChange = (e) => {
     const { name, value } = e.target
     setResetPasswordData((prev) => ({
       ...prev,
       [name]: value,
     }))
+    
+    // Effacer les messages d'erreur/succès quand l'utilisateur tape
+    if (error) setError("")
+    if (success) setSuccess("")
   }
 
   const handleResetPasswordSubmit = async (e) => {
     e.preventDefault()
+    
+    // Réinitialiser les messages
+    setError("")
+    setSuccess("")
+
+    // Validation du mot de passe
+    const passwordValidation = validatePassword(resetPasswordData.newPassword)
+    if (!passwordValidation.isValid) {
+      let errorMessage = "Le mot de passe doit contenir :"
+      if (!passwordValidation.minLength) errorMessage += "\n• Au moins 6 caractères"
+      if (!passwordValidation.hasLetter) errorMessage += "\n• Au moins une lettre"
+      if (!passwordValidation.hasSpecialChar) errorMessage += "\n• Au moins un caractère spécial"
+      
+      setError(errorMessage)
+      return
+    }
+
     if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
-      alert("Les mots de passe ne correspondent pas.")
+      setError("Les mots de passe ne correspondent pas.")
       return
     }
 
@@ -41,10 +77,16 @@ function ResetPasswordPage({ onNavigate, otp }) {
         code: otp,
         new_password: resetPasswordData.newPassword
       })
-      alert(response.data.message || "Mot de passe réinitialisé avec succès!")
-      onNavigate("login")
+      
+      setSuccess(response.data.message || "Mot de passe réinitialisé avec succès!")
+      
+      // Rediriger après un délai pour permettre à l'utilisateur de voir le message
+      setTimeout(() => {
+        onNavigate("login")
+      }, 2000)
+      
     } catch (error) {
-      alert(error.response?.data?.message || "Erreur lors de la réinitialisation du mot de passe.")
+      setError(error.response?.data?.message || "Une erreur s'est produite, veuillez réessayer.")
     }
   }
 
@@ -69,6 +111,18 @@ function ResetPasswordPage({ onNavigate, otp }) {
         Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
       </p>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+          {error}
+        </Alert>
+      )}
+
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
+
       <Box sx={{ mb: 3 }}>
         <InputField
           InputLabelProps={{ shrink: true }}
@@ -79,14 +133,13 @@ function ResetPasswordPage({ onNavigate, otp }) {
           fullWidth
           required
           size="small"
-          type={showPassword ? "text" : "password"}
-          disabled={loading}
+          type={showPasswords ? "text" : "password"}
           InputProps={{
             sx: { bgcolor: "white" },
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                <IconButton onClick={() => setShowPasswords(!showPasswords)} edge="end" size="small">
+                  {showPasswords ? <EyeOff size={18} /> : <Eye size={18} />}
                 </IconButton>
               </InputAdornment>
             ),
@@ -104,17 +157,9 @@ function ResetPasswordPage({ onNavigate, otp }) {
           onChange={handleResetPasswordChange}
           fullWidth
           required
-          type={showConfirmPassword ? "text" : "password"}
-          disabled={loading}
+          type={showPasswords ? "text" : "password"}
           InputProps={{
             sx: { bgcolor: "white" },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end" size="small">
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </IconButton>
-              </InputAdornment>
-            ),
           }}
         />
       </Box>

@@ -55,6 +55,7 @@ function VerificationPage({ onNavigate }) {
 
       if (response.success) {
         // Si la vérification réussit, naviguer vers la page de succès ou login
+      await new Promise((resolve) => setTimeout(resolve, 2000));
         onNavigate("resetPassword", { otp })
       }
     } catch (error) {
@@ -117,7 +118,7 @@ function VerificationPage({ onNavigate }) {
       {/* Affichage des messages d'erreur/succès */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          Code incorrect ou expiré. Veuillez réessayer.
         </Alert>
       )}
 
