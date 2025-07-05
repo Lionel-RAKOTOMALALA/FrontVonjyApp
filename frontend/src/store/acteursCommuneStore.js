@@ -11,7 +11,7 @@ const useActeursCommuneStore = create((set, get) => ({
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
-      const response = await axios.get(`http://localhost:8000/api/acteurs_commune/${idCommune}/`, {
+      const response = await axios.get(`http://localhost:8000/api/acteurs-commune/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },

@@ -1,4 +1,4 @@
-// CollapsibleTable.jsx - composant modifié pour prendre en charge plusieurs niveaux de collapse
+// CollapsibleTable.jsx - composant modifié pour prendre en charge plusieurs niveaux de collapse et les actions
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
@@ -14,12 +14,25 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import PaginationComponent from '../ui-table/PaginationComponent';
 
 function Row(props) {
-  const { row, columns, detailTables, arrowPosition, isOpen, onToggle, isHighlighted } = props;
+  const { 
+    row, 
+    columns, 
+    detailTables, 
+    arrowPosition, 
+    isOpen, 
+    onToggle, 
+    isHighlighted,
+    showActionsColumn,
+    showDeleteIcon,
+    onEdit,
+    onDelete
+  } = props;
+  
   const [open, setOpen] = useState(isOpen);
-
   const hasDetails = detailTables && detailTables.length > 0;
 
   // Mettre à jour l'état "open" lorsqu'il y a un changement dans "isOpen"
@@ -36,14 +49,14 @@ function Row(props) {
   };
 
   // Styles pour la mise en évidence
-  const highlightStyle = isHighlighted ? { backgroundColor: '#f0f7ff' } : {}; // Couleur douce bleutée
+  const highlightStyle = isHighlighted ? { backgroundColor: '#f0f7ff' } : {};
 
   return (
     <React.Fragment>
       <TableRow sx={{ 
         '& > *': { borderBottom: 'none !important' },
         ...highlightStyle,
-        transition: 'background-color 0.3s ease', // Transition douce pour le changement de couleur
+        transition: 'background-color 0.3s ease',
       }}>
         {arrowPosition === 'left' && (
           <TableCell sx={{ width: '30px' }}>
@@ -74,9 +87,24 @@ function Row(props) {
             </IconButton>
           </TableCell>
         )}
+        {showActionsColumn && (
+          <TableCell align="right" sx={{ width: '120px' }}>
+            <IconButton onClick={() => onEdit && onEdit(row)} size="small">
+              <EditIcon />
+            </IconButton>
+            {showDeleteIcon && (
+              <IconButton onClick={() => onDelete && onDelete(row)} size="small">
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </TableCell>
+        )}
       </TableRow>
       <TableRow sx={{ '& > *': { borderBottom: '1px dashed #e0e0e0 !important' } }}>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 1}>
+        <TableCell 
+          style={{ paddingBottom: 0, paddingTop: 0 }} 
+          colSpan={columns.length + (arrowPosition ? 1 : 0) + (showActionsColumn ? 1 : 0)}
+        >
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ my: 2, px: 2 }}>
               {detailTables && detailTables.map((detailTable, index) => (
@@ -158,6 +186,10 @@ Row.propTypes = {
   isOpen: PropTypes.bool,
   onToggle: PropTypes.func,
   isHighlighted: PropTypes.bool,
+  showActionsColumn: PropTypes.bool,
+  showDeleteIcon: PropTypes.bool,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
 };
 
 export default function CollapsibleTable({ 
@@ -166,9 +198,13 @@ export default function CollapsibleTable({
   detailTables, 
   arrowPosition = 'left', 
   expandedRows = {},
-  accordion = false, // Paramètre pour le comportement accordion
-  highlightSelected = true, // Nouveau paramètre pour la mise en évidence
-  highlightColor = '#f0f7ff', // Couleur de mise en évidence par défaut
+  accordion = false,
+  highlightSelected = true,
+  highlightColor = '#f0f7ff',
+  showActionsColumn = true, // Nouveau paramètre pour afficher la colonne d'actions
+  showDeleteIcon = true,    // Nouveau paramètre pour afficher l'icône de suppression
+  onEdit,                   // Callback pour l'édition
+  onDelete,                 // Callback pour la suppression
 }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
@@ -296,6 +332,18 @@ export default function CollapsibleTable({
                 </TableCell>
               ))}
               {arrowPosition === 'right' && <TableCell />}
+              {showActionsColumn && (
+                <TableCell 
+                  align="right" 
+                  sx={{
+                    backgroundColor: '#F4F6F8',
+                    color: '#637381',
+                    fontWeight: 'lighter',
+                  }}
+                >
+                  Actions
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
 
@@ -310,6 +358,10 @@ export default function CollapsibleTable({
                 isOpen={isRowOpen(row.id)}
                 onToggle={handleRowToggle}
                 isHighlighted={isRowHighlighted(row.id)}
+                showActionsColumn={showActionsColumn}
+                showDeleteIcon={showDeleteIcon}
+                onEdit={onEdit}
+                onDelete={onDelete}
               />
             ))}
           </TableBody>
@@ -354,4 +406,8 @@ CollapsibleTable.propTypes = {
   accordion: PropTypes.bool,
   highlightSelected: PropTypes.bool,
   highlightColor: PropTypes.string,
+  showActionsColumn: PropTypes.bool,
+  showDeleteIcon: PropTypes.bool,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
 };

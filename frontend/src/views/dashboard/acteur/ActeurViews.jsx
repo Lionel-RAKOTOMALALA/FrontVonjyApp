@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Alert } from '@mui/material';
 import StatusTabs from '../../../components/ui-table/StatusTabs'; 
 import TableView, { highlightText } from '../../../components/ui-table/TableView';
+import CollapsibleTable from '../../../components/ui-table/CollapsibleTable';
 import FilterBar from '../../../components/ui-table/FilterBar';
 import ActeurEdit from './ActeurEdit';  
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
@@ -20,9 +21,7 @@ function ActeursView() {
     updateActeur,
     deleteActeur
   } = useActeursCommuneStore();
-
-  const [tabIndex, setTabIndex] = useState(0);   
-  const [selectedFilter, setSelectedFilter] = useState('');
+   
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const [selectedActeur, setSelectedActeur] = useState(null);
@@ -33,12 +32,64 @@ function ActeursView() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [expandedRows, setExpandedRows] = useState({});
+
+  // Fonction pour vérifier si le terme de recherche est dans les détails
+  const shouldExpandRow = (row, searchQuery) => {
+    if (!searchQuery) return false;
+    
+    const searchLower = searchQuery.toLowerCase();
+    
+    // Vérifier dans interventions_actuelles
+    if (row.interventions_actuelles) {
+      const interventions = Array.isArray(row.interventions_actuelles) 
+        ? row.interventions_actuelles 
+        : [row.interventions_actuelles];
+      
+      for (const intervention of interventions) {
+        if (intervention && intervention.toString().toLowerCase().includes(searchLower)) {
+          return true;
+        }
+      }
+    }
+    
+    // Vérifier dans domaines_intervention_possibles
+    if (row.domaines_intervention_possibles) {
+      const domaines = Array.isArray(row.domaines_intervention_possibles) 
+        ? row.domaines_intervention_possibles 
+        : [row.domaines_intervention_possibles];
+      
+      for (const domaine of domaines) {
+        if (domaine && domaine.toString().toLowerCase().includes(searchLower)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  };
+
+  // Effet pour étendre automatiquement les lignes lors de la recherche
+  useEffect(() => {
+    if (searchQuery && filteredData.length > 0) {
+      const newExpandedRows = {};
+      
+      filteredData.forEach(row => {
+        if (shouldExpandRow(row, searchQuery)) {
+          newExpandedRows[row.id] = true;
+        }
+      });
+      
+      setExpandedRows(newExpandedRows);
+    } else {
+      // Réinitialiser quand il n'y a pas de recherche
+      setExpandedRows({});
+    }
+  }, [searchQuery, filteredData]);
 
   // Fetch data from backend
   useEffect(() => {
-    // Note: vous devrez adapter idCommune selon votre logique
-    const idCommune = 1; // ou récupérer depuis les props/context/params
-    fetchActeurs(idCommune);
+    fetchActeurs();
   }, [fetchActeurs]);
 
   // Gérer les erreurs
@@ -49,58 +100,89 @@ function ActeursView() {
       setSnackbarSeverity('error');
     }
   }, [error]);
-
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue); 
-  };
-
-  const statuses = {
-    Actif: { label: "Actif", color: "success" },
-    Inactif: { label: "Inactif", color: "error" }, 
-  };
-
-  const filterOptions = [
-    { value: 'Maire', label: 'Maire' },
-    { value: 'Adjoint', label: 'Adjoint au Maire' },
-    { value: 'Conseiller', label: 'Conseiller Municipal' },
-    { value: 'Responsable', label: 'Responsable Service' },
-    { value: 'Directeur', label: 'Directeur' },
-  ];
   
-  const columns = [
-    { id: 'id', label: 'Id' },
-    { id: 'nom', label: 'Nom', render: (row) => highlightText(row.nom || '', searchQuery) },
-    { id: 'prenom', label: 'Prénom', render: (row) => highlightText(row.prenom || '', searchQuery) },
+  // Colonnes pour la table principale (CollapsibleTable)
+  const collapsibleColumns = [
+    { field: 'id', label: 'Id', align: 'center' },
     { 
-      id: 'role_acteurs', 
-      label: 'Rôle', 
-      render: (row) => (
-        <div className="text-left">
-          {highlightText(row.role_acteurs || '', searchQuery)}
-        </div>
-      ) 
+      field: 'nom', 
+      label: 'Nom',
+      render: (row) => highlightText(row.nom || '', searchQuery)
     },
     { 
-      id: 'commune', 
-      label: 'Commune', 
-      render: (row) => (
-        <div className="text-center">
-          {row.commune ? highlightText(row.commune.nomCommune || '', searchQuery) : 'N/A'}
-        </div>
-      ) 
+      field: 'prenom', 
+      label: 'Prénom',
+      render: (row) => highlightText(row.prenom || '', searchQuery)
     },
     { 
-      id: 'contact', 
-      label: 'Contact', 
-      render: (row) => (
-        <div className="text-center">
-          {row.contact || 'N/A'}
-        </div>
-      ) 
+      field: 'role_acteurs', 
+      label: 'Rôle',
+      render: (row) => highlightText(row.role_acteurs || '', searchQuery)
     },
-    
+    { 
+      field: 'commune', 
+      label: 'Commune',
+      align: 'center',
+      render: (row) => row.commune ? highlightText(row.commune.nomCommune || '', searchQuery) : 'N/A'
+    },
+    { 
+      field: 'contact', 
+      label: 'Contact',
+      align: 'center',
+      render: (row) => highlightText(row.contact || 'N/A', searchQuery)
+    }
   ];
 
+// Remplacer la fonction getDetailData par celle-ci :
+
+// Fonction pour récupérer les données détaillées pour chaque acteur avec surlignage
+const getDetailData = (row) => {
+  const details = [];
+  // Ajouter les interventions actuelles
+  if (row.interventions_actuelles) {
+    const interventions = Array.isArray(row.interventions_actuelles) 
+      ? row.interventions_actuelles 
+      : [row.interventions_actuelles];
+    
+    interventions.forEach((intervention, index) => {
+      details.push({
+        id: `intervention_${index}`,
+        type: 'Intervention Actuelle',
+        description: intervention,
+        // Utiliser highlightText pour le rendu
+        render: (item) => highlightText(item.description || '', searchQuery)
+      });
+    });
+  }
+
+  // Ajouter les domaines d'intervention possibles
+  if (row.domaines_intervention_possibles) {
+    const domaines = Array.isArray(row.domaines_intervention_possibles) 
+      ? row.domaines_intervention_possibles 
+      : [row.domaines_intervention_possibles];
+    
+    domaines.forEach((domaine, index) => {
+      details.push({
+        id: `domaine_${index}`,
+        type: 'Domaine d\'Intervention Possible',
+        description: domaine,
+        // Utiliser highlightText pour le rendu
+        render: (item) => highlightText(item.description || '', searchQuery)
+      });
+    });
+  }
+  return details;
+};
+
+// Et modifier la définition des colonnes détaillées (approche plus simple) :
+const detailColumns = [
+  { field: 'type', label: 'Type', align: 'center' },
+  { 
+    field: 'description', 
+    label: 'Description',
+    render: (row) => highlightText(row.description || '', searchQuery)
+  }
+];
   const handleCreate = () => {
     setSelectedActeur(null);
     setOpenCreateModal(true);
@@ -205,36 +287,43 @@ function ActeursView() {
       /> 
       
       <Box className="card"> 
-        <StatusTabs
-          tabIndex={tabIndex}
-          handleTabChange={handleTabChange}
-          data={acteurs}
-          statuses={statuses}
-        /> 
-        <FilterBar
-          label="Type de rôle"
-          filterOptions={filterOptions}
-          selectedFilter={selectedFilter}
-          onFilterChange={setSelectedFilter}
+        <FilterBar 
+          showFilter={false} 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          data={acteurs}
-          tabIndex={tabIndex}
-          statuses={statuses}
+          data={acteurs} 
           onFilteredData={setFilteredData}
-          filterCriteria={{ filterBy: 'role_acteurs', searchFields: ['nom', 'prenom', 'role_acteurs', 'commune.nomCommune'] }}
+          filterCriteria={{ 
+            filterBy: 'role_acteurs', 
+            searchFields: [
+              'nom', 
+              'prenom', 
+              'role_acteurs', 
+              'commune.nomCommune', 
+              'contact', 
+              'interventions_actuelles', 
+              'domaines_intervention_possibles'
+            ] 
+          }}
           multiple={false}
         />
+        
         {filteredData.length > 0 && (
-          <TableView 
-            data={filteredData}
-            columns={columns}
-            statuses={statuses}
-            rowsPerPage={5}
+          <CollapsibleTable
+            columns={collapsibleColumns}
+            rows={filteredData}
+            detailTables={[
+              {
+                title: "Interventions et Domaines",
+                columns: detailColumns,
+                getData: getDetailData
+              }
+            ]}
+            arrowPosition="left"
+            expandedRows={expandedRows}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            showCheckboxes={true}
-            loading={loading}
+            showActions={true}
           />
         )}
       </Box> 
@@ -248,7 +337,7 @@ function ActeursView() {
           setOpenSnackbar(true);
         }}
       /> 
-
+      
       <ActeurEdit
         isOpen={openEditModal}
         acteur={selectedActeur}
@@ -261,7 +350,6 @@ function ActeursView() {
         }}
         key={selectedActeur?.id || 'new-edit-modal'}
       />
-      
       
       <ConfirmationDialog
         open={openDialog}
