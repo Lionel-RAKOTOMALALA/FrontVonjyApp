@@ -1,12 +1,13 @@
 "use client"
 
-import { Box, IconButton } from "@mui/material"
+import { Box, IconButton, Alert } from "@mui/material"
 import { ArrowLeft } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import { z } from "zod"
+import usePasswordResetStore from "../../../store/passwordResetStore"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide" }),
@@ -18,6 +19,22 @@ function ForgotPasswordPage({ onNavigate }) {
   })
   const [errors, setErrors] = useState({})
 
+  // Store Zustand
+  const { 
+    loading, 
+    error, 
+    success, 
+    requestReset, 
+    clearError, 
+    clearSuccess 
+  } = usePasswordResetStore()
+
+  // Nettoyer les messages lors du montage du composant
+  useEffect(() => {
+    clearError()
+    clearSuccess()
+  }, [clearError, clearSuccess])
+
   const handleForgotPasswordChange = (e) => {
     const { name, value } = e.target
     setForgotPasswordData((prev) => ({
@@ -25,9 +42,11 @@ function ForgotPasswordPage({ onNavigate }) {
       [name]: value,
     }))
     setErrors((prev) => ({ ...prev, [name]: undefined }))
+    // Nettoyer les erreurs du store quand l'utilisateur tape
+    if (error) clearError()
   }
 
-  const handleForgotPasswordSubmit = (e) => {
+  const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault()
     const result = forgotPasswordSchema.safeParse(forgotPasswordData)
     if (!result.success) {
@@ -39,8 +58,14 @@ function ForgotPasswordPage({ onNavigate }) {
       return
     }
     setErrors({})
-    onNavigate("verification")
-    console.log("Forgot password submitted:", forgotPasswordData)
+
+    // Appel de l'API
+    const response = await requestReset(forgotPasswordData.email)
+    
+    if (response.success) {
+      // Navigation vers la page de vérification
+      onNavigate("verification")
+    }
   }
 
   return (
@@ -54,6 +79,19 @@ function ForgotPasswordPage({ onNavigate }) {
       <Paragraphe sx={{ mb: 3, mt: 2, textAlign: "center" }}>
         Entrez votre adresse e-mail pour recevoir un code de réinitialisation
       </Paragraphe>
+
+      {/* Affichage des messages d'erreur/succès */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
 
       <Box sx={{ mb: 4 }}>
         <InputField
@@ -70,11 +108,18 @@ function ForgotPasswordPage({ onNavigate }) {
           InputLabelProps={{ shrink: true }}
           error={Boolean(errors.email)}
           helperText={errors.email}
+          disabled={loading}
         />
       </Box>
 
-      <CustomButton size="medium" type="submit" fullWidth color="warning">
-        Envoyer le code
+      <CustomButton 
+        size="medium" 
+        type="submit" 
+        fullWidth 
+        color="warning"
+        disabled={loading}
+      >
+        {loading ? "Envoi en cours..." : "Envoyer le code"}
       </CustomButton>
     </Box>
   )

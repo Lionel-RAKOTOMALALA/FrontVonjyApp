@@ -1,16 +1,30 @@
 "use client"
 
-import { Box, IconButton } from "@mui/material"
+import { Box, IconButton, Alert } from "@mui/material"
 import { ArrowLeft } from "lucide-react"
 import { useEffect, useState } from "react"
 import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import CustomButton from "../../../components/ui/CustomButton"
 import OTPInput from "./OTPInput"
+import usePasswordResetStore from "../../../store/passwordResetStore"
 
 function VerificationPage({ onNavigate }) {
   const [otp, setOtp] = useState("")
+  const [newPassword, setNewPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
+
+  // Store Zustand
+  const { 
+    loading, 
+    error, 
+    success, 
+    email,
+    verifyCode, 
+    clearError, 
+    clearSuccess,
+    requestReset
+  } = usePasswordResetStore()
 
   // Auto focus on mount
   useEffect(() => {
@@ -18,29 +32,35 @@ function VerificationPage({ onNavigate }) {
     if (input) input.focus()
   }, [])
 
+  // Nettoyer les messages lors du montage du composant
+  useEffect(() => {
+    clearError()
+    clearSuccess()
+  }, [clearError, clearSuccess])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     // Validation de base - vérifier que tous les champs sont remplis
-    if (otp.length !== 5) {
+    if (otp.length !== 6) {
       alert("Veuillez entrer un code à 5 chiffres complet")
       return
     }
 
+  
+
     setIsSubmitting(true)
 
     try {
-      // Ajouter cette ligne pour afficher l'OTP dans la console
-      console.log("Code OTP saisi :", otp)
-
-      // Simuler une requête API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Si la vérification réussit
-      onNavigate("resetPassword")
+      // Appel de l'API de vérification
+      const response = await verifyCode(email, otp, newPassword)
+      
+      if (response.success) {
+        // Si la vérification réussit, naviguer vers la page de succès ou login
+        onNavigate("resetPassword", { otp })
+      }
     } catch (error) {
       console.error("Erreur lors de la vérification:", error)
-      alert("Échec de la vérification. Veuillez réessayer.")
     } finally {
       setIsSubmitting(false)
     }
@@ -48,9 +68,13 @@ function VerificationPage({ onNavigate }) {
 
   const handleResendCode = async () => {
     if (resendCooldown > 0) return
+    
     try {
-      console.log("Resending verification code")
-      setResendCooldown(60)
+      // Réutiliser l'API de demande de réinitialisation
+      const response = await requestReset(email)
+      if (response.success) {
+        setResendCooldown(60)
+      }
     } catch (error) {
       console.error("Failed to resend code:", error)
       alert("Échec de l'envoi du code. Veuillez réessayer.")
@@ -92,44 +116,63 @@ function VerificationPage({ onNavigate }) {
         Entrez le code de vérification que nous avons envoyé à votre email
       </Paragraphe>
 
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 3 }}>
-        <OTPInput
-          value={otp}
-          onChange={setOtp}
-          length={5}
-          inputProps={{
-            style: {
-              width: "40px",
-              height: "40px",
-              margin: "0 4px",
-              fontSize: "16px",
-              borderRadius: "8px",
-              border: "1px solid rgba(0, 0, 0, 0.23)",
-              transition: "border-color 0.3s",
-            },
-          }}
-          separator={<span style={{ margin: "0 2px" }}></span>}
-          inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
-        />
-      </Box>
+      {/* Affichage des messages d'erreur/succès */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
+
+<Box
+  sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1, mb: 3 }}
+  className="flex flex-row items-center justify-center gap-2"
+>
+  <OTPInput
+    value={otp}
+    onChange={setOtp}
+    length={6}
+    inputProps={{
+      style: {
+        width: "40px",
+        height: "40px",
+        margin: "0 4px",
+        fontSize: "16px",
+        borderRadius: "8px",
+        border: "1px solid rgba(0, 0, 0, 0.23)",
+        transition: "border-color 0.3s",
+      },
+    }}
+    separator={<span style={{ margin: "0 2px" }}></span>}
+    inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
+    disabled={loading}
+  />
+</Box>
+
+ 
 
       <Box sx={{ textAlign: "start", m: 2, ml: 0 }}>
         <Paragraphe
           component="button"
           type="button"
           onClick={handleResendCode}
-          disabled={resendCooldown > 0}
+          disabled={resendCooldown > 0 || loading}
           sx={{
             fontSize: "0.75rem",
-            color: resendCooldown > 0 ? "text.disabled" : "#1677FF",
+            color: resendCooldown > 0 || loading ? "text.disabled" : "#1677FF",
             textDecoration: "none",
             background: "none",
             border: "none",
-            cursor: resendCooldown > 0 ? "default" : "pointer",
+            cursor: resendCooldown > 0 || loading ? "default" : "pointer",
             padding: 0,
             fontFamily: "inherit",
             "&:hover": {
-              textDecoration: resendCooldown > 0 ? "none" : "underline",
+              textDecoration: resendCooldown > 0 || loading ? "none" : "underline",
             },
           }}
         >
@@ -137,8 +180,14 @@ function VerificationPage({ onNavigate }) {
         </Paragraphe>
       </Box>
 
-      <CustomButton size="medium" type="submit" fullWidth color="warning" disabled={isSubmitting || otp.length !== 5}>
-        {isSubmitting ? "Vérification..." : "Vérifier le code"}
+      <CustomButton 
+        size="medium" 
+        type="submit" 
+        fullWidth 
+        color="warning" 
+        
+      >
+        {isSubmitting || loading ? "Vérification..." : "Vérifier le code"}
       </CustomButton>
     </Box>
   )
