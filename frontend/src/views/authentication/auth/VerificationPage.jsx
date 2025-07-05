@@ -15,13 +15,13 @@ function VerificationPage({ onNavigate }) {
   const [resendCooldown, setResendCooldown] = useState(0)
 
   // Store Zustand
-  const { 
-    loading, 
-    error, 
-    success, 
+  const {
+    loading,
+    error,
+    success,
     email,
-    verifyCode, 
-    clearError, 
+    verifyCode,
+    clearError,
     clearSuccess,
     requestReset
   } = usePasswordResetStore()
@@ -47,14 +47,14 @@ function VerificationPage({ onNavigate }) {
       return
     }
 
-  
+
 
     setIsSubmitting(true)
 
     try {
       // Appel de l'API de vérification
       const response = await verifyCode(email, otp, newPassword)
-      
+
       if (response.success) {
         // Si la vérification réussit, naviguer vers la page de succès ou login
         onNavigate("resetPassword", { otp })
@@ -68,7 +68,7 @@ function VerificationPage({ onNavigate }) {
 
   const handleResendCode = async () => {
     if (resendCooldown > 0) return
-    
+
     try {
       // Réutiliser l'API de demande de réinitialisation
       const response = await requestReset(email)
@@ -129,32 +129,32 @@ function VerificationPage({ onNavigate }) {
         </Alert>
       )}
 
-<Box
-  sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1, mb: 3 }}
-  className="flex flex-row items-center justify-center gap-2"
->
-  <OTPInput
-    value={otp}
-    onChange={setOtp}
-    length={6}
-    inputProps={{
-      style: {
-        width: "40px",
-        height: "40px",
-        margin: "0 4px",
-        fontSize: "16px",
-        borderRadius: "8px",
-        border: "1px solid rgba(0, 0, 0, 0.23)",
-        transition: "border-color 0.3s",
-      },
-    }}
-    separator={<span style={{ margin: "0 2px" }}></span>}
-    inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
-    disabled={loading}
-  />
-</Box>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1, mb: 3 }}
+        className="flex flex-row items-center justify-center gap-2"
+      >
+        <OTPInput
+          value={otp}
+          onChange={setOtp}
+          length={6}
+          inputProps={{
+            style: {
+              width: "40px",
+              height: "40px",
+              margin: "0 4px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "1px solid rgba(0, 0, 0, 0.23)",
+              transition: "border-color 0.3s",
+            },
+          }}
+          separator={<span style={{ margin: "0 2px" }}></span>}
+          inputClassName="focus:border-[#1677FF] focus:ring-[#1677FF]/20"
+          disabled={loading}
+        />
+      </Box>
 
- 
+
 
       <Box sx={{ textAlign: "start", m: 2, ml: 0 }}>
         <Paragraphe
@@ -180,15 +180,16 @@ function VerificationPage({ onNavigate }) {
         </Paragraphe>
       </Box>
 
-      <CustomButton 
-        size="medium" 
-        type="submit" 
-        fullWidth 
-        color="warning" 
-        
+      <CustomButton
+        size="medium"
+        type="submit"
+        fullWidth
+        color="warning"
+        disabled={otp.length !== 6 || isSubmitting || loading} // ← Ajout ici
       >
         {isSubmitting || loading ? "Vérification..." : "Vérifier le code"}
       </CustomButton>
+
     </Box>
   )
 }

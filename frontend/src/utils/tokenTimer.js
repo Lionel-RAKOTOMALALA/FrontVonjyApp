@@ -53,7 +53,7 @@ function TokenTimer() {
       const now = Date.now();
       const remaining = expirationTime - now;
       setRemainingTime(remaining);
-      console.log(`Token expires in: ${Math.floor(remaining / 1000)} seconds`);
+      // console.log(`Token expires in: ${Math.floor(remaining / 1000)} seconds`);
 
       if (remaining <= 0) {
         console.log("Token expired");
