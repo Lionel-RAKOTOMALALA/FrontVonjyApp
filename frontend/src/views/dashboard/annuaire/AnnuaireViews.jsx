@@ -19,7 +19,7 @@ function AnnuaireViews() {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Ajout pour gérer le type d'alerte
 
   // Store Zustand
-  const { annuaires, fetchAnnuaires, loading, error } = useAnnuaireStore();
+  const { annuaires, fetchAnnuaires, loading, error, createAnnuaire, updateAnnuaire, deleteAnnuaire } = useAnnuaireStore();
 
   useEffect(() => {
     fetchAnnuaires();
@@ -130,15 +130,16 @@ function AnnuaireViews() {
   };
 
   // Gère l'enregistrement d'un nouvel annuaire
-  const handleSaveCreate = (annuaire) => {
+  const handleSaveCreate = async (annuaire) => {
     try {
-      console.log('Created:', annuaire);
-      // Ici, vous ajouteriez la logique pour sauvegarder dans la base de données
-
-      setOpenCreateModal(false); // Ferme le modal après la sauvegarde
-      showSnackbar(`Annuaire "${annuaire.acteurs}" créé avec succès !`, 'success');
+      const result = await createAnnuaire(annuaire);
+      if (result.success) {
+        setOpenCreateModal(false);
+        showSnackbar(`Annuaire "${annuaire.acteurs}" créé avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la création de l\'annuaire.', 'error');
+      }
     } catch (error) {
-      console.error('Erreur lors de la création:', error);
       showSnackbar('Erreur lors de la création de l\'annuaire.', 'error');
     }
   };
@@ -150,15 +151,16 @@ function AnnuaireViews() {
   };
 
   // Gère l'enregistrement des modifications d'un annuaire
-  const handleSaveEdit = (updatedAnnuaire) => {
+  const handleSaveEdit = async (updatedAnnuaire) => {
     try {
-      console.log('Edited:', updatedAnnuaire);
-      // Ici, vous ajouteriez la logique pour mettre à jour dans la base de données
-
-      setOpenEditModal(false);
-      showSnackbar(`Annuaire "${updatedAnnuaire.acteurs}" modifié avec succès !`, 'success');
+      const result = await updateAnnuaire(updatedAnnuaire.id, updatedAnnuaire);
+      if (result.success) {
+        setOpenEditModal(false);
+        showSnackbar(`Annuaire "${updatedAnnuaire.acteurs}" modifié avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la modification de l\'annuaire.', 'error');
+      }
     } catch (error) {
-      console.error('Erreur lors de la modification:', error);
       showSnackbar('Erreur lors de la modification de l\'annuaire.', 'error');
     }
   };
@@ -170,17 +172,19 @@ function AnnuaireViews() {
   };
 
   // Confirme la suppression d'un annuaire
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     try {
-      console.log('Deleted:', annuaireToDelete);
-      // Ici, vous ajouteriez la logique pour supprimer de la base de données
-
-      const deletedActeur = annuaireToDelete.acteurs;
-      setOpenDialog(false);
-      setAnnuaireToDelete(null);
-      showSnackbar(`Annuaire "${deletedActeur}" supprimé avec succès !`, 'success');
+      const result = await deleteAnnuaire(annuaireToDelete.id);
+      if (result.success) {
+        const deletedActeur = annuaireToDelete.acteurs;
+        setOpenDialog(false);
+        setAnnuaireToDelete(null);
+        showSnackbar(`Annuaire "${deletedActeur}" supprimé avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la suppression de l\'annuaire.', 'error');
+        setOpenDialog(false);
+      }
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
       showSnackbar('Erreur lors de la suppression de l\'annuaire.', 'error');
       setOpenDialog(false);
     }
@@ -243,6 +247,9 @@ function AnnuaireViews() {
         severity={snackbarSeverity}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       />
+
+      {/* Affichage des erreurs API */}
+      {error && <Alert severity="error">{typeof error === 'string' ? error : JSON.stringify(error)}</Alert>}
     </>
   );
 }
