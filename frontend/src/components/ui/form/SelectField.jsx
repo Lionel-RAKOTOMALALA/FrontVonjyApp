@@ -11,8 +11,6 @@ const SelectField = ({
   required = true, 
   fullWidth = true, 
   autocomplete = false, // Nouveau prop pour activer l'autocomplete
-  error = false,
-  helperText = '',
   ...props 
 }) => {
   
