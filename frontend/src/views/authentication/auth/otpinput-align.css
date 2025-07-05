@@ -1,0 +1,15 @@
+.otp-container, .flex.items-center.gap-1 {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.otp-container input, .flex.items-center.gap-1 input {
+  width: 40px !important;
+  height: 40px !important;
+  text-align: center !important;
+  font-size: 1.2rem !important;
+  margin: 0 2px !important;
+} 

@@ -17,11 +17,13 @@ export default function Login() {
   // État pour gérer les différentes vues
   const [currentView, setCurrentView] = useState("login") // login, forgotPassword, verification, resetPassword
   const [previousView, setPreviousView] = useState(null)
+  const [resetProps, setResetProps] = useState({})
 
   // Fonction pour naviguer entre les vues avec historique
-  const navigateTo = (view) => {
+  const navigateTo = (view, params = {}) => {
     setPreviousView(currentView)
     setCurrentView(view)
+    if (view === "resetPassword") setResetProps(params)
   }
 
   // Fonction pour rendre la vue appropriée
@@ -42,7 +44,7 @@ export default function Login() {
 
         {currentView === "resetPassword" && (
           <AnimatedView key="resetPassword">
-            <ResetPasswordPage onNavigate={navigateTo} />
+            <ResetPasswordPage onNavigate={navigateTo} otp={resetProps.otp} />
           </AnimatedView>
         )}
 

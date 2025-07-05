@@ -6,8 +6,10 @@ import { useState } from "react"
 import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
+import usePasswordResetStore from '../../../store/passwordResetStore'
+import axios from 'axios'
 
-function ResetPasswordPage({ onNavigate }) {
+function ResetPasswordPage({ onNavigate, otp }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -15,6 +17,9 @@ function ResetPasswordPage({ onNavigate }) {
     newPassword: "",
     confirmPassword: "",
   })
+
+  // Récupérer email depuis le store Zustand
+  const { email } = usePasswordResetStore()
 
   const handleResetPasswordChange = (e) => {
     const { name, value } = e.target
@@ -24,15 +29,23 @@ function ResetPasswordPage({ onNavigate }) {
     }))
   }
 
-  const handleResetPasswordSubmit = (e) => {
+  const handleResetPasswordSubmit = async (e) => {
     e.preventDefault()
-    console.log("Reset password submitted:", resetPasswordData)
-    // Réinitialiser le mot de passe et revenir à la page de connexion
-    if (resetPasswordData.newPassword === resetPasswordData.confirmPassword) {
-      alert("Mot de passe réinitialisé avec succès!")
-      onNavigate("login")
-    } else {
+    if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
       alert("Les mots de passe ne correspondent pas.")
+      return
+    }
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/reset-password/', {
+        email: email,
+        code: otp,
+        new_password: resetPasswordData.newPassword
+      })
+      alert(response.data.message || "Mot de passe réinitialisé avec succès!")
+      onNavigate("login")
+    } catch (error) {
+      alert(error.response?.data?.message || "Erreur lors de la réinitialisation du mot de passe.")
     }
   }
 
