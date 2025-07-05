@@ -83,7 +83,7 @@ function ForgotPasswordPage({ onNavigate }) {
       {/* Affichage des messages d'erreur/succès */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          Utilisateur introuvable
         </Alert>
       )}
 
