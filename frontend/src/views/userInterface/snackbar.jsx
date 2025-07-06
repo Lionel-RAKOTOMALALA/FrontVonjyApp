@@ -1,5 +1,5 @@
 // File: snackbar.jsx
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import SnackbarAlert from '../../components/ui/SnackbarAlert';
 import AlertBox from '../../components/ui/AlertBox';
 import CustomButton from '../../components/ui/CustomButton';

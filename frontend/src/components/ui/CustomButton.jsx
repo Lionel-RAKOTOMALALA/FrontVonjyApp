@@ -1,5 +1,4 @@
 // components/CustomButton.jsx
-import React from 'react';
 import { Button } from '@mui/material';
 
 const colorPalette = {
@@ -78,7 +77,7 @@ const getButtonStyle = (variant, color) => {
       "&:hover": {
         borderColor: c.hover,
         color: c.hover,
-        bgcolor: `${c.main.replace(/[\d\.]+\)$/g, '0.08)')}`, // soft background
+        bgcolor: `${c.main.replace(/[\d.]+\)$/g, '0.08)')}`, // soft background
       },
     };
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TableSortLabel, IconButton,
@@ -23,12 +23,12 @@ export function highlightText(text, query) {
   );
 }
  
-function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, showCheckboxes = true , showDeleteIcon = true }) {
+function TableView({ data, columns, rowsPerPage, onEdit, onDelete, showCheckboxes = true , showDeleteIcon = true }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('id');
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
   
 
   // Sorting and pagination handlers

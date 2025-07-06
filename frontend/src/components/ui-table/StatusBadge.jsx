@@ -1,5 +1,3 @@
-import React from 'react';
-
 function StatusBadge({ status, count, badgeClass }) {
   return (
     <span>

@@ -1,19 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import Footer from './Footer';
 import LoadingBar from 'react-top-loading-bar';
-import { useSpring, animated } from '@react-spring/web';
-
+import Main from '../Main';
 const Layout = ({ children, user }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  const [ setIsLoading] = useState(true);
+  const [ setShowContent] = useState(false);
   const loadingBarRef = useRef(null);
-
-  const props = useSpring({
-    opacity: showContent ? 1 : 0,
-    config: { duration: 250 },
-  });
 
   useEffect(() => {
     Main();

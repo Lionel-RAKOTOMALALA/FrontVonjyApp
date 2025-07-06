@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
 import { DashboardPage } from "../views/DashboardPage"; 
 import Layout from "../layouts/Layout"; 
@@ -29,7 +29,7 @@ const Home = () => {
     );
   };
 
-export const LoggedOutView = ({ title = 'Home' }) => {
+export const LoggedOutView = () => {
     const navigate = useNavigate();
 
     useEffect(() => {

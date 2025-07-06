@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Box,
     Select,
     MenuItem,
-    TextField,
-    InputAdornment,
     Typography,
     FormControl,
     InputLabel,
     Checkbox,
     ListItemText,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
-import IconButton from '@mui/material/IconButton';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 
 function FilterBar({
@@ -22,7 +17,6 @@ function FilterBar({
     selectedFilter,
     onFilterChange,
     searchQuery,
-    onSearchChange,
     data,
     tabIndex,
     statuses,
@@ -112,7 +106,6 @@ function FilterBar({
                         MenuProps={{
                             PaperProps: {
                             sx: {
-                                color: 'black',
                                 boxShadow: 'rgba(145, 158, 171, 0.24) 0px 0px 2px 0px, rgba(145, 158, 171, 0.24) -20px 20px 40px -4px',
                                 maxHeight: '240px',
                                 borderRadius: '10px',

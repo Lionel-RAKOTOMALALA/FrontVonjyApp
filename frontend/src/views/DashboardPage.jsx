@@ -1,6 +1,7 @@
 import { useEffect } from "react";
+import { dashboardAnalitics } from "../components/analytics/DashboardAnalytics";
 
-export const DashboardPage = ({ user }) => {
+export const DashboardPage = () => {
     useEffect(() => {
         dashboardAnalitics();
     }, [])

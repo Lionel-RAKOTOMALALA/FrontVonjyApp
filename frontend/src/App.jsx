@@ -1,12 +1,10 @@
 import './index.css';
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import MainWrapper from './layouts/MainWrapper';
-import { useLocation, Navigate } from "react-router-dom";
-import Layout from "./layouts/Layout";
+import { useLocation } from "react-router-dom";
 import AppRoutes from "./router/AppRoutes";
 import { Blank } from "./layouts/Blank";  
 import { useAuthStore } from './store/auth';
-import { checkAndRefreshToken } from './utils/auth';
 
 function App() {
   const location = useLocation();
@@ -18,9 +16,6 @@ function App() {
   })); 
 
   useEffect(() => {
-    const initializeAuth = async () => { 
-      const success = await checkAndRefreshToken();  
-    };
 
     initializeAuth();
   }, [ isAuthPath]);
