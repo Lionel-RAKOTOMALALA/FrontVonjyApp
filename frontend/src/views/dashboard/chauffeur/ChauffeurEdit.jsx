@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import QuantityInput from '../../../components/ui/QuantityInput';
 import Modal from '../../../components/ui/Modal';
@@ -173,7 +173,7 @@ function ChauffeurEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
         {/* Champ expérience (nombre d'années) */}
         <div className="col mb-1 d-flex flex-column align-items-center">
           <label htmlFor="experienceBackdrop" className="mb-2" style={{fontWeight: '700', color: '#637381', fontSize:'0.75rem'}}>
-            Années d'expérience
+            Années d&apos;expérience
           </label>
           <QuantityInput
             aria-label="Expérience"

@@ -17,8 +17,6 @@ import Map from '../views/map/MapViews';
 
 import Composant from '../views/userInterface';
 
-import { WithoutMenuPage } from "../pages/layouts/WithoutMenuPage";
-
 const AppRoutes = ({user, isLoggedIn}) => { 
  
     return (

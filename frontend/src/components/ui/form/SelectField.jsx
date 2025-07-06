@@ -1,4 +1,3 @@
-import React from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const SelectField = ({ label, name, value, onChange, options, required = true, fullWidth = true, ...props }) => {
@@ -39,7 +38,6 @@ const SelectField = ({ label, name, value, onChange, options, required = true, f
         MenuProps={{
           PaperProps: {
           sx: {
-              color: 'black',
               boxShadow: 'rgba(145, 158, 171, 0.24) 0px 0px 2px 0px, rgba(145, 158, 171, 0.24) -20px 20px 40px -4px',
               maxHeight: '240px',
               borderRadius: '10px',

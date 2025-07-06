@@ -1,13 +1,11 @@
 // ChauffeurCreate.js
-import React, { useState, useEffect } from 'react';  
+import  { useState } from 'react';  
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import SelectField from '../../../components/ui/form/SelectField'; 
-import 'dayjs/locale/fr';
-import DateField from '../../../components/ui/form/DateField';
-import InputQuantity from '../../../components/ui/InputQuantity';  
+import 'dayjs/locale/fr'; 
 
-const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
+const ChauffeurCreate = ({ isOpen, onClose }) => {
   // État local pour stocker les données du formulaire
   const [chauffeur, setChauffeur] = useState({
     nom: '',
@@ -58,15 +56,6 @@ const ChauffeurCreate = ({ isOpen, onSave, onClose }) => {
     });
   };
 
-  // Gère le changement de la date (fonction encore vide, à compléter selon l'implémentation)
-  const handleDateChange = (newDate) => {
-    // Exemple : setChauffeur(prev => ({ ...prev, date_naissance: newDate }));
-  };
-
-  // Gère le changement de la quantité (fonction encore vide, à compléter selon l'implémentation)
-  const handleQuantityChange = (event, newValue) => {
-    
-  };
   
   return (
     <Modal

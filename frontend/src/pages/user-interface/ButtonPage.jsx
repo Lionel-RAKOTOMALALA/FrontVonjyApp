@@ -1,5 +1,4 @@
 // ButtonPage.js
-import React from 'react';
 import Button from '../../components/atoms/Buttons';
 
 export const ButtonPage = () => {
