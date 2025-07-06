@@ -19,7 +19,7 @@ export const ForgotPasswordPage = () => {
         <AuthWrapper>
 
             <h4 className="mb-2">Forgot Password? 🔒</h4>
-            <p className="mb-4">Enter your email and we'll send you instructions to reset your password</p>
+            <p className="mb-4">Enter your email and we will send you instructions to reset your password</p>
             <form id="formAuthentication" className="mb-3" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>

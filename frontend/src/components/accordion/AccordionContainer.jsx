@@ -1,5 +1,5 @@
 // AccordionContainer.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AccordionItem from './AccordionItem';
 
 const AccordionContainer = ({ title, items }) => {

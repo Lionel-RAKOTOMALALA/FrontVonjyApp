@@ -1,5 +1,4 @@
 // composant.js
-import React from 'react';
 import ButtonPage from './button'
 import InputPage from './input'
 import SnackBarPage from './snackbar'

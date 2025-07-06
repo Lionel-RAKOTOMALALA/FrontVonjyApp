@@ -1,7 +1,7 @@
 // Navbar.jsx
 import { Link } from 'react-router-dom'; 
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   return (
     <nav
       className="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"

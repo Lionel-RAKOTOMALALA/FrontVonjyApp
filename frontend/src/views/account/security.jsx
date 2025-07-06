@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import Layout from '../../layouts/Layout';
 import { AccountWrapper } from '../../components/wrapper/AccountWrapper';
 import PasswordChecklist from 'react-password-checklist';
 import { updateProfile } from '../../utils/auth'; // Assurez-vous que cette fonction est correctement importée
+import { useState } from 'react';
 
 function Security({ user }) {
   const [formData, setFormData] = useState({
