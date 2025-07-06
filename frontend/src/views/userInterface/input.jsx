@@ -1,10 +1,12 @@
-import React, { useState }  from 'react'
+import { useState }  from 'react'
 import InputField from '../../components/ui/form/InputField';
 import SelectField from '../../components/ui/form/SelectField';
 import InputQuantity from '../../components/ui/InputQuantity';
 import CheckboxPage from './checkbox';
+import handleQuantityChange from '../../utils/handleQuantityChange'; 
 
 function input() {
+
     const [genre, setGenre] = useState('');
 
     const selectChange = (event) => {
@@ -12,9 +14,6 @@ function input() {
       setGenre(value);
     };
     
-    const handleQuantityChange = (event, newValue) => {
-      
-    };
   return (
     <>
         <h5 className="card-header">Inputs</h5> 

@@ -48,12 +48,18 @@ const theme = createTheme({
 })
 
 // Chaque composant typographique
-const withTheme = (Component) => (props) =>
-  (
+const withTheme = (Component) => {
+  const WrappedComponent = (props) => (
     <ThemeProvider theme={theme}>
       <Component {...props} />
     </ThemeProvider>
-  )
+  );
+
+  WrappedComponent.displayName = `withTheme(${Component.displayName || Component.name || 'Component'})`;
+
+  return WrappedComponent;
+};
+
 
 export const H1 = withTheme((props) => (
   <Typography variant="h1" component="h1" {...props} />

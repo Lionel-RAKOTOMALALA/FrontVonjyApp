@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import { dashboardAnalitics } from "../utils/analytics";
 export const DashboardPage = () => {
     useEffect(() => {
         dashboardAnalitics();
@@ -590,7 +590,7 @@ export const DashboardPage = () => {
                                     <div className="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                         <div className="me-2">
                                             <small className="text-muted d-block mb-1">Wallet</small>
-                                            <h6 className="mb-0">Mac'D</h6>
+                                            <h6 className="mb-0">Mac D</h6>
                                         </div>
                                         <div className="user-progress d-flex align-items-center gap-1">
                                             <h6 className="mb-0">+270.69</h6>

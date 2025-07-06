@@ -1,5 +1,4 @@
 // Alert.js
-import React from 'react';
 
 const Alert = ({ type, dismissible, children }) => {
   const alertClass = `alert alert-${type} ${dismissible ? ' alert-dismissible' : ''}`;

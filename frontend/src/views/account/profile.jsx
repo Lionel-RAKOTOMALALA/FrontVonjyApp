@@ -55,7 +55,7 @@ export const Profile = () => {
         };
     
         try {
-            const { data, error } = await updateProfile(dataToUpdate);
+            const {  error } = await updateProfile(dataToUpdate);
             if (error) {
                 setError(error);
                 setSuccess(null);

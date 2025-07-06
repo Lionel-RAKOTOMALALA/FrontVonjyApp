@@ -1,4 +1,3 @@
-import React from 'react'
 import usePerfectScrollbar from '../../hooks/usePerfectScrollbar';
 
 export const PerfectScrollbarPage = () => {

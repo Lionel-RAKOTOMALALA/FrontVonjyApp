@@ -18,8 +18,7 @@ const iconMap = {
 // Version modifiée qui accepte les enfants et des props individuelles
 export default function AlertBox({ 
   severity = 'info', 
-  children, 
-  onClose, 
+  children,
   sx = {}, 
   // On garde aussi la compatibilité avec l'ancien mode
   alerts = [] 

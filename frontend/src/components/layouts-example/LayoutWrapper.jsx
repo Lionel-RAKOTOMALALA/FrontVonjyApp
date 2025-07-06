@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../../layouts/Navbar';
 
 const LayoutWrapper = ({ img, alt, title, explanation }) => (
