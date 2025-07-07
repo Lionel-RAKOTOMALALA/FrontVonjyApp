@@ -47,13 +47,12 @@ function VerificationPage({ onNavigate }) {
     }
 
 
-
     setIsSubmitting(true)
 
     try {
       // Appel de l'API de vérification
       const response = await verifyCode(email, otp, newPassword)
-      
+
       if (response.success) {
         // Si la vérification réussit, naviguer vers la page de succès ou login
         onNavigate("resetPassword", { otp })

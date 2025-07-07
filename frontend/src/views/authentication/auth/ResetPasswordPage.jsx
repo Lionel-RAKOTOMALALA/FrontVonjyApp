@@ -80,6 +80,7 @@ function ResetPasswordPage({ onNavigate, otp }) {
           required
           size="small"
           type={showPassword ? "text" : "password"}
+          disabled={loading}
           InputProps={{
             sx: { bgcolor: "white" },
             endAdornment: (
@@ -104,6 +105,7 @@ function ResetPasswordPage({ onNavigate, otp }) {
           fullWidth
           required
           type={showConfirmPassword ? "text" : "password"}
+          disabled={loading}
           InputProps={{
             sx: { bgcolor: "white" },
             endAdornment: (
@@ -117,8 +119,14 @@ function ResetPasswordPage({ onNavigate, otp }) {
         />
       </Box>
 
-      <CustomButton size="medium" type="submit" fullWidth color="warning">
-        Réinitialiser mon mot de passe
+      <CustomButton 
+        size="medium" 
+        type="submit" 
+        fullWidth 
+        color="warning"
+        disabled={loading}
+      >
+        {loading ? "Réinitialisation..." : "Réinitialiser mon mot de passe"}
       </CustomButton>
     </Box>
   )

@@ -192,7 +192,6 @@ function UserViews() {
         onClose={() => setOpenEditModal(false)}
       />
 
-      {/* Dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}
         title="Confirmer la suppression"

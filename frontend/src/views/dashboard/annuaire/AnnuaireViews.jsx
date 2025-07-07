@@ -129,7 +129,6 @@ function AnnuaireViews() {
     setOpenCreateModal(true);
   };
 
-  // Gère l'enregistrement d'un nouvel annuaire
   const handleSaveCreate = async (annuaire) => {
     try {
       const result = await createAnnuaire(annuaire);
@@ -247,7 +246,6 @@ function AnnuaireViews() {
         severity={snackbarSeverity}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       />
-
       {/* Affichage des erreurs API */}
       {error && <Alert severity="error">{typeof error === 'string' ? error : JSON.stringify(error)}</Alert>}
     </>
