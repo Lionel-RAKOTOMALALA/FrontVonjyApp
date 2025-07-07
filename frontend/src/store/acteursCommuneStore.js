@@ -7,11 +7,30 @@ const useActeursCommuneStore = create((set, get) => ({
   error: null, // Message d'erreur
 
   // Récupérer les acteurs d'une commune spécifique depuis l'API
-  fetchActeurs: async (idCommune) => {
+  fetchActeurs: async () => {
     set({ loading: true, error: null });
     const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
     try {
       const response = await axios.get(`http://localhost:8000/api/acteurs-commune/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
+        },
+      });
+      set({ acteurs: response.data, loading: false });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || 'Erreur lors de la récupération des acteurs',
+        loading: false,
+      });
+    }
+  },
+
+
+  fetchActeursById: async (idCommune) => {
+    set({ loading: true, error: null });
+    const accessToken = localStorage.getItem('access_token'); // Récupérer le token depuis le localStorage
+    try {
+      const response = await axios.get(`http://localhost:8000/api/acteurs_commune/${idCommune}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Ajouter le token en tant qu'en-tête Authorization
         },

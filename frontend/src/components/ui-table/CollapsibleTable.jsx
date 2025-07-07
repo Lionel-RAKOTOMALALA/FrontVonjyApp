@@ -200,7 +200,7 @@ export default function CollapsibleTable({
   expandedRows = {},
   accordion = false,
   highlightSelected = true,
-  highlightColor = '#f0f7ff',
+  // highlightColor = '#f0f7ff',
   showActionsColumn = true, // Nouveau paramètre pour afficher la colonne d'actions
   showDeleteIcon = true,    // Nouveau paramètre pour afficher l'icône de suppression
   onEdit,                   // Callback pour l'édition
@@ -219,7 +219,7 @@ export default function CollapsibleTable({
     if (Object.keys(expandedRows).length > 0) {
       // Si mode accordion, ne garder que la dernière ligne ouverte
       if (accordion) {
-        const openRows = Object.entries(expandedRows).filter(([_, isOpen]) => isOpen);
+        const openRows = Object.entries(expandedRows).filter(([, isOpen]) => isOpen);
         if (openRows.length > 0) {
           const lastOpenRowId = openRows[openRows.length - 1][0];
           setOpenRowId(parseInt(lastOpenRowId, 10));

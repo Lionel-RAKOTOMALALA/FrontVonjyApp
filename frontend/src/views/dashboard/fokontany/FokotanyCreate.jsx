@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
@@ -35,7 +35,7 @@ const FokotanyCreate = ({ isOpen, onClose, onSuccess }) => {
         const data = await response.json();
         setCommunes(data);
       } catch (err) {
-        setError('Impossible de charger les communes.');
+        setErrors('Impossible de charger les communes.');
       }
     };
 

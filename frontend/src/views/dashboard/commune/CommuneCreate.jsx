@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Snackbar, Alert, Tooltip } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Alert, Tooltip } from '@mui/material';
 import TableView from '../../../components/ui-table/TableView';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Box,
   Select,
@@ -9,7 +9,6 @@ import {
   Checkbox,
   ListItemText,
   Fade,
-  Button,
 } from '@mui/material';
 import SearchInput from '../ui/SearchInput';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
@@ -35,18 +34,18 @@ function FilterBar({
   onExpandedRowsChange, 
   children,
 }) {
-  const [filteredData, setFilteredData] = useState([]);
+  const [,setFilteredData] = useState([]);
   const [totalResults, setTotalResults] = useState(0);
-  const [rowsToExpand, setRowsToExpand] = useState({});
- 
-  const matchesSearch = (value, searchTerms) => {
+  const [, setRowsToExpand] = useState({});
+
+  const matchesSearch = useCallback((value, searchTerms) => {
     if (!value) return false;
     return searchTerms.every(term =>
       value.toString().toLowerCase().includes(term.toLowerCase().trim())
     );
-  };
+  }, []);
 
-  const getNestedValue = (obj, keyPath) => {
+  const getNestedValue = useCallback((obj, keyPath) => {
     return keyPath.split('.').reduce((acc, key) => {
       if (!acc) return null;
       // Si c'est un tableau, recherche dans chaque élément
@@ -55,9 +54,9 @@ function FilterBar({
       }
       return acc[key];
     }, obj);
-  };
+  }, []);
 
-  const objectContainsSearch = (obj, searchTerms, fields) => {
+  const objectContainsSearch = useCallback((obj, searchTerms, fields) => {
     return fields.some(field => {
       const value = getNestedValue(obj, field);
       if (Array.isArray(value)) {
@@ -74,9 +73,9 @@ function FilterBar({
       }
       return matchesSearch(value, searchTerms);
     });
-  };
+  }, [getNestedValue, matchesSearch]);
 
-  const detailsContainSearch = (item, searchTerms) => {
+  const detailsContainSearch = useCallback((item, searchTerms) => {
     if (!item.centres_desservis) return false;
     
     // Recherche directement dans les données brutes des centres
@@ -87,7 +86,7 @@ function FilterBar({
       matchesSearch(centre.detail.nom, searchTerms) ||
       matchesSearch(centre.detail.localisation, searchTerms)
     );
-  };
+  }, [matchesSearch]);
 
   useEffect(() => {
     if (!Array.isArray(data)) {
@@ -148,6 +147,8 @@ function FilterBar({
     getDetailData,
     detailColumns,
     onExpandedRowsChange,
+    objectContainsSearch,
+    detailsContainSearch,
   ]);
 
   const hasFilterOrSearch = searchQuery.trim() !== '' || (multiple ? selectedFilter.length > 0 : selectedFilter);

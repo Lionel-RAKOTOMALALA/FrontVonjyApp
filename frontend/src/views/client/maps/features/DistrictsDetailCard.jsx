@@ -1,6 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import React, { useEffect } from 'react';
-import { H4 } from '../../../../components/ui/TypographyVariants';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TableView from '../../../../components/ui-table/TableView';
 import useDistrictStore from '../../../../store/useDistrictStore'; // Assure-toi que ce chemin est correct
@@ -42,7 +41,7 @@ const columns = [
 ];
 
 function DistrictDetailCard() {
-  const { districts, fetchDistricts, loading, error } = useDistrictStore();
+  const { districts, fetchDistricts } = useDistrictStore();
 
   useEffect(() => {
     fetchDistricts();
@@ -64,7 +63,7 @@ function DistrictDetailCard() {
             <CardContent className="pt-0">
               <motion.div variants={contentVariants}>
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Informations globale</H4> 
+                  <h4 className='m-0 mb-4'>Informations globale</h4> 
                     <TableView
                       data={districts}
                       columns={columns}

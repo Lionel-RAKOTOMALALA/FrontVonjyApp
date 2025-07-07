@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCurrentUser } from '../utils/auth';
+// import { getCurrentUser } from '../utils/auth';
 
 
 const MainWrapper = ({ children }) => {
@@ -7,7 +7,7 @@ const MainWrapper = ({ children }) => {
     useEffect(() => {
         const handler = async () => {
             setLoading(true);
-            const user = await getCurrentUser(); 
+            // const user = await getCurrentUser(); 
             setLoading(false);
         };
         handler();

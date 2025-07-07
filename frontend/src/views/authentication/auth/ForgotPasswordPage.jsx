@@ -3,7 +3,6 @@
 import { Box, IconButton, Alert } from "@mui/material"
 import { ArrowLeft } from "lucide-react"
 import { useState, useEffect } from "react"
-import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import { z } from "zod"
@@ -74,11 +73,11 @@ function ForgotPasswordPage({ onNavigate }) {
         <IconButton onClick={() => onNavigate("login")} sx={{ position: "relative", left: "-6px" }}>
           <ArrowLeft size={18} />
         </IconButton>
-        <H3 className="m-0 p-0">Mot de passe oublié ?</H3>
+        <h3 className="m-0 p-0">Mot de passe oublié ?</h3>
       </Box>
-      <Paragraphe sx={{ mb: 3, mt: 2, textAlign: "center" }}>
+      <p className="mb-3 mt-2 text-center">
         Entrez votre adresse e-mail pour recevoir un code de réinitialisation
-      </Paragraphe>
+      </p>
 
       {/* Affichage des messages d'erreur/succès */}
       {error && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
@@ -13,7 +13,7 @@ const acteurSchema = z.object({
   prenom: z.string().trim().optional(),
   contact: z.string().trim()
     .min(1, "Le contact est requis")
-    .regex(/^(\+?261|0)?[0-9\s\-\.]{8,15}$/, "Format de contact invalide (ex: 033 24 992 10)"),
+    .regex(/^(\+?261|0)?[0-9\s\-.]{8,15}$/, "Format de contact invalide (ex: 033 24 992 10)"),
   interventions_actuelles: z.string().trim().optional(),
   domaines_intervention_possibles: z.string().trim().optional(),
   ouverture: z.string().trim().min(1, "L'ouverture est requise")
@@ -100,7 +100,6 @@ const ActeurCreate = ({ isOpen, onClose, onSuccess }) => {
   };
 
   // Vérifier si le formulaire est valide
-  const isFormValid = acteurSchema.safeParse(acteur).success;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
