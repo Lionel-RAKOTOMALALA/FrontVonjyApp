@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0'
+  },
+  optimizeDeps: {
+    include: ['lodash', 'react-dropzone']
   }
 })
