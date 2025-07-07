@@ -1,8 +1,7 @@
 "use client"
 import PropTypes from "prop-types"
 import { Box, Card, CardContent, CircularProgress, Typography } from "@mui/material"
-import { MapContainer, TileLayer } from "react-leaflet"
-import { H4, Paragraphe } from "../../../../components/ui/TypographyVariants"
+import { MapContainer, TileLayer } from "react-leaflet" 
 import MapController from "./MapController"
 import CustomMapEvents from "./CustomMapEvents"
 import { motion, AnimatePresence } from "framer-motion"
@@ -33,12 +32,12 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <H4 mb={0} ml={3} mt={3} fontWeight="bold">
+                <h4 className="mb-0 mx-3 mt-3" fontWeight="bold">
                   Carte
-                </H4>
-                <Paragraphe style={{ marginTop: 4 }} mb={2} ml={3}>
+                </h4>
+                <p style={{ marginTop: 4 }} className="mb-2 mx-3">
                   Cliquez sur une commune pour voir ses détails
-                </Paragraphe>
+                </p>
               </motion.div>
             </div>
           </AnimatePresence>

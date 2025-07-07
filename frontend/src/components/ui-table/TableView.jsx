@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TableSortLabel, IconButton,
@@ -10,28 +10,13 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import PaginationComponent from './PaginationComponent';
 import BpCheckbox from './BpCheckbox';
 
-export function highlightText(text, query) {
-  if (!query) return text;
-  const regex = new RegExp(`(${query})`, 'gi');
-  const parts = text.split(regex);
-  return parts.map((part, index) =>
-    part.toLowerCase() === query.toLowerCase() ? (
-      <span key={index} style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-}
-
-function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, showCheckboxes = true, showDeleteIcon = true, loading = false, showActionsColumn = true }) {
+function TableView({ data, columns, rowsPerPage, onEdit, onDelete, showCheckboxes = true, showDeleteIcon = true, loading = false, showActionsColumn = true }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('id');
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [searchQuery,] = useState('');
+  const [, setIsTransitioning] = useState(false);
 
   // Référence pour le conteneur externe pour animation
   const containerRef = useRef(null);
@@ -150,8 +135,6 @@ function TableView({ data, columns, statuses, rowsPerPage, onEdit, onDelete, sho
       <CircularProgress />
     </Box>
   );
-
-
 
   return (
     <Box

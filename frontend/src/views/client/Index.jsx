@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Box, Typography } from "@mui/material"
 import AppHeader from "./AppHeader"
 import AmpanihyData from "./maps/data/Ampanihy.json"
@@ -12,8 +12,8 @@ function MapViews() {
   const [scrolled, setScrolled] = useState(false)
   const [loading, setLoading] = useState(true)
   const [mapError, setMapError] = useState(null)
-  const [communeCount, setCommuneCount] = useState(0)
-  const [fokotanyCount, setFokotanyCount] = useState(0)
+  const [, setCommuneCount] = useState(0)
+  const [, setFokotanyCount] = useState(0)
   const { fetchDetailCommune, fetchTotals, totals, communedetail } = useCommuneStore()
 
   const [selectedCommune, setSelectedCommune] = useState(null)
@@ -75,7 +75,7 @@ function MapViews() {
     fetchTotals()
   }, [fetchTotals])
 
-  const handleCommuneClick = (communeId) => {
+  const handleCommuneClick = useCallback((communeId) => {
     setIsAnimating(true)
     setResetView(false)
     fetchDetailCommune(communeId)
@@ -96,30 +96,36 @@ function MapViews() {
     }
 
     setTimeout(() => setIsAnimating(false), 500)
-  }
+  }, [fetchDetailCommune])
 
+  // Solution 1 : Retirer selectedCommune de la condition et utiliser une fonction de callback
   useEffect(() => {
-    if (communedetail && selectedCommune) {
+    if (communedetail) {
       console.log("Commune detail:", communedetail)
 
-      setSelectedCommune(prev => ({
-        ...prev,
-        id: communedetail.id || prev.id,
-        nomCommune: communedetail.nomCommune || prev.nomCommune,
-        total_fokotanys: communedetail.total_fokotanys || prev.total_fokotanys,
-        total_services: communedetail.total_services || prev.total_services,
-        fokotanys: Array.isArray(communedetail.fokotanys)
-          ? communedetail.fokotanys.map(fokotany => ({
-              id: fokotany.id,
-              nomFokotany: fokotany.nomFokotany,
-              responsables_count: fokotany.responsables_count,
-              services_count: fokotany.services_count,
-              responsables: fokotany.responsables || [],
-              chef_service: fokotany.chef_service || [],
-              services: fokotany.services || []
-            }))
-          : [] // Si fokotanys n'est pas un tableau, utilisez un tableau vide
-      }))
+      setSelectedCommune(prev => {
+        // Vérifier si prev existe avant de faire la mise à jour
+        if (!prev) return null
+        
+        return {
+          ...prev,
+          id: communedetail.id || prev.id,
+          nomCommune: communedetail.nomCommune || prev.nomCommune,
+          total_fokotanys: communedetail.total_fokotanys || prev.total_fokotanys,
+          total_services: communedetail.total_services || prev.total_services,
+          fokotanys: Array.isArray(communedetail.fokotanys)
+            ? communedetail.fokotanys.map(fokotany => ({
+                id: fokotany.id,
+                nomFokotany: fokotany.nomFokotany,
+                responsables_count: fokotany.responsables_count,
+                services_count: fokotany.services_count,
+                responsables: fokotany.responsables || [],
+                chef_service: fokotany.chef_service || [],
+                services: fokotany.services || []
+              }))
+            : [] // Si fokotanys n'est pas un tableau, utilisez un tableau vide
+        }
+      })
     }
   }, [communedetail])
 
@@ -153,7 +159,6 @@ function MapViews() {
       }}
     >
       <AppHeader scrolled={scrolled} />
-
       <MapMainContent
         selectedCommune={selectedCommune}
         loading={loading}

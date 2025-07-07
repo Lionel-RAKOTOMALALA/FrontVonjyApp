@@ -2,7 +2,6 @@
 
 import { Box } from "@mui/material"
 import { motion, AnimatePresence } from "framer-motion"
-import { H3 } from "../../../components/ui/TypographyVariants"
 import BackToOverviewButton from "./features/BackToOverviewButton"
 import MapCard from "./features/MapCard"
 import StatistiqueGlobal from "./features/StatistiqueGlobal"
@@ -15,7 +14,6 @@ const MapMainContent = ({
   loading,
   mapError,
   resetView,
-  isAnimating,
   handleCommuneClick,
   handleBackToOverview,
   totals,
@@ -60,7 +58,7 @@ const MapMainContent = ({
                 transition={{ duration: 0.3, delay: 0.1 }}
                 style={{ margin: 0 }}
               >
-                <H3 className="my-3">Commune {selectedCommune.nom}</H3>
+                <h3 className="my-3">Commune {selectedCommune.nom}</h3>
               </motion.div>
             </>
           ) : (
@@ -72,7 +70,7 @@ const MapMainContent = ({
               transition={{ duration: 0.3 }}
               style={{ margin: 0 }}
             >
-              <H3 className="my-3">{"District d'Ampanihy"}</H3>
+              <h3 className="my-3">{"District d'Ampanihy"}</h3>
             </motion.div>
           )}
         </AnimatePresence>

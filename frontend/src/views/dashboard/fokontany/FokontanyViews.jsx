@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView';
@@ -54,7 +54,7 @@ function FokotanyViews() {
     }
   }, [error]);
 
-  const handleSaveCreate = async (fokotany) => {
+  const handleSaveCreate = async () => {
     try {
       setOpenCreateModal(false);
       setOpenSnackbar(true);
@@ -68,7 +68,7 @@ function FokotanyViews() {
     }
   };
 
-  const handleSaveEdit = async (updatedFokotany) => {
+  const handleSaveEdit = async () => {
     try {
       setOpenEditModal(false);
       setSnackbarMessage('Fokontany modifié avec succès!');

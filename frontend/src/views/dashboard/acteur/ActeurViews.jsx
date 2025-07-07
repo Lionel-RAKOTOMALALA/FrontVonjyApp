@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Alert } from '@mui/material';
-import StatusTabs from '../../../components/ui-table/StatusTabs'; 
-import TableView, { highlightText } from '../../../components/ui-table/TableView';
+import  { useState, useEffect } from 'react';
+import { Box } from '@mui/material';
+import { highlightText } from "../../../components/ui-table/HighlightText";
 import CollapsibleTable from '../../../components/ui-table/CollapsibleTable';
 import FilterBar from '../../../components/ui-table/FilterBar';
 import ActeurEdit from './ActeurEdit';  
@@ -17,8 +16,6 @@ function ActeursView() {
     loading,
     error,
     fetchActeurs,
-    addActeur,
-    updateActeur,
     deleteActeur
   } = useActeursCommuneStore();
    
@@ -188,49 +185,9 @@ const detailColumns = [
     setOpenCreateModal(true);
   };
 
-  const handleSaveCreate = async (acteur) => {
-    try {
-      const result = await addActeur(acteur);
-      if (result.success) {
-        setOpenCreateModal(false);
-        setOpenSnackbar(true);
-        setSnackbarMessage('Acteur créé avec succès!');
-        setSnackbarSeverity('success');
-      } else {
-        setOpenSnackbar(true);
-        setSnackbarMessage(result.error?.message || 'Erreur lors de la création de l\'acteur');
-        setSnackbarSeverity('error');
-      }
-    } catch (error) {
-      setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la création de l\'acteur');
-      setSnackbarSeverity('error');
-    }
-  };
-
   const handleEdit = (row) => {
     setSelectedActeur(row);
     setOpenEditModal(true);
-  };
-
-  const handleSaveEdit = async (updatedActeur) => {  
-    try {
-      const result = await updateActeur(updatedActeur.id, updatedActeur);
-      if (result.success) {
-        setOpenEditModal(false);
-        setOpenSnackbar(true);
-        setSnackbarMessage('Acteur modifié avec succès!');
-        setSnackbarSeverity('success');
-      } else {
-        setOpenSnackbar(true);
-        setSnackbarMessage(result.error?.message || 'Erreur lors de la modification de l\'acteur');
-        setSnackbarSeverity('error');
-      }
-    } catch (error) {
-      setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la modification de l\'acteur');
-      setSnackbarSeverity('error');
-    }
   };
 
   const handleDelete = (row) => {

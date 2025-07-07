@@ -1,4 +1,3 @@
-import React from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
 
@@ -32,7 +31,7 @@ const themeColors = {
 };
 
 // Styled components pour Checkbox
-const BpIcon = styled('span')(({ theme }) => ({
+const BpIcon = styled('span')(() => ({
   borderRadius: 3,
   width: 16,
   height: 16,
@@ -43,7 +42,7 @@ const BpIcon = styled('span')(({ theme }) => ({
   },
 }));
 
-const BpCheckedIcon = styled(BpIcon)(({ theme, color }) => {
+const BpCheckedIcon = styled(BpIcon)(({  color }) => {
   const colorScheme = themeColors[color] || themeColors.primary;
 
   return {

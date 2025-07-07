@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
@@ -35,7 +35,7 @@ const ChefServiceEdit = ({ isOpen, chefService, onSave, onClose, onError }) => {
   const [loadingServices, setLoadingServices] = useState(false);
   const [localChefService, setLocalChefService] = useState(initialChefService);
   const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState("");
+  const [, setSubmitError] = useState("");
 
   // Charger les fokotanys au montage
   useEffect(() => {
@@ -208,7 +208,7 @@ const ChefServiceEdit = ({ isOpen, chefService, onSave, onClose, onError }) => {
               <p className="text-warning">Aucun service disponible pour ce fokotany.</p>
             )
           ) : (
-            <p className="text-info">Veuillez d'abord sélectionner un fokotany.</p>
+            <p className="text-info">Veuillez d&apos;abord sélectionner un fokotany.</p>
           )}
         </div>
       </div>

@@ -19,7 +19,6 @@ const iconMap = {
 export default function AlertBox({ 
   severity = 'info', 
   children, 
-  onClose, 
   sx = {}, 
   // On garde aussi la compatibilité avec l'ancien mode
   alerts = [] 

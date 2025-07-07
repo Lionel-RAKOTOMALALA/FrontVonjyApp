@@ -1,7 +1,6 @@
 import './index.css';
-import React, { useEffect } from 'react';
 import MainWrapper from './layouts/MainWrapper';
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuthStore } from './store/auth'; 
 import AppRoutes from "./router/AppRoutes";
 import { Blank } from "./layouts/Blank";  

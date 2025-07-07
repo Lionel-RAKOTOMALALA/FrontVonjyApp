@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
@@ -55,7 +55,6 @@ const FokotanyEdit = ({ isOpen, fokotany, onChange, onSave, onClose }) => {
     };
 
     fetchCommunes();
-    // eslint-disable-next-line
   }, [fokotany, onChange, initialized]);
 
   // Validation d'un champ individuel

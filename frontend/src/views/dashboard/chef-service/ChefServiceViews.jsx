@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Snackbar, Alert } from "@mui/material";
-import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import TableView from "../../../components/ui-table/TableView";
+import { highlightText } from "../../../components/ui-table/HighlightText";
 import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
@@ -10,7 +11,7 @@ import useChefServiceStore from "../../../store/chefServiceStore";
 import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ChefServiceViews() {
-  const { chefServices, fetchChefServices, loading, deleteChefService, error } = useChefServiceStore();
+  const { chefServices, fetchChefServices, loading, deleteChefService } = useChefServiceStore();
   const [selectedChefService, setSelectedChefService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -76,7 +77,7 @@ function ChefServiceViews() {
     setOpenCreateModal(true);
   };
 
-  const handleSaveCreate = (chefService) => {
+  const handleSaveCreate = () => {
     setSnackbarMessage("Chef de service créé avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
@@ -88,7 +89,7 @@ function ChefServiceViews() {
     setOpenEditModal(true);
   };
 
-  const handleSaveEdit = (updatedChefService) => {
+  const handleSaveEdit = () => {
     setSnackbarMessage("Chef de service modifié avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
