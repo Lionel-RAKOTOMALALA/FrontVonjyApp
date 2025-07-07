@@ -117,30 +117,47 @@ const useUserStore = create((set, get) => ({
       return { success: false, error: 'Utilisateur non identifié' };
     }
 
-    // Utiliser isProfileLoading pour les mises à jour de profil
     set({ isProfileLoading: true, error: null });
 
     try {
+      // Préparer les données pour l'API
+      let dataToSend;
+      let headers;
+      if (updatedData.avatar && updatedData.avatar instanceof File) {
+        // Si une nouvelle photo est sélectionnée, utiliser FormData
+        dataToSend = new FormData();
+        dataToSend.append('namefull', updatedData.namefull);
+        dataToSend.append('email', updatedData.email);
+        dataToSend.append('photo_profil', updatedData.avatar);
+        headers = {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        };
+      } else {
+        // Sinon, envoyer en JSON
+        dataToSend = {
+          namefull: updatedData.namefull,
+          email: updatedData.email,
+        };
+        headers = {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        };
+      }
+
       const response = await axios.put(
         `http://localhost:8000/api/auth/update-profile/${uid}/`,
-        updatedData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
+        dataToSend,
+        { headers }
       );
 
-      const updatedUser = { ...user, ...response.data };
+      const updatedUser = { ...user, ...response.data.user };
       set({ 
         user: updatedUser, 
         isProfileLoading: false,
-        // Ne pas modifier loading pour éviter d'affecter ProtectedRoute
         loading: false
       });
-      
-      return { success: true, data: response.data };
+      return { success: true, data: response.data.user };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Erreur lors de la mise à jour des informations utilisateur';
       set({

@@ -7,6 +7,7 @@ import useUserStore from '../../../store/userStore' // Ajustez le chemin selon v
 import { z } from "zod"
 import SnackbarAlert from "../../../components/ui/SnackbarAlert"
 import UploadAvatar from "../../../components/upload/UploadAvatar"
+import { getProfileImageUrl } from '../../../utils/imageUtils'
 
 // Schéma de validation Zod
 const profileSchema = z.object({
@@ -46,7 +47,7 @@ const Profile = ({ isOpen, onClose }) => {
       setFormData({
         namefull: user.namefull || user.full_name || user.name || '',
         email: user.email || '',
-        avatar: null // Reset avatar à null au chargement
+        avatar: user.photo_profil ? getProfileImageUrl(user.photo_profil) : null
       })
     }
   }, [user])
@@ -163,7 +164,15 @@ const Profile = ({ isOpen, onClose }) => {
     if (!isFormValid) return
 
     try {
-      const result = await updateUser(formData)
+      // Préparer les données à envoyer
+      const dataToSend = {
+        namefull: formData.namefull,
+        email: formData.email,
+      };
+      if (formData.avatar && formData.avatar instanceof File) {
+        dataToSend.avatar = formData.avatar;
+      }
+      const result = await updateUser(dataToSend)
 
       if (result?.success) {
         setSnackbarMessage('Profil mis à jour avec succès')
