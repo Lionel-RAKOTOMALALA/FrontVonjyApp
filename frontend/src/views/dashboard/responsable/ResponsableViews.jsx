@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Snackbar, Alert } from "@mui/material";
-import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import TableView from "../../../components/ui-table/TableView";
+import { highlightText } from "../../../components/ui-table/HighlightText";
 import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
@@ -10,7 +11,7 @@ import useResponsableStore from "../../../store/responsableStore";
 import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ResponsableViews() {
-  const { responsables, fetchResponsables, loading, deleteResponsable, error } = useResponsableStore();
+  const { responsables, fetchResponsables, loading, deleteResponsable } = useResponsableStore();
   const [selectedResponsable, setSelectedResponsable] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);

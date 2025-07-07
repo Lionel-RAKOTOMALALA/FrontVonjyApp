@@ -2,7 +2,7 @@
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, styled } from "@mui/material"
 
 // Radio stylisé
-const StyledRadio = styled(Radio)(({ theme }) => ({
+const StyledRadio = styled(Radio)(() => ({
   "&.MuiRadio-root": {
     color: "rgba(0, 0, 0, 0.6)",
     padding: "4px 9px",
@@ -13,7 +13,7 @@ const StyledRadio = styled(Radio)(({ theme }) => ({
 }))
 
 // FormControlLabel stylisé
-const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
+const StyledFormControlLabel = styled(FormControlLabel)(() => ({
   marginRight: 16,
   "& .MuiFormControlLabel-label": {
     color: "rgba(0, 0, 0, 0.87)",

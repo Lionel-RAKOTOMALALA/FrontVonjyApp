@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Paper, Typography } from "@mui/material"
-import { H1, Paragraphe } from "../../components/ui/TypographyVariants"
+import { Box, Paper, Typography } from "@mui/material" 
 import { AnimatePresence } from "framer-motion"
 
 // Import des composants extraits
@@ -16,12 +15,14 @@ import AnimatedView from "./auth/AnimatedView"
 export default function Login() {
   // État pour gérer les différentes vues
   const [currentView, setCurrentView] = useState("login") // login, forgotPassword, verification, resetPassword
-  const [previousView, setPreviousView] = useState(null)
+  const [, setPreviousView] = useState(null)
+  const [resetProps, setResetProps] = useState({})
 
   // Fonction pour naviguer entre les vues avec historique
-  const navigateTo = (view) => {
+  const navigateTo = (view, params = {}) => {
     setPreviousView(currentView)
     setCurrentView(view)
+    if (view === "resetPassword") setResetProps(params)
   }
 
   // Fonction pour rendre la vue appropriée
@@ -42,7 +43,7 @@ export default function Login() {
 
         {currentView === "resetPassword" && (
           <AnimatedView key="resetPassword">
-            <ResetPasswordPage onNavigate={navigateTo} />
+            <ResetPasswordPage onNavigate={navigateTo} otp={resetProps.otp} />
           </AnimatedView>
         )}
 
@@ -104,11 +105,11 @@ export default function Login() {
           }}
         >
           <Box component="img" src="../../assets/background/logo.png" alt="Centre Vonjy Logo" sx={{ maxWidth: 130 }} />
-          <H1 sx={{ textAlign: "center", my: 1, mb: 2 }}>Centre Vonjy</H1>
-          <Paragraphe sx={{ textAlign: "center" }}>
-            Cartographie des services de réponses et de prise en charge disponibles au niveau du district d'Ampanihy
+          <h1 style={{textAlign: "center", my: 1, mb: 2}}>Centre Vonjy</h1>
+          <p style={{textAlign: "center"}}>
+            Cartographie des services de réponses et de prise en charge disponibles au niveau du district d&apos;Ampanihy
             Ouest
-          </Paragraphe>
+          </p>
         </Box>
 
         {/* Partie droite avec formulaire */}

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Box, Snackbar, Alert, Tooltip } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Alert, Tooltip } from '@mui/material';
 import TableView from '../../../components/ui-table/TableView';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import AnnuaireCreate from './AnnuaireCreate';
 import AnnuaireEdit from './AnnuaireEdit';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
+import useAnnuaireStore from '../../../store/annuaireStore';
 
 function AnnuaireViews() {
   const [selectedAnnuaire, setSelectedAnnuaire] = useState(null);
@@ -17,36 +18,12 @@ function AnnuaireViews() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Ajout pour gérer le type d'alerte
 
-  // Données d'annuaire
-  const data = [
-    {
-      id: 1,
-      acteurs: "SDPPSPF Aampanihy",
-      personne_reference: "VORIHASINA Miora Aurélie",
-      contacts: "034 88 925 88",
-      interventions_actuelles: "coordination des interventions de protection de l'enfant dans le district",
-      domaines_intervention_possibles: "Travailler pour que les acteurs de protection de l'enfance ait les compétences éprouvées en ce qui concerne leurs rôles et responsabilités (RPE, CeV, autres acteurs...).",
-      ouverture: "lundi au vendredi"
-    },
-    {
-      id: 2,
-      acteurs: "Tribunal de Première instance",
-      personne_reference: "Juge des enfants PINPIN MICHEK",
-      contacts: "0340557238",
-      interventions_actuelles: "Prise en charge judiciaire des enfants victimes de violence et des survivants de VBG",
-      domaines_intervention_possibles: "Collaborer dans l'identification et réforme des lacunes législatives et politiques en matière de protection de l'enfance dans les crises climatiques, Collaborer pour Identifier tous les obstacles juridiques, politiques et pratiques existants qui excluent des groupes spécifiques de la protection de l'enfance et des systèmes de protection plus larges.",
-      ouverture: "du lundi au vendredi"
-    },
-    {
-      id: 3,
-      acteurs: "Centre de Santé de Base",
-      personne_reference: "Dr. RAKOTO Andry",
-      contacts: "034 12 345 67",
-      interventions_actuelles: "Soins de santé primaires et prévention",
-      domaines_intervention_possibles: "Améliorer l'accès aux soins de santé pour tous les enfants et familles vulnérables",
-      ouverture: "lundi au samedi"
-    }
-  ];
+  // Store Zustand
+  const { annuaires, fetchAnnuaires, loading, error, createAnnuaire, updateAnnuaire, deleteAnnuaire } = useAnnuaireStore();
+
+  useEffect(() => {
+    fetchAnnuaires();
+  }, [fetchAnnuaires]);
 
   // Colonnes du tableau avec formatage personnalisé
   const columns = [
@@ -152,16 +129,16 @@ function AnnuaireViews() {
     setOpenCreateModal(true);
   };
 
-  // Gère l'enregistrement d'un nouvel annuaire
-  const handleSaveCreate = (annuaire) => {
+  const handleSaveCreate = async (annuaire) => {
     try {
-      console.log('Created:', annuaire);
-      // Ici, vous ajouteriez la logique pour sauvegarder dans la base de données
-
-      setOpenCreateModal(false); // Ferme le modal après la sauvegarde
-      showSnackbar(`Annuaire "${annuaire.acteurs}" créé avec succès !`, 'success');
+      const result = await createAnnuaire(annuaire);
+      if (result.success) {
+        setOpenCreateModal(false);
+        showSnackbar(`Annuaire "${annuaire.acteurs}" créé avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la création de l\'annuaire.', 'error');
+      }
     } catch (error) {
-      console.error('Erreur lors de la création:', error);
       showSnackbar('Erreur lors de la création de l\'annuaire.', 'error');
     }
   };
@@ -173,15 +150,16 @@ function AnnuaireViews() {
   };
 
   // Gère l'enregistrement des modifications d'un annuaire
-  const handleSaveEdit = (updatedAnnuaire) => {
+  const handleSaveEdit = async (updatedAnnuaire) => {
     try {
-      console.log('Edited:', updatedAnnuaire);
-      // Ici, vous ajouteriez la logique pour mettre à jour dans la base de données
-
-      setOpenEditModal(false);
-      showSnackbar(`Annuaire "${updatedAnnuaire.acteurs}" modifié avec succès !`, 'success');
+      const result = await updateAnnuaire(updatedAnnuaire.id, updatedAnnuaire);
+      if (result.success) {
+        setOpenEditModal(false);
+        showSnackbar(`Annuaire "${updatedAnnuaire.acteurs}" modifié avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la modification de l\'annuaire.', 'error');
+      }
     } catch (error) {
-      console.error('Erreur lors de la modification:', error);
       showSnackbar('Erreur lors de la modification de l\'annuaire.', 'error');
     }
   };
@@ -193,17 +171,19 @@ function AnnuaireViews() {
   };
 
   // Confirme la suppression d'un annuaire
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     try {
-      console.log('Deleted:', annuaireToDelete);
-      // Ici, vous ajouteriez la logique pour supprimer de la base de données
-
-      const deletedActeur = annuaireToDelete.acteurs;
-      setOpenDialog(false);
-      setAnnuaireToDelete(null);
-      showSnackbar(`Annuaire "${deletedActeur}" supprimé avec succès !`, 'success');
+      const result = await deleteAnnuaire(annuaireToDelete.id);
+      if (result.success) {
+        const deletedActeur = annuaireToDelete.acteurs;
+        setOpenDialog(false);
+        setAnnuaireToDelete(null);
+        showSnackbar(`Annuaire "${deletedActeur}" supprimé avec succès !`, 'success');
+      } else {
+        showSnackbar('Erreur lors de la suppression de l\'annuaire.', 'error');
+        setOpenDialog(false);
+      }
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
       showSnackbar('Erreur lors de la suppression de l\'annuaire.', 'error');
       setOpenDialog(false);
     }
@@ -223,12 +203,13 @@ function AnnuaireViews() {
       {/* Tableau principal affichant les annuaires */}
       <Box className="card">
         <TableView
-          data={data}
+          data={annuaires}
           columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
           onDelete={handleDelete}
           showCheckboxes={false}
+          loading={loading}
         />
       </Box>
 
@@ -265,6 +246,8 @@ function AnnuaireViews() {
         severity={snackbarSeverity}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       />
+      {/* Affichage des erreurs API */}
+      {error && <Alert severity="error">{typeof error === 'string' ? error : JSON.stringify(error)}</Alert>}
     </>
   );
 }

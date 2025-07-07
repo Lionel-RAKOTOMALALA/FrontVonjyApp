@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Box, Avatar } from '@mui/material'; 
+import { useState } from 'react';
+import { Box, Avatar } from '@mui/material';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
-import TableView from '../../../components/ui-table/TableView'; 
-import ChauffeurEdit from './UserEdit';  
+import TableView from '../../../components/ui-table/TableView';
+import ChauffeurEdit from './UserEdit';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import ChauffeurCreate from './UserCreate';
@@ -19,39 +19,39 @@ function UserViews() {
 
   // Données fictives des chauffeurs avec avatars
   const data = [
-    { 
-      id: 1, 
-      nameFull: 'Rasoanaivo Hery', 
+    {
+      id: 1,
+      nameFull: 'Rasoanaivo Hery',
       email: 'test@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
     },
-    { 
-      id: 2, 
-      nameFull: 'Rakotoarivelo Naina', 
+    {
+      id: 2,
+      nameFull: 'Rakotoarivelo Naina',
       email: 'test@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b1a2?w=150&h=150&fit=crop&crop=face'
     },
-    { 
-      id: 3, 
-      nameFull: 'Andrianarivo Mamy', 
+    {
+      id: 3,
+      nameFull: 'Andrianarivo Mamy',
       email: 'test@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
     },
-    { 
-      id: 4, 
-      nameFull: 'Ravelojaona Lova', 
+    {
+      id: 4,
+      nameFull: 'Ravelojaona Lova',
       email: 'test@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face'
     },
-    { 
-      id: 5, 
-      nameFull: 'Mihobisoa Antsa', 
+    {
+      id: 5,
+      nameFull: 'Mihobisoa Antsa',
       email: 'test@gmail.com',
       avatar: null // Pas d'avatar pour tester le fallback
     },
-    { 
-      id: 6, 
-      nameFull: 'Andriantsitohaina Tiana', 
+    {
+      id: 6,
+      nameFull: 'Andriantsitohaina Tiana',
       email: 'test@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
     },
@@ -68,15 +68,15 @@ function UserViews() {
   // Colonnes du tableau avec formatage personnalisé
   const columns = [
     { id: 'id', label: 'Id' },
-    { 
-      id: 'avatar', 
+    {
+      id: 'avatar',
       label: 'Avatar',
       render: (row) => (
         <Avatar
           src={row.avatar}
           alt={row.nameFull}
-          sx={{ 
-            width: 40, 
+          sx={{
+            width: 40,
             height: 40,
             fontSize: '0.875rem',
             bgcolor: row.avatar ? 'transparent' : '#1976d2'
@@ -86,8 +86,8 @@ function UserViews() {
         </Avatar>
       )
     },
-    { id: 'namefull', label: 'Nom et prenom', render: (row) => row.nameFull }, 
-    { id: 'email', label: 'Email', render: (row) => row.email }, 
+    { id: 'namefull', label: 'Nom et prenom', render: (row) => row.nameFull },
+    { id: 'email', label: 'Email', render: (row) => row.email },
   ];
 
   // Ouvre le modal de création de chauffeur
@@ -169,31 +169,31 @@ function UserViews() {
       />
 
       {/* Fil d'Ariane avec bouton de création */}
-      <Breadcrumb 
-        mainText="Listes" 
-        subText="Chauffeur" 
-        showCreateButton={true} 
-        onCreate={handleCreate} 
-      /> 
+      <Breadcrumb
+        mainText="Listes"
+        subText="Chauffeur"
+        showCreateButton={true}
+        onCreate={handleCreate}
+      />
 
       {/* Tableau principal affichant les chauffeurs */}
-      <Box className="card">   
-        <TableView 
+      <Box className="card">
+        <TableView
           data={data}
-          columns={columns} 
+          columns={columns}
           rowsPerPage={5}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          showCheckboxes={false} 
-        /> 
-      </Box> 
-       
+          showCheckboxes={false}
+        />
+      </Box>
+
       {/* Modal de création */}
       <ChauffeurCreate
         isOpen={openCreateModal}
         onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)} 
-      /> 
+        onClose={() => setOpenCreateModal(false)}
+      />
 
       {/* Modal d'édition */}
       <ChauffeurEdit
@@ -201,9 +201,9 @@ function UserViews() {
         chauffeur={selectedChauffeur}
         onChange={(updatedChauffeur) => setSelectedChauffeur(updatedChauffeur)}
         onSave={handleSaveEdit}
-        onClose={() => setOpenEditModal(false)} 
+        onClose={() => setOpenEditModal(false)}
       />
-      
+
       {/* Boîte de dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}

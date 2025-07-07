@@ -1,5 +1,4 @@
-import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Autocomplete, TextField } from '@mui/material';
 
 const SelectField = ({ 
@@ -11,8 +10,6 @@ const SelectField = ({
   required = true, 
   fullWidth = true, 
   autocomplete = false, // Nouveau prop pour activer l'autocomplete
-  error = false,
-  helperText = '',
   ...props 
 }) => {
   
@@ -81,7 +78,7 @@ const SelectField = ({
   // Si autocomplete est activé, on utilise le composant Autocomplete de MUI
   if (autocomplete) {
     return (
-      <FormControl fullWidth={fullWidth} error={error}>
+      <FormControl fullWidth={fullWidth}>
         <Autocomplete
           value={value ? options.find(option => option.value === value) || null : null}
           onChange={(event, newValue) => {
@@ -100,8 +97,6 @@ const SelectField = ({
               name={name}
               label={label}
               required={required}
-              error={error}
-              helperText={helperText}
               InputLabelProps={{
                 sx: labelStyle
               }}
@@ -127,7 +122,7 @@ const SelectField = ({
 
   // Sinon on garde le Select d'origine
   return (
-    <FormControl fullWidth={fullWidth} error={error}>
+    <FormControl fullWidth={fullWidth}>
       <InputLabel
         required={required}
         sx={labelStyle}
@@ -144,8 +139,7 @@ const SelectField = ({
           PaperProps: {
             sx: menuStyle
           },
-        }}
-        error={error}
+        }} 
         {...props}
       >
         {options.map((option) => (
@@ -153,10 +147,7 @@ const SelectField = ({
             {option.label}
           </MenuItem>
         ))}
-      </Select>
-      {helperText && (
-        <FormHelperText>{helperText}</FormHelperText>
-      )}
+      </Select> 
     </FormControl>
   );
 };

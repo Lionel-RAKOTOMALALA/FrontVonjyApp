@@ -49,6 +49,14 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
   const geoJsonLayerRef = useRef(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const selectedLayerRef = useRef(null)
+  
+  // Utiliser une ref pour stocker la fonction onCommuneClick
+  const onCommuneClickRef = useRef(onCommuneClick)
+
+  // Mettre à jour la ref quand onCommuneClick change
+  useEffect(() => {
+    onCommuneClickRef.current = onCommuneClick
+  }, [onCommuneClick])
 
   // Fonction pour appliquer une transition CSS aux styles de la couche
   const applyStyleWithTransition = (layer, style, duration = 0.5) => {
@@ -83,8 +91,9 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
         // Attacher uniquement l'événement de clic
         layer.on({
           click: () => {
-            if (onCommuneClick) {
-              onCommuneClick(communeId)
+            // Utiliser la ref pour accéder à la fonction actuelle
+            if (onCommuneClickRef.current) {
+              onCommuneClickRef.current(communeId)
             }
           },
         })
@@ -114,7 +123,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
       }
       delete window.prepareMapForExport
     }
-  }, [map]) // Dépendance uniquement à map pour s'assurer que cela ne se réexécute pas inutilement
+  }, [map]) // Maintenant on n'a plus besoin d'inclure onCommuneClick
 
   // Fonction pour préparer la carte pour l'export PDF
   const prepareMapForExport = (communeId) => {
@@ -252,7 +261,7 @@ function MapController({ selectedCommuneId, resetView, onCommuneClick, resetView
         })
       }
     }
-  }, [resetViewToDefault, isInitialized])
+  }, [resetViewToDefault, isInitialized, map])
 
   return null
 }

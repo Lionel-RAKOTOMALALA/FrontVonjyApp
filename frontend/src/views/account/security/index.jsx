@@ -5,6 +5,8 @@ import { z } from "zod"
 import Modal from "../../../components/ui/Modal"
 import SnackbarAlert from "../../../components/ui/SnackbarAlert"
 import InputField from "../../../components/ui/form/InputField"
+import useUserStore from "../../../store/userStore"
+import jwtDecode from "jwt-decode"
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Mot de passe actuel requis"),
@@ -22,11 +24,15 @@ const Securite = ({ isOpen, onClose }) => {
     confirmPassword: ''
   })
   const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
   const [snackbar, setSnackbar] = useState({
     open: false,
     severity: 'success',
     message: '',
   })
+
+  // Utiliser le store utilisateur
+  const { user, accessToken } = useUserStore()
 
   const handleCloseSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }))
@@ -55,14 +61,87 @@ const Securite = ({ isOpen, onClose }) => {
 
   const handleSave = async () => {
     if (!validate()) return
-    // Appelle ici ton API de changement de mot de passe
-    setSnackbar({
-      open: true,
-      severity: 'success',
-      message: 'Mot de passe modifié avec succès'
-    })
-    onClose()
-    resetForm()
+    
+    setLoading(true)
+    
+    try {
+      // Récupérer l'uid depuis le store utilisateur ou décoder le token
+      let uid = user?.uid
+      
+      if (!uid && accessToken) {
+        try {
+          const decodedToken = jwtDecode(accessToken)
+          uid = decodedToken.uid
+        } catch (error) {
+          console.error('Erreur lors du décodage du token:', error)
+        }
+      }
+      
+      console.log('User from store:', user)
+      console.log('UID found:', uid)
+      console.log('AccessToken exists:', !!accessToken)
+      
+      if (!accessToken) {
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Token d\'authentification manquant'
+        })
+        return
+      }
+
+      if (!uid) {
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'ID utilisateur manquant'
+        })
+        return
+      }
+
+      const requestBody = {
+        current_password: form.currentPassword,
+        new_password: form.newPassword
+      }
+      
+      console.log('Request body:', requestBody)
+
+      // Appeler l'API update-profile pour changer le mot de passe
+      const response = await fetch(`http://localhost:8000/api/auth/update-profile/${uid}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      const data = await response.json()
+      console.log('Response status:', response.status)
+      console.log('Response data:', data)
+
+      if (!response.ok) {
+        throw new Error(data.message || data.detail || 'Erreur lors du changement de mot de passe')
+      }
+      
+      setSnackbar({
+        open: true,
+        severity: 'success',
+        message: data.message || 'Mot de passe modifié avec succès'
+      })
+      onClose()
+      resetForm()
+      
+    } catch (error) {
+      console.error('Error in handleSave:', error)
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: error.message || 'Erreur lors du changement de mot de passe'
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const resetForm = () =>{
@@ -80,6 +159,7 @@ const Securite = ({ isOpen, onClose }) => {
         onClose={onClose}
         onSave={handleSave}
         resetForm={resetForm}
+        loading={loading}
       >
         <div className="row">
           <div className="col mt-2">
@@ -92,6 +172,7 @@ const Securite = ({ isOpen, onClose }) => {
               error={!!errors.currentPassword}
               helperText={errors.currentPassword}
               required
+              disabled={loading}
             />
           </div>
         </div>
@@ -107,6 +188,7 @@ const Securite = ({ isOpen, onClose }) => {
               error={!!errors.newPassword}
               helperText={errors.newPassword}
               required
+              disabled={loading}
             />
           </div>
         </div>
@@ -122,6 +204,7 @@ const Securite = ({ isOpen, onClose }) => {
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
               required
+              disabled={loading}
             />
 
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView'; 
@@ -14,8 +14,8 @@ function CommuneViews() {
     loading,
     error,
     fetchCommunes,
-    createCommune,
-    updateCommune,
+    // createCommune,
+    // updateCommune,
     deleteCommune
   } = useCommuneStore();
 
@@ -55,19 +55,19 @@ function CommuneViews() {
   };
 
   // Gère l'enregistrement d'une nouvelle commune
-  const handleSaveCreate = async (commune) => {
-    try {
-      await createCommune(commune);
-      setOpenSnackbar(true);  
-      setOpenCreateModal(false);
-      setSnackbarMessage('Commune créée avec succès!');
-      setSnackbarSeverity('success');
-    } catch (error) {
-      setOpenSnackbar(true);
-      setSnackbarMessage(error.message || 'Erreur lors de la création de la commune');
-      setSnackbarSeverity('error');
-    }
-  };
+  // const handleSaveCreate = async (commune) => {
+  //   try {
+  //     await createCommune(commune);
+  //     setOpenSnackbar(true);  
+  //     setOpenCreateModal(false);
+  //     setSnackbarMessage('Commune créée avec succès!');
+  //     setSnackbarSeverity('success');
+  //   } catch (error) {
+  //     setOpenSnackbar(true);
+  //     setSnackbarMessage(error.message || 'Erreur lors de la création de la commune');
+  //     setSnackbarSeverity('error');
+  //   }
+  // };
 
   // Ouvre le modal d'édition
   const handleEdit = (row) => {
@@ -76,19 +76,19 @@ function CommuneViews() {
   };
 
   // Gère l'enregistrement des modifications
-  const handleSaveEdit = async (updatedCommune) => {  
-    try {
-      await updateCommune(updatedCommune.id, updatedCommune);
-      setOpenEditModal(false);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Commune modifiée avec succès!');
-      setSnackbarSeverity('success');
-    } catch (error) {
-      setOpenSnackbar(true);
-      setSnackbarMessage(error.message || 'Erreur lors de la modification de la commune');
-      setSnackbarSeverity('error');
-    }
-  };
+  // const handleSaveEdit = async (updatedCommune) => {  
+  //   try {
+  //     await updateCommune(updatedCommune.id, updatedCommune);
+  //     setOpenEditModal(false);
+  //     setOpenSnackbar(true);
+  //     setSnackbarMessage('Commune modifiée avec succès!');
+  //     setSnackbarSeverity('success');
+  //   } catch (error) {
+  //     setOpenSnackbar(true);
+  //     setSnackbarMessage(error.message || 'Erreur lors de la modification de la commune');
+  //     setSnackbarSeverity('error');
+  //   }
+  // };
 
   // Ouvre le dialogue de confirmation pour la suppression
   const handleDelete = (row) => {

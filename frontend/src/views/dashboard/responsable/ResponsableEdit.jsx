@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
@@ -17,11 +17,11 @@ const responsableSchema = z.object({
   formation_acquise: z.enum(["true", "false"]),
 });
 
-const ResponsableEdit = ({ isOpen, responsable, onChange, onSave, onClose }) => {
+const ResponsableEdit = ({ isOpen, responsable, onSave, onClose }) => {
   const { updateResponsable } = useResponsableStore();
   const [fokotanys, setFokotanys] = useState([]);
   const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState('');
+  const [, setSubmitError] = useState('');
   const [loadingFokotanys, setLoadingFokotanys] = useState(false);
 
   const [localResponsable, setLocalResponsable] = useState({

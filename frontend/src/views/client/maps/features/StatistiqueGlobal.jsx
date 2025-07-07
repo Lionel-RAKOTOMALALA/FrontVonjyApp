@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CommuneIcon from '../../../../assets/icons/commune.svg';
 import FokotanyIcon from '../../../../assets/icons/fokotany.svg';
@@ -6,7 +6,7 @@ import ServiceIcon from '../../../../assets/icons/service.svg';
 
 const StatistiqueGlobal = ({ selectedCommune, totals }) => {
   
-  const [communeData, setCommuneData] = useState(null);
+  const [, setCommuneData] = useState(null);
 
   useEffect(() => {
     fetch('/exempleData.json')
@@ -42,24 +42,6 @@ const StatistiqueGlobal = ({ selectedCommune, totals }) => {
     service: 'linear-gradient(322deg,rgba(255, 248, 225, 1) 0%, rgba(255, 220, 125, 0.80) 100%)',
     fokotany: 'linear-gradient(322deg,rgba(227, 247, 236, 1) 0%, rgba(150, 255, 192, 0.50) 78%)'
   };
-
-  // Valeurs par défaut
-  let communeCount = 15;
-  let fokotanyCount = 40;
-  let serviceCount = 15;
-
-  if (selectedCommune && communeData) {
-    if (communeData.nomCommune === selectedCommune.nom) {
-      communeCount = 1;
-      fokotanyCount = communeData.fokotanys.length;
-
-      const allServiceIds = communeData.fokotanys.flatMap(f =>
-        f.services.map(s => s.id)
-      );
-
-      serviceCount = new Set(allServiceIds).size;
-    }
-  }
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },

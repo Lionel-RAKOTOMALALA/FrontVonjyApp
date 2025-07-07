@@ -2,7 +2,6 @@
 
 import { Box } from "@mui/material"
 import { motion, AnimatePresence } from "framer-motion"
-import { H3 } from "../../../components/ui/TypographyVariants"
 import BackToOverviewButton from "./features/BackToOverviewButton"
 import MapCard from "./features/MapCard"
 import StatistiqueGlobal from "./features/StatistiqueGlobal"
@@ -15,25 +14,29 @@ const MapMainContent = ({
   loading,
   mapError,
   resetView,
-  isAnimating,
   handleCommuneClick,
   handleBackToOverview,
   totals,
 }) => {
   return (
     <Box className="container" sx={{ paddingBottom: 4, mt: 5 }}>
-      <div
+      <Box
         className="z-2 mx-auto"
-        style={{
-          position: "sticky",
+        sx={{
+          position: {
+            xs: "static",
+            md: "sticky",
+          },
           top: 0,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "1rem",
-          // maxWidth:'350px'
+          gap: 2,
+          margin: "0 auto",
+          width: "fit-content",
         }}
       >
+
         <AnimatePresence mode="wait">
           {selectedCommune ? (
             <>
@@ -55,7 +58,7 @@ const MapMainContent = ({
                 transition={{ duration: 0.3, delay: 0.1 }}
                 style={{ margin: 0 }}
               >
-                <H3 className="my-3">Commune {selectedCommune.nom}</H3>
+                <h3 className="my-3">Commune {selectedCommune.nom}</h3>
               </motion.div>
             </>
           ) : (
@@ -67,11 +70,11 @@ const MapMainContent = ({
               transition={{ duration: 0.3 }}
               style={{ margin: 0 }}
             >
-              <H3 className="my-3">{"District d'Ampanihy"}</H3>
+              <h3 className="my-3">{"District d'Ampanihy"}</h3>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </Box>
 
       <Box className="row mt-2 flex-wrap-reverse justify-content-center">
         <Box className="col-12 col-md-8">

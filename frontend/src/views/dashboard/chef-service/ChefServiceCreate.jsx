@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
@@ -197,7 +197,7 @@ const ChefServiceCreate = ({ isOpen, onClose, onSave, onError }) => {
               <p className="text-warning">Aucun service disponible pour ce fokotany.</p>
             )
           ) : (
-            <p className="text-info">Veuillez d'abord sélectionner un fokotany.</p>
+            <p className="text-info">Veuillez d&apos;abord sélectionner un fokotany.</p>
           )}
         </div>
       </div>

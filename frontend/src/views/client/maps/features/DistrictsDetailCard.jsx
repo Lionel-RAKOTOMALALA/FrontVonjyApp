@@ -1,6 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { H4 } from '../../../../components/ui/TypographyVariants';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CollapsibleTable from '../../../../components/ui-table/CollapsibleTable';
 import useDistrictStore from '../../../../store/useDistrictStore';
@@ -72,7 +71,7 @@ function DistrictDetailCard() {
             <Card elevation={3} sx={{ borderRadius: 5, overflow: 'hidden', bgcolor: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
               <CardContent className="pt-0">
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Informations globale</H4>
+                  <h4 className="m-0 mb-4">Informations globale</h4>
                   <p>Chargement des données...</p>
                 </Box>
               </CardContent>
@@ -118,7 +117,7 @@ function DistrictDetailCard() {
             <CardContent className="pt-0">
               <motion.div variants={contentVariants}>
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Informations globale</H4>
+                  <h4 className="m-0 mb-4">Informations globale</h4>
                   <Box 
                     sx={{
                       '& .MuiTableHead-root .MuiTableCell-root': {
@@ -161,7 +160,6 @@ function DistrictDetailCard() {
                       arrowPosition="left"
                       expandedRows={expandedRows}
                       onExpandedRowsChange={setExpandedRows}
-                      // Props pour enlever les actions
                       showActionsColumn={false}
                       showDeleteIcon={false}
                       showEditIcon={false}

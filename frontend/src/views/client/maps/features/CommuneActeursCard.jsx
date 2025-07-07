@@ -1,6 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import React, { useEffect } from 'react';
-import { H4 } from '../../../../components/ui/TypographyVariants';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TableView from '../../../../components/ui-table/TableView';
 import useActeursCommuneStore from '../../../../store/acteursCommuneStore';
@@ -51,14 +50,14 @@ const columns = [
 function CommuneActeurCard({ selectedCommune }) {
   console.log('selectedCommune:', selectedCommune);
   
-  const { acteurs, loading, error, fetchActeurs } = useActeursCommuneStore();
+  const { acteurs, loading, error, fetchActeursById } = useActeursCommuneStore();
 
   // Récupérer les données des acteurs pour une commune spécifique
   useEffect(() => {
     if (selectedCommune?.id) {
-      fetchActeurs(selectedCommune.id); // Appeler le store avec l'ID de la commune
+      fetchActeursById(selectedCommune.id); // Appeler le store avec l'ID de la commune
     }
-  }, [selectedCommune, fetchActeurs]);
+  }, [selectedCommune, fetchActeursById]);
 
   return (
     <motion.div initial="hidden" className="" animate="visible" exit="exit" variants={cardVariants}>
@@ -76,7 +75,7 @@ function CommuneActeurCard({ selectedCommune }) {
             <CardContent className="pt-0">
               <motion.div variants={contentVariants}>
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Acteurs dans cette commune</H4>
+                  <h4 className='m-0 mb-4'>Acteurs dans cette commune</h4>
                   {loading ? (
                     <div>Chargement des données...</div>
                   ) : error ? (

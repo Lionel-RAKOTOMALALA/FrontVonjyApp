@@ -1,5 +1,4 @@
 // components/CustomButton.jsx
-import React from 'react';
 import { Button } from '@mui/material';
 
 const colorPalette = {
@@ -97,7 +96,7 @@ const getButtonStyle = (variant, color) => {
       "&:hover": {
         borderColor: c.hover,
         color: c.hover,
-        bgcolor: `${c.main.replace(/[\d\.]+\)$/g, '0.08)')}`, // soft background
+        bgcolor: `${c.main.replace(/[\d.]+\)$/g, '0.08)')}`,
       },
     };
   }
@@ -114,8 +113,8 @@ const getButtonStyle = (variant, color) => {
       },
     };
   }
-  
-  
+
+
 
   // Text variant
   if (variant === "text") {
@@ -130,14 +129,6 @@ const getButtonStyle = (variant, color) => {
   }
 
   return {};
-};
-
-const baseStyle = {
-  textTransform: "none",
-  fontSize: "0.875rem",
-  fontWeight: 600,
-  borderRadius: "8px",
-  padding: "6px 20px",
 };
 
 const CustomButton = ({

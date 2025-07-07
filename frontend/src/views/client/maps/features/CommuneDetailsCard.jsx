@@ -2,27 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { Box, Card, CardContent, Typography } from "@mui/material"
-import { H4 } from "../../../../components/ui/TypographyVariants"
 import { motion } from "framer-motion"
 import CollapsibleTable from "../../../../components/ui-table/CollapsibleTable"
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital"
-import SchoolIcon from "@mui/icons-material/School"
-import WorkIcon from "@mui/icons-material/Work"
-import LocationCityIcon from "@mui/icons-material/LocationCity"
-import PeopleIcon from "@mui/icons-material/People"
 import CustomButton from "../../../../components/ui/CustomButton"
 import CommunePDFExporter from "./CommunePDFExporter"
 
-const getServiceIcon = (serviceName) => {
-  if (serviceName.toLowerCase().includes("santé")) return <LocalHospitalIcon color="primary" />
-  if (serviceName.toLowerCase().includes("éduc")) return <SchoolIcon color="primary" />
-  if (serviceName.toLowerCase().includes("sécurité")) return <WorkIcon color="primary" />
-  if (serviceName.toLowerCase().includes("agricole")) return <LocationCityIcon color="primary" />
-  return <PeopleIcon color="primary" />
-}
 
 const CommuneDetailsCard = ({ selectedCommune }) => {
-  console.log("fory", selectedCommune)
   const [communeDetails, setCommuneDetails] = useState(null)
 
   useEffect(() => {
@@ -176,7 +162,7 @@ const CommuneDetailsCard = ({ selectedCommune }) => {
                 <motion.div variants={contentVariants}>
                   <Box sx={{ mt: 3, p: 0 }}>
                     <Box className="d-flex justify-content-between align-items-center mb-4">
-                      <H4 sx={{ m: 0 }}>Fokotany de {communeDetails.nomCommune}</H4>
+                      <h4 style={{ margin: 0 }}>Fokotany de {communeDetails.nomCommune}</h4>
                       <CustomButton color="warning" onClick={handleExportPDF}>
                         Exporter PDF
                       </CustomButton>
