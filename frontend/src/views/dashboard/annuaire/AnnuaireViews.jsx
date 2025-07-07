@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Box, Alert, Tooltip } from '@mui/material';
 import TableView from '../../../components/ui-table/TableView';
+import { highlightText } from '../../../components/ui-table/HighlightText';
+import FilterBar from '../../../components/ui-table/FilterBar';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import AnnuaireCreate from './AnnuaireCreate';
@@ -16,7 +18,10 @@ function AnnuaireViews() {
   const [annuaireToDelete, setAnnuaireToDelete] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Ajout pour gérer le type d'alerte
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  // Nouveaux états pour la recherche
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   // Store Zustand
   const { annuaires, fetchAnnuaires, loading, error, createAnnuaire, updateAnnuaire, deleteAnnuaire } = useAnnuaireStore();
@@ -25,12 +30,29 @@ function AnnuaireViews() {
     fetchAnnuaires();
   }, [fetchAnnuaires]);
 
-  // Colonnes du tableau avec formatage personnalisé
+  // Mettre à jour les données filtrées quand les annuaires changent
+  useEffect(() => {
+    setFilteredData(annuaires);
+  }, [annuaires]);
+
+  // Colonnes du tableau avec formatage personnalisé et highlight
   const columns = [
     { id: 'id', label: 'Id' },
-    { id: 'acteurs', label: 'Acteurs', render: (row) => row.acteurs },
-    { id: 'personne_reference', label: 'Personne de référence', render: (row) => row.personne_reference },
-    { id: 'contacts', label: 'Contacts', render: (row) => row.contacts },
+    { 
+      id: 'acteurs', 
+      label: 'Acteurs', 
+      render: (row) => highlightText(row.acteurs, searchQuery)
+    },
+    { 
+      id: 'personne_reference', 
+      label: 'Personne de référence', 
+      render: (row) => highlightText(row.personne_reference, searchQuery)
+    },
+    { 
+      id: 'contacts', 
+      label: 'Contacts', 
+      render: (row) => highlightText(row.contacts, searchQuery)
+    },
     {
       id: 'interventions_actuelles',
       label: 'Interventions actuelles',
@@ -48,7 +70,7 @@ function AnnuaireViews() {
                   fontSize: 13,
                   borderRadius: 2,
                   boxShadow: 3,
-                  maxWidth: 300,
+                  maxWidth: 600,
                   whiteSpace: 'pre-line',
                   p: 1.2,
                 }
@@ -60,7 +82,7 @@ function AnnuaireViews() {
               }
             }}>
             <span style={{ cursor: 'pointer' }}>
-              {truncatedText}
+              {highlightText(truncatedText, searchQuery)}
             </span>
           </Tooltip>
         );
@@ -90,7 +112,7 @@ function AnnuaireViews() {
                   fontSize: 13,
                   borderRadius: 2,
                   boxShadow: 3,
-                  maxWidth: 300,
+                  maxWidth: 600,
                   whiteSpace: 'pre-line',
                   p: 1.2,
                 }
@@ -107,13 +129,17 @@ function AnnuaireViews() {
                 cursor: 'pointer',
               }}
             >
-              {truncatedText}
+              {highlightText(truncatedText, searchQuery)}
             </span>
           </Tooltip>
         );
       }
     },
-    { id: 'ouverture', label: 'Ouverture', render: (row) => row.ouverture }
+    { 
+      id: 'ouverture', 
+      label: 'Ouverture', 
+      render: (row) => highlightText(row.ouverture, searchQuery)
+    }
   ];
 
   // Fonction utilitaire pour afficher les notifications
@@ -189,7 +215,6 @@ function AnnuaireViews() {
     }
   };
 
-
   return (
     <>
       {/* Fil d'Ariane avec bouton de création */}
@@ -202,15 +227,31 @@ function AnnuaireViews() {
 
       {/* Tableau principal affichant les annuaires */}
       <Box className="card">
-        <TableView
+        {/* Ajout du composant FilterBar */}
+        <FilterBar
+          showSearch={true}
+          showFilter={false}
+          filterCriteria={{
+            filterBy: null,
+            searchFields: ['acteurs', 'personne_reference', 'contacts', 'interventions_actuelles', 'domaines_intervention_possibles', 'ouverture']
+          }}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
           data={annuaires}
-          columns={columns}
-          rowsPerPage={5}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          showCheckboxes={false}
-          loading={loading}
+          onFilteredData={setFilteredData}
         />
+
+        {filteredData.length > 0 && (
+          <TableView
+            data={filteredData} // Utilisation des données filtrées
+            columns={columns}
+            rowsPerPage={5}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            showCheckboxes={false}
+            loading={loading}
+          />
+        )}
       </Box>
 
       {/* Modal de création */}
