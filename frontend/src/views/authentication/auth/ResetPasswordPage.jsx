@@ -3,7 +3,6 @@
 import { Box, IconButton, InputAdornment } from "@mui/material"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
-import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import usePasswordResetStore from '../../../store/passwordResetStore'
@@ -62,13 +61,13 @@ function ResetPasswordPage({ onNavigate, otp }) {
         <IconButton onClick={() => onNavigate("verification")} sx={{ position: "relative", left: "-6px" }}>
           <ArrowLeft size={18} />
         </IconButton>
-        <H3 className="m-0 mb-2 p-0">
+        <h3 className="m-0 mb-2 p-0">
           Réinitialiser votre <br className="d-none d-lg-block" /> mot de passe
-        </H3>
+        </h3>
       </Box>
-      <Paragraphe sx={{ mb: 3, mt: 1, textAlign: "center" }}>
+      <p style={{ marginBottom: 3, marginTop: 1, textAlign: "center" }}>
         Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
-      </Paragraphe>
+      </p>
 
       <Box sx={{ mb: 3 }}>
         <InputField

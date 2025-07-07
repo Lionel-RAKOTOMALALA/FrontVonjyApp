@@ -4,8 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react"
 import PropTypes from "prop-types"
 import { AppBar, Toolbar, Box, IconButton, Avatar, Popover, Divider, MenuList, MenuItem } from "@mui/material"
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
-import VonjyLogo from "../../assets/VonjyLogo.svg"
-import { Paragraphe } from "../../components/ui/TypographyVariants"
+import VonjyLogo from "../../assets/VonjyLogo.svg" 
 import useUserStore from "../../store/userStore"
 import { useNavigate } from 'react-router-dom'
 import ProfileModal from "../account/profile"
@@ -90,12 +89,12 @@ const DashboardIcon = () => (
 // Composant pour les informations utilisateur dans le popover
 const UserInfo = ({ user }) => (
   <Box sx={{ p: 2, pb: 1.5 }}>
-    <Paragraphe className="fw-bold">
+    <p className="fw-bold">
       {user?.namefull || "Nom indisponible"}
-    </Paragraphe>
-    <Paragraphe>
+    </p>
+    <p>
       {user?.email || "Email non disponible"}
-    </Paragraphe>
+    </p>
   </Box>
 );
 
@@ -105,7 +104,7 @@ const MenuItemComponent = ({ onClick, icon: Icon, text }) => (
     <span style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Icon />
     </span>
-    <Paragraphe>{text}</Paragraphe>
+    <p>{text}</p>
   </MenuItem>
 );
 

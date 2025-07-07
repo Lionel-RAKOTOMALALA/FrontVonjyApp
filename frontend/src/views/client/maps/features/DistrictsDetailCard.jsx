@@ -1,6 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { H4 } from '../../../../components/ui/TypographyVariants';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CollapsibleTable from '../../../../components/ui-table/CollapsibleTable';
 import useDistrictStore from '../../../../store/useDistrictStore';

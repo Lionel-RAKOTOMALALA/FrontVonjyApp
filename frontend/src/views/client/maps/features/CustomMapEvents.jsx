@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -41,7 +41,7 @@ function CustomMapEvents({ onCommuneClick }) {
         });
         
         // Add hover handlers
-        layer.on('mouseover', (e) => {
+        layer.on('mouseover', () => {
           // Apply hover style
           layer.setStyle(hoverStyle);
           
@@ -54,7 +54,7 @@ function CustomMapEvents({ onCommuneClick }) {
           layer.bindTooltip(`${nomCommune}`).openTooltip();
         });
         
-        layer.on('mouseout', (e) => {
+        layer.on('mouseout', () => {
           // Reset to default style when not hovering
           layer.setStyle(defaultStyle);
           

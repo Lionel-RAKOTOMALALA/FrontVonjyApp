@@ -3,7 +3,6 @@
 import { Box, Checkbox, FormControlLabel, IconButton, InputAdornment } from "@mui/material"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
-import { H3, Paragraphe } from "../../../components/ui/TypographyVariants"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import axios from "axios"
@@ -74,15 +73,15 @@ function LoginForm({ onNavigate }) {
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Box>
-        <H3 sx={{ textAlign: "center", m: 1, mb: 2 }}>Connexion</H3>
-        <Paragraphe sx={{ textAlign: "center", mb: 2 }}>
+        <h3 className="text-center m-1 mb-2">Connexion</h3>
+        <p className="text-center mb-2">
           Connectez-vous pour commencer votre mission de collecte
-        </Paragraphe>
+        </p>
 
         {/* Affichage des erreurs */}
         {error && (
-          <Paragraphe
-            sx={{
+          <p
+            style={{
               color: "#fff",
               textAlign: "center",
               mb: 2,
@@ -92,7 +91,7 @@ function LoginForm({ onNavigate }) {
             }}
           >
             {error}
-          </Paragraphe>
+          </p>
         )}
 
         <Box sx={{ mb: 3 }}>
@@ -157,16 +156,15 @@ function LoginForm({ onNavigate }) {
                 }}
               />
             }
-            label={<Paragraphe sx={{ fontSize: "0.75rem" }}>Se souvenir de moi</Paragraphe>}
+            label={<p style={{ fontSize: "0.75rem" }}>Se souvenir de moi</p>}
           />
-          <Paragraphe
-            component="a"
+          <a 
             href="#"
             onClick={(e) => {
               e.preventDefault()
               onNavigate("forgotPassword")
             }}
-            sx={{
+            style={{
               fontSize: "0.75rem",
               color: "#1677FF",
               textDecoration: "none",
@@ -176,7 +174,7 @@ function LoginForm({ onNavigate }) {
             }}
           >
             Mot de passe oublié?
-          </Paragraphe>
+          </a>
         </Box>
         <CustomButton type="submit" fullWidth color="warning" size="medium" loading={isLoading} disabled={isLoading}>
           {isLoading ? "Connexion en cours..." : "Se Connecter"}

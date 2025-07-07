@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuthStore } from '../store/auth';
 
 function getTokenExpiration(token) {
@@ -13,7 +13,7 @@ function getTokenExpiration(token) {
 }
 
 function TokenTimer() {
-  const [remainingTime, setRemainingTime] = useState(null);
+  const [, setRemainingTime] = useState(null);
   const isLoggedIn = useAuthStore(state => state.isLoggedIn());
   const [token, setToken] = useState(localStorage.getItem('access_token'));
   const intervalRef = useRef(null); // 🧠 Référence vers le timer

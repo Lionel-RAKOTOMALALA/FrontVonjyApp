@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import Modal from "../../../components/ui/Modal";
 import InputField from "../../../components/ui/form/InputField";
@@ -30,7 +30,7 @@ const ResponsableCreate = ({ isOpen, onClose, onSave }) => {
 
   const [fokotanys, setFokotanys] = useState([]);
   const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState("");
+  const [, setSubmitError] = useState("");
   const [inputDisabled, setInputDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const { createResponsable } = useResponsableStore();

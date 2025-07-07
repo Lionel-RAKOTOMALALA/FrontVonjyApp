@@ -1,12 +1,10 @@
 // Navbar.jsx
-import { Link } from 'react-router-dom';
 import { useState, useCallback, useMemo } from "react";
-import { Box, IconButton, Avatar, Popover, Divider, MenuList, Typography, MenuItem, Button } from "@mui/material";
+import { Box, IconButton, Avatar, Popover, Divider, MenuList, MenuItem } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import CustomButton from "../components/ui/CustomButton";
-import { H1, H2, H3, Subtitle1, Paragraphe } from "../components/ui/TypographyVariants";
 import ProfileModal from "../views/account/profile";
 import SecuriteModal from "../views/account/security";
 import { getProfileImageUrl } from '../utils/imageUtils';
@@ -74,12 +72,12 @@ const MenuToggle = () => (
 // Composant pour les informations utilisateur dans le popover
 const UserInfo = ({ user }) => (
   <Box sx={{ p: 2, pb: 1.5 }}>
-    <Paragraphe className="fw-bold">
+    <p className="fw-bold">
       {user?.namefull || "Nom indisponible"}
-    </Paragraphe>
-    <Paragraphe>
+    </p>
+    <p>
       {user?.email || "Email non disponible"}
-    </Paragraphe>
+    </p>
   </Box>
 );
 
@@ -89,7 +87,7 @@ const MenuItemComponent = ({ onClick, icon: Icon, text }) => (
     <span style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Icon />
     </span>
-    <Paragraphe>{text}</Paragraphe>
+    <p>{text}</p>
   </MenuItem>
 );
 

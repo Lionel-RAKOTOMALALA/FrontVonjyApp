@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Snackbar, Alert } from "@mui/material";
-import TableView, { highlightText } from "../../../components/ui-table/TableView";
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import TableView from "../../../components/ui-table/TableView";
+import { highlightText } from "../../../components/ui-table/HighlightText";
 import FilterBar from "../../../components/ui-table/FilterBar";
 import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import Breadcrumb from "../../../components/ui/Breadcrumb";
@@ -10,7 +11,7 @@ import useServiceStore from "../../../store/serviceStore";
 import SnackbarAlert from "../../../components/ui/SnackbarAlert";
 
 function ServiceViews() {
-  const { services, fetchServices, loading, deleteService, error } = useServiceStore();
+  const { services, fetchServices, loading, deleteService } = useServiceStore();
   const [selectedService, setSelectedService] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -77,7 +78,7 @@ function ServiceViews() {
     setOpenCreateModal(true);
   };
 
-  const handleSaveCreate = (service) => {
+  const handleSaveCreate = () => {
     setSnackbarMessage("Service créé avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
@@ -89,7 +90,7 @@ function ServiceViews() {
     setOpenEditModal(true);
   };
 
-  const handleSaveEdit = (updatedService) => {
+  const handleSaveEdit = () => {
     setSnackbarMessage("Service modifié avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);

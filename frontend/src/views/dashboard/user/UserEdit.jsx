@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import UploadAvatar from '../../../components/upload/UploadAvatar';

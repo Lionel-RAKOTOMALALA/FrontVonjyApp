@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Box, Avatar } from '@mui/material'; 
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
-import TableView from '../../../components/ui-table/TableView'; 
-import ChauffeurEdit from './UserEdit';  
+import TableView from '../../../components/ui-table/TableView';
+import ChauffeurEdit from './UserEdit';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import ChauffeurCreate from './UserCreate';
@@ -181,15 +181,15 @@ function UserViews() {
       <ChauffeurCreate
         isOpen={openCreateModal}
         onSave={handleSaveCreate}
-        onClose={() => setOpenCreateModal(false)} 
-      /> 
+        onClose={() => setOpenCreateModal(false)}
+      />
 
       {/* Modal d'édition */}
       <ChauffeurEdit
         isOpen={openEditModal}
         chauffeur={selectedChauffeur}
         onSave={handleSaveEdit}
-        onClose={() => setOpenEditModal(false)} 
+        onClose={() => setOpenEditModal(false)}
       />
 
       {/* Dialogue de confirmation pour la suppression */}

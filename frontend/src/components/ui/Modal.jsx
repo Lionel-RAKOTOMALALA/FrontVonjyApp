@@ -1,5 +1,5 @@
 // Modal.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop } from '@mui/material';
 
 const CustomBackdrop = (props) => {
@@ -16,7 +16,6 @@ const Modal = ({
   title,
   btnLabel,
   maxWidth,
-  fullWidth = true,
   customActionsContent, // 👈 pour ajouter du contenu
   hideDefaultActions = false, // 👈 pour désactiver les boutons par défaut
 }) => {
