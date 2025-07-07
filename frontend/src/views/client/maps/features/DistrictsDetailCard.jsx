@@ -1,5 +1,5 @@
 import { Box, Card, CardContent } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import CollapsibleTable from '../../../../components/ui-table/CollapsibleTable';
 import useDistrictStore from '../../../../store/useDistrictStore';
@@ -90,7 +90,7 @@ function DistrictDetailCard() {
             <Card elevation={3} sx={{ borderRadius: 5, overflow: 'hidden', bgcolor: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
               <CardContent className="pt-0">
                 <Box sx={{ mt: 3, p: 0 }}>
-                  <H4 sx={{ m: 0, mb: 4 }}>Informations globale</H4>
+                  <h4 className='m-0 mb-4'>Informations globale</h4>
                   <p>Erreur lors du chargement des données: {error}</p>
                 </Box>
               </CardContent>

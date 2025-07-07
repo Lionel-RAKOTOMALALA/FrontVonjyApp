@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Box, Avatar } from '@mui/material'; 
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView';
@@ -25,16 +25,21 @@ function UserViews() {
     loading,
     error,
     fetchSimpleUsers,
-    createSimpleUser,
+    // createSimpleUser, // Removed unused variable
     deleteSimpleUser,
     clearError,
     updateSimpleUser
   } = useSimpleUsersStore();
 
+  // Wrap fetchSimpleUsers in useCallback to avoid dependency warning
+  const fetchUsers = useCallback(() => {
+    fetchSimpleUsers();
+  }, [fetchSimpleUsers]);
+
   // Charger les utilisateurs au montage du composant
   useEffect(() => {
-    fetchSimpleUsers();
-  }, []);
+    fetchUsers();
+  }, [fetchUsers]);
 
   // Afficher les erreurs du store dans le snackbar
   useEffect(() => {
@@ -79,7 +84,7 @@ function UserViews() {
   };
 
   // Gère l'enregistrement d'un nouvel utilisateur
-  const handleSaveCreate = async (userData) => {
+  const handleSaveCreate = async () => {
     // Ne rien faire ici, la création est déjà gérée dans UserCreate
     setOpenCreateModal(false);
     setOpenSnackbar(true);

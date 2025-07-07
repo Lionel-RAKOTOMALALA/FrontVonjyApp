@@ -35,7 +35,7 @@ function MapCard({ loading, mapError, selectedCommune, resetView, onCommuneClick
                 <h4 className="mb-0 mx-3 mt-3" fontWeight="bold">
                   Carte
                 </h4>
-                <p style={{ marginTop: 4 }} className="mb-2 mx-3">
+                <p style={{ marginTop: 4, color:"#616161" }} className="mb-2 mx-3">
                   Cliquez sur une commune pour voir ses détails
                 </p>
               </motion.div>

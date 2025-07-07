@@ -67,6 +67,26 @@ function ForgotPasswordPage({ onNavigate }) {
     }
   }
 
+  // Fonction pour déterminer le message d'erreur approprié
+  const getErrorMessage = (error) => {
+    if (typeof error === 'string') {
+      return error
+    }
+    
+    // Si c'est une erreur 500, afficher un message générique
+    if (error?.status === 500 || error?.message?.includes('500')) {
+      return "Erreur du serveur. Veuillez réessayer plus tard."
+    }
+    
+    // Si c'est une erreur 404, l'utilisateur n'existe pas
+    if (error?.status === 404 || error?.message?.includes('404')) {
+      return "Utilisateur introuvable"
+    }
+    
+    // Message par défaut
+    return error?.message || "Une erreur est survenue. Veuillez réessayer."
+  }
+
   return (
     <Box component="form" onSubmit={handleForgotPasswordSubmit}>
       <Box sx={{ textAlign: "center", position: "relative", mb: 1 }} className="d-flex align-items-center">
@@ -75,14 +95,14 @@ function ForgotPasswordPage({ onNavigate }) {
         </IconButton>
         <h3 className="m-0 p-0">Mot de passe oublié ?</h3>
       </Box>
-      <p className="mb-3 mt-2 text-center">
+      <p className="mb-3 mt-2 text-center" style={{color: '#616161'}}>
         Entrez votre adresse e-mail pour recevoir un code de réinitialisation
       </p>
 
       {/* Affichage des messages d'erreur/succès */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          Utilisateur introuvable
+          {getErrorMessage(error)}
         </Alert>
       )}
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Checkbox, FormControlLabel, IconButton, InputAdornment } from "@mui/material"
+import { Alert, Box, Checkbox, FormControlLabel, IconButton, InputAdornment } from "@mui/material"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import InputField from "../../../components/ui/form/InputField"
@@ -53,7 +53,7 @@ function LoginForm({ onNavigate }) {
       } else if (user?.role === "super") {
         navigate("/users")
       }
-      
+
     } catch (err) {
       if (!err.response) {
         // Erreur réseau ou CORS
@@ -83,18 +83,11 @@ function LoginForm({ onNavigate }) {
 
         {/* Affichage des erreurs */}
         {error && (
-          <p
-            style={{
-              color: "#fff",
-              textAlign: "center",
-              mb: 2,
-              bgcolor: "error.light",
-              p: 1,
-              borderRadius: 1,
-            }}
-          >
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
-          </p>
+          </Alert>
+
+
         )}
 
         <Box sx={{ mb: 3 }}>
@@ -161,7 +154,7 @@ function LoginForm({ onNavigate }) {
             }
             label={<p style={{ fontSize: "0.75rem" }}>Se souvenir de moi</p>}
           />
-          <a 
+          <a
             href="#"
             onClick={(e) => {
               e.preventDefault()

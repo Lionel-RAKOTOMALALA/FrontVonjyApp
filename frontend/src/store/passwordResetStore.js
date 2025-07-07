@@ -1,104 +1,110 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import axios from 'axios';
 
-const usePasswordResetStore = create((set, get) => ({
-  // État
+const usePasswordResetStore = create((set) => ({
+  // États
   loading: false,
   error: null,
-  success: false,
+  success: null,
+  email: '',
 
   // Actions
-  resetPassword: async (newPassword, confirmPassword, otpCode) => {
-    set({ loading: true, error: null, success: false })
+  setEmail: (email) => set({ email }),
+  clearError: () => set({ error: null }),
+  clearSuccess: () => set({ success: null }),
+
+  // 1. Demander la réinitialisation (envoi du code)
+  requestReset: async (email) => {
+    set({ loading: true, error: null, success: null });
     
     try {
-      const token = localStorage.getItem('token')
+      const response = await axios.post('http://127.0.0.1:8000/api/request-reset/', {
+        email: email
+      });
       
-      const response = await fetch('http://localhost:8000/api/reset-password/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
-        },
-        body: JSON.stringify({
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-          otp_code: otpCode
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors de la réinitialisation du mot de passe')
-      }
-
-      set({ 
-        loading: false, 
-        success: true, 
-        error: null 
-      })
-
-      return { success: true, data }
+      set({
+        loading: false,
+        success: response.data.message,
+        email: email
+      });
+      
+      return { success: true, message: response.data.message };
     } catch (error) {
-      set({ 
-        loading: false, 
-        error: error.message, 
-        success: false 
-      })
-      throw error
+      // Gestion d'erreur améliorée
+      let errorMessage = 'Erreur lors de l\'envoi du code';
+      
+      if (error.response) {
+        // Erreur avec réponse du serveur
+        if (error.response.status === 500) {
+          errorMessage = 'Erreur du serveur. Veuillez réessayer plus tard.';
+        } else if (error.response.status === 404) {
+          errorMessage = 'Utilisateur introuvable';
+        } else {
+          errorMessage = error.response.data?.message || `Erreur ${error.response.status}`;
+        }
+      } else if (error.request) {
+        // Erreur de réseau
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      }
+      
+      set({
+        loading: false,
+        error: errorMessage
+      });
+      return { success: false, error: errorMessage };
     }
   },
 
-  changePassword: async (currentPassword, newPassword, confirmPassword) => {
-    set({ loading: true, error: null, success: false })
+  // 2. Vérifier le code et définir le nouveau mot de passe
+  verifyCode: async (email, code, newPassword) => {
+    set({ loading: true, error: null, success: null });
     
     try {
-      const token = localStorage.getItem('token')
+      const response = await axios.post('http://127.0.0.1:8000/api/verify-code/', {
+        email: email,
+        code: code,
+        new_password: newPassword
+      });
       
-      if (!token) {
-        throw new Error('Token d\'authentification manquant')
-      }
-
-      const response = await fetch('http://localhost:8000/api/change-password/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_password: newPassword,
-          confirm_password: confirmPassword
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors du changement de mot de passe')
-      }
-
-      set({ 
-        loading: false, 
-        success: true, 
-        error: null 
-      })
-
-      return { success: true, data }
+      set({
+        loading: false,
+        success: response.data.message
+      });
+      
+      return { success: true, message: response.data.message };
     } catch (error) {
-      set({ 
-        loading: false, 
-        error: error.message, 
-        success: false 
-      })
-      throw error
+      // Gestion d'erreur améliorée
+      let errorMessage = 'Erreur lors de la vérification du code';
+      
+      if (error.response) {
+        if (error.response.status === 500) {
+          errorMessage = 'Erreur du serveur. Veuillez réessayer plus tard.';
+        } else if (error.response.status === 400) {
+          errorMessage = 'Code invalide ou expiré';
+        } else {
+          errorMessage = error.response.data?.message || `Erreur ${error.response.status}`;
+        }
+      } else if (error.request) {
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      }
+      
+      set({
+        loading: false,
+        error: errorMessage
+      });
+      return { success: false, error: errorMessage };
     }
   },
 
-  // Reset state
-  resetState: () => {
-    set({ loading: false, error: null, success: false })
+  // Réinitialiser le store
+  resetStore: () => {
+    set({
+      loading: false,
+      error: null,
+      success: null,
+      email: ''
+    });
   }
-}))
+}));
 
-export default usePasswordResetStore 
+export default usePasswordResetStore;

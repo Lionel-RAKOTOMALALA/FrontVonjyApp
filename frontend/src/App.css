@@ -48,6 +48,6 @@ p {
   font-family: "Public sans", "Helvetica", "Arial", sans-serif !important;
   font-size: 0.875rem !important;
   font-weight: 300 !important;
-  color: #616161 !important;
+  /* color: #616161 !important; */
   margin: 0;
 }

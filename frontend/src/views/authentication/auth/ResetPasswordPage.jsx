@@ -2,7 +2,7 @@
 
 import { Box, IconButton, InputAdornment, Alert } from "@mui/material"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
-import { useState } from "react"
+import { useState } from "react" 
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import usePasswordResetStore from '../../../store/passwordResetStore'
@@ -107,7 +107,7 @@ function ResetPasswordPage({ onNavigate, otp }) {
           Réinitialiser votre <br className="d-none d-lg-block" /> mot de passe
         </h3>
       </Box>
-      <p style={{ marginBottom: 3, marginTop: 1, textAlign: "center" }}>
+      <p className="mb-3 mt-1 text-center">
         Entrez votre nouveau mot de passe et confirmez-le pour sécuriser votre compte
       </p>
 
@@ -164,14 +164,8 @@ function ResetPasswordPage({ onNavigate, otp }) {
         />
       </Box>
 
-      <CustomButton 
-        size="medium" 
-        type="submit" 
-        fullWidth 
-        color="warning"
-        disabled={loading}
-      >
-        {loading ? "Réinitialisation..." : "Réinitialiser mon mot de passe"}
+      <CustomButton size="medium" type="submit" fullWidth color="warning">
+        Réinitialiser mon mot de passe
       </CustomButton>
     </Box>
   )

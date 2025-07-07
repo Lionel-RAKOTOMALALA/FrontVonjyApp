@@ -9,7 +9,7 @@ import usePasswordResetStore from "../../../store/passwordResetStore"
 
 function VerificationPage({ onNavigate }) {
   const [otp, setOtp] = useState("")
-  const [newPassword, setNewPassword] = useState("")
+  const [newPassword,] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
 
