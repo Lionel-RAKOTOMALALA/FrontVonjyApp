@@ -1,5 +1,3 @@
-import React from 'react';
-
 const TextDivider = ({ text, alignment, color, icon, style }) => {
     const dividerClasses = ['divider'];
 

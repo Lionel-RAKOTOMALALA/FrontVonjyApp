@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Avatar } from '@mui/material'; 
 import SnackbarAlert from '../../../components/ui/SnackbarAlert';
 import TableView from '../../../components/ui-table/TableView'; 
@@ -6,6 +6,8 @@ import ChauffeurEdit from './UserEdit';
 import ConfirmationDialog from '../../../components/ui/ConfirmationDialog';
 import Breadcrumb from '../../../components/ui/Breadcrumb';
 import ChauffeurCreate from './UserCreate';
+import useSimpleUsersStore from '../../../store/simpleUsersStore';
+import { getProfileImageUrl, getInitials, handleImageError } from '../../../utils/imageUtils';
 
 function UserViews() {
   const [selectedChauffeur, setSelectedChauffeur] = useState(null);
@@ -17,115 +19,94 @@ function UserViews() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-  // Données fictives des chauffeurs avec avatars
-  const data = [
-    { 
-      id: 1, 
-      nameFull: 'Rasoanaivo Hery', 
-      email: 'test@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    },
-    { 
-      id: 2, 
-      nameFull: 'Rakotoarivelo Naina', 
-      email: 'test@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b1a2?w=150&h=150&fit=crop&crop=face'
-    },
-    { 
-      id: 3, 
-      nameFull: 'Andrianarivo Mamy', 
-      email: 'test@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    },
-    { 
-      id: 4, 
-      nameFull: 'Ravelojaona Lova', 
-      email: 'test@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face'
-    },
-    { 
-      id: 5, 
-      nameFull: 'Mihobisoa Antsa', 
-      email: 'test@gmail.com',
-      avatar: null // Pas d'avatar pour tester le fallback
-    },
-    { 
-      id: 6, 
-      nameFull: 'Andriantsitohaina Tiana', 
-      email: 'test@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
-    },
-  ];
+  // Utiliser le store pour les utilisateurs simples
+  const {
+    users,
+    loading,
+    error,
+    fetchSimpleUsers,
+    createSimpleUser,
+    deleteSimpleUser,
+    clearError,
+    updateSimpleUser
+  } = useSimpleUsersStore();
 
-  // Fonction pour générer les initiales à partir du nom complet
-  const getInitials = (nameFull) => {
-    if (!nameFull) return '';
-    const names = nameFull.split(' ');
-    const initials = names.map(name => name.charAt(0).toUpperCase()).join('');
-    return initials.substring(0, 2); // Prendre seulement les 2 premières initiales
-  };
+  // Charger les utilisateurs au montage du composant
+  useEffect(() => {
+    fetchSimpleUsers();
+  }, []);
+
+  // Afficher les erreurs du store dans le snackbar
+  useEffect(() => {
+    if (error) {
+      setSnackbarMessage(error);
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+      clearError();
+    }
+  }, [error, clearError]);
 
   // Colonnes du tableau avec formatage personnalisé
   const columns = [
-    { id: 'id', label: 'Id' },
+    // { id: 'uid', label: 'ID' }, // Masqué
     { 
-      id: 'avatar', 
+      id: 'photo_profil', 
       label: 'Avatar',
       render: (row) => (
         <Avatar
-          src={row.avatar}
-          alt={row.nameFull}
+          src={getProfileImageUrl(row.photo_profil)}
+          alt={row.namefull}
           sx={{ 
             width: 40, 
             height: 40,
             fontSize: '0.875rem',
-            bgcolor: row.avatar ? 'transparent' : '#1976d2'
+            bgcolor: row.photo_profil ? 'transparent' : '#1976d2'
           }}
+          onError={handleImageError}
         >
-          {!row.avatar && getInitials(row.nameFull)}
+          {!row.photo_profil && getInitials(row.namefull)}
         </Avatar>
       )
     },
-    { id: 'namefull', label: 'Nom et prenom', render: (row) => row.nameFull }, 
-    { id: 'email', label: 'Email', render: (row) => row.email }, 
+    { id: 'namefull', label: 'Nom et prénoms', render: (row) => row.namefull }, 
+    { id: 'email', label: 'Email', render: (row) => row.email },
   ];
 
-  // Ouvre le modal de création de chauffeur
+  // Ouvre le modal de création d'utilisateur
   const handleCreate = () => {
     setSelectedChauffeur(null);
     setOpenCreateModal(true);
   };
 
-  // Gère l'enregistrement d'un nouveau chauffeur
-  const handleSaveCreate = async (chauffeur) => {
-    try {
-      console.log('Created:', chauffeur);
-      setOpenCreateModal(false);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Utilisateur créé avec succès!');
-      setSnackbarSeverity('success');
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Erreur lors de la création de l\'utilisateur.');
-      setSnackbarSeverity('error');
-    }
+  // Gère l'enregistrement d'un nouvel utilisateur
+  const handleSaveCreate = async (userData) => {
+    // Ne rien faire ici, la création est déjà gérée dans UserCreate
+    setOpenCreateModal(false);
+    setOpenSnackbar(true);
+    setSnackbarMessage('Utilisateur créé avec succès!');
+    setSnackbarSeverity('success');
   };
 
-  // Ouvre le modal d'édition avec les infos du chauffeur sélectionné
+  // Ouvre le modal d'édition avec les infos de l'utilisateur sélectionné
   const handleEdit = (row) => {
     setSelectedChauffeur(row);
     setOpenEditModal(true);
   };
 
-  // Gère l'enregistrement des modifications d'un chauffeur
-  const handleSaveEdit = async (updatedChauffeur) => {
+  // Gère l'enregistrement des modifications d'un utilisateur
+  const handleSaveEdit = async (updatedUser) => {
     try {
-      console.log('Edited:', updatedChauffeur);
-      setOpenEditModal(false);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Utilisateur modifié avec succès!');
-      setSnackbarSeverity('success');
+      const result = await updateSimpleUser(updatedUser.uid, updatedUser);
+      if (result.success) {
+        setOpenEditModal(false);
+        setOpenSnackbar(true);
+        setSnackbarMessage('Utilisateur modifié avec succès!');
+        setSnackbarSeverity('success');
+      } else {
+        setOpenSnackbar(true);
+        setSnackbarMessage(`Erreur: ${result.error}`);
+        setSnackbarSeverity('error');
+      }
     } catch (error) {
       console.error('Erreur lors de la modification:', error);
       setOpenSnackbar(true);
@@ -140,14 +121,21 @@ function UserViews() {
     setOpenDialog(true);
   };
 
-  // Confirme la suppression d'un chauffeur
+  // Confirme la suppression d'un utilisateur
   const confirmDelete = async () => {
     try {
-      console.log('Deleted:', chauffeurToDelete);
-      setOpenDialog(false);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Utilisateur supprimé avec succès!');
-      setSnackbarSeverity('success');
+      const result = await deleteSimpleUser(chauffeurToDelete.uid);
+      if (result.success) {
+        setOpenDialog(false);
+        setOpenSnackbar(true);
+        setSnackbarMessage('Utilisateur supprimé avec succès!');
+        setSnackbarSeverity('success');
+      } else {
+        setOpenDialog(false);
+        setOpenSnackbar(true);
+        setSnackbarMessage(`Erreur: ${result.error}`);
+        setSnackbarSeverity('error');
+      }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       setOpenDialog(false);
@@ -171,20 +159,21 @@ function UserViews() {
       {/* Fil d'Ariane avec bouton de création */}
       <Breadcrumb 
         mainText="Listes" 
-        subText="Chauffeur" 
+        subText="Utilisateurs" 
         showCreateButton={true} 
         onCreate={handleCreate} 
       /> 
 
-      {/* Tableau principal affichant les chauffeurs */}
+      {/* Tableau principal affichant les utilisateurs */}
       <Box className="card">   
         <TableView 
-          data={data}
+          data={users}
           columns={columns} 
           rowsPerPage={5}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          showCheckboxes={false} 
+          showCheckboxes={false}
+          loading={loading}
         /> 
       </Box> 
        
@@ -199,18 +188,17 @@ function UserViews() {
       <ChauffeurEdit
         isOpen={openEditModal}
         chauffeur={selectedChauffeur}
-        onChange={(updatedChauffeur) => setSelectedChauffeur(updatedChauffeur)}
         onSave={handleSaveEdit}
         onClose={() => setOpenEditModal(false)} 
       />
-      
-      {/* Boîte de dialogue de confirmation pour la suppression */}
+
+      {/* Dialogue de confirmation pour la suppression */}
       <ConfirmationDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        title="Confirmer la suppression"
+        content={`Êtes-vous sûr de vouloir supprimer l'utilisateur "${chauffeurToDelete?.namefull}" ?`}
         onConfirm={confirmDelete}
-        title="Suppression"
-        content="Êtes-vous sûr de vouloir supprimer ce chauffeur?"
+        onClose={() => setOpenDialog(false)}
       />
     </>
   );

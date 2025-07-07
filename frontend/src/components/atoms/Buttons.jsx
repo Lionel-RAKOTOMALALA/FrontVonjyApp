@@ -1,7 +1,7 @@
 // Badge.js
 import React from 'react';
 import PropTypes from 'prop-types';
-const Button = ({ type, size, state, rounded, outline, textType, children }) => {
+const Button = ({ type, size, rounded, outline, textType, children }) => {
     const btnClass = `${rounded ? 'rounded-pill ' : ''}${size ? `btn-${size}` : ''} ${outline ? `btn-outline-${type} ` : `btn-${type}`} ${textType ? `text-${textType} ` : ''} `;
 
     return (

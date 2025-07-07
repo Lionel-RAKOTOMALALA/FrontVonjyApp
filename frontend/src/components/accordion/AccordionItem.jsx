@@ -1,6 +1,4 @@
 // Accordion.js
-import React from 'react';
-
 const AccordionItem = ({ id, title, content, isActive, onToggle }) => (
   <div className={`card accordion-item ${isActive ? 'active' : ''}`}>
     <h2 className="accordion-header" id={`heading${id}`}>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 /**
  * Composant OTP (One-Time Password) réutilisable

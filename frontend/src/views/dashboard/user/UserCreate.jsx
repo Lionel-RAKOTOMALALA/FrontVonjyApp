@@ -1,26 +1,32 @@
 // ChauffeurCreate.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import UploadAvatar from '../../../components/upload/UploadAvatar';
 import { z } from "zod";
+import useSimpleUsersStore from '../../../store/simpleUsersStore';
+import { validateImageFile } from '../../../utils/imageUtils';
 
 // Schéma de validation Zod
 const userSchema = z.object({
-  nameFull: z.string().min(1, "Le nom complet est requis"),
+  namefull: z.string().min(1, "Le nom complet est requis"),
   email: z.string().min(1, "L'email est requis").email("Format d'email invalide"),
-  avatar: z.any().optional(),
+  photo_profil: z.any().optional(),
 });
 
 const UserCreate = ({ isOpen, onSave, onClose }) => {
+  // Utiliser le store
+  const { createSimpleUser } = useSimpleUsersStore();
+
   // État local pour stocker les données du formulaire
   const [formData, setFormData] = useState({
-    nameFull: '',
+    namefull: '',
     email: '',
-    avatar: null,
+    photo_profil: null,
   });
   const [formErrors, setFormErrors] = useState({});
   const [avatarError, setAvatarError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Gère les changements pour les champs texte du formulaire
   const handleChange = (event) => {
@@ -29,27 +35,6 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
       ...prevState,
       [name]: value
     }));
-  };
-
-  // Validation personnalisée des fichiers image
-  const validateImageFile = (file) => {
-    const allowedTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-      'image/webp', 'image/bmp', 'image/svg+xml'
-    ];
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
-    if (!allowedTypes.includes(file.type)) {
-      return `Le type de fichier ${file.type} n'est pas autorisé. Seules les images sont acceptées.`;
-    }
-    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    if (!allowedExtensions.includes(fileExtension)) {
-      return `L'extension ${fileExtension} n'est pas autorisée.`;
-    }
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return 'Le fichier est trop volumineux (5MB maximum).';
-    }
-    return null;
   };
 
   // Gère le changement de fichier avatar avec validation
@@ -83,7 +68,7 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
       }
       setFormData(prev => ({
         ...prev,
-        avatar: Object.assign(file, { preview: URL.createObjectURL(file) })
+        photo_profil: Object.assign(file, { preview: URL.createObjectURL(file) })
       }));
       setAvatarError(null);
     }
@@ -105,7 +90,7 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
 
     // Validation de l'avatar
     if (avatarError) {
-      errors.avatar = avatarError;
+      errors.photo_profil = avatarError;
       hasErrors = true;
     }
 
@@ -114,26 +99,61 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
   };
 
   // Gère la sauvegarde des données du formulaire
-  const handleSave = () => {
+  const handleSave = async () => {
     // Validation uniquement à la soumission
     const isValid = validateForm();
     
-    if (!isValid) {
-      return; // Arrêter si le formulaire n'est pas valide
+    if (!isValid || isSubmitting) {
+      return; // Arrêter si le formulaire n'est pas valide ou si déjà en cours
     }
 
-    console.log('Données du user:', formData);
-    
-    // Appeler la fonction onSave du parent si elle existe
-    if (onSave) {
-      onSave(formData);
+    setIsSubmitting(true);
+
+    try {
+      // Préparer les données pour l'API selon la logique du backend
+      const userData = {
+        namefull: formData.namefull,
+        email: formData.email,
+        password: 'defaultPassword123', // Mot de passe par défaut
+        // Le rôle sera forcé à 'simple' par le backend
+      };
+
+      // Si une photo est sélectionnée, l'ajouter aux données
+      if (formData.photo_profil) {
+        userData.photo_profil = formData.photo_profil;
+      }
+
+      const result = await createSimpleUser(userData);
+      
+      console.log('Résultat de createSimpleUser:', result);
+      
+      if (result.success) {
+        // Appeler la fonction onSave du parent si elle existe
+        if (onSave) {
+          onSave(result.data);
+        }
+        handleClose();
+      } else {
+        console.log('Erreur détectée:', result.error);
+        // Gérer les erreurs de l'API
+        setFormErrors({
+          submit: result.error || 'Erreur lors de la création de l\'utilisateur'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+      setFormErrors({
+        submit: 'Erreur lors de la création de l\'utilisateur'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Nettoyer l'URL de l'avatar à la fermeture et reset le formulaire
   const handleClose = () => {
-    if (formData.avatar && formData.avatar.preview) {
-      URL.revokeObjectURL(formData.avatar.preview);
+    if (formData.photo_profil && formData.photo_profil.preview) {
+      URL.revokeObjectURL(formData.photo_profil.preview);
     }
     onClose && onClose();
     resetForm();
@@ -142,27 +162,36 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
   const resetForm = () => {
     // Reset form
     setFormData({
-      nameFull: '',
+      namefull: '',
       email: '',
-      avatar: null,
+      photo_profil: null,
     });
     setFormErrors({});
     setAvatarError(null);
+    setIsSubmitting(false);
   };
 
   return (
     <Modal
       title="Créer un utilisateur"
-      btnLabel="Créer"
+      btnLabel={isSubmitting ? "Création..." : "Créer"}
       isOpen={isOpen}
       onSave={handleSave}
       onClose={handleClose}
       maxWidth="435px"
+      disabled={isSubmitting}
     >
+      {/* Affichage des erreurs de soumission */}
+      {formErrors.submit && (
+        <div className="alert alert-danger mb-3">
+          {formErrors.submit}
+        </div>
+      )}
+
       <div className="row">
         <div className="col mb-2 mt-2 text-center">
           <UploadAvatar
-            file={formData.avatar}
+            file={formData.photo_profil}
             onDrop={handleAvatarDrop}
             accept={{
               'image/jpeg': ['.jpg', '.jpeg'],
@@ -189,11 +218,11 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
           <InputField
             required
             label="Nom complet"
-            name="nameFull"
-            value={formData.nameFull}
+            name="namefull"
+            value={formData.namefull}
             onChange={handleChange}
-            error={!!formErrors.nameFull}
-            helperText={formErrors.nameFull}
+            error={!!formErrors.namefull}
+            helperText={formErrors.namefull}
           />
         </div>
       </div>

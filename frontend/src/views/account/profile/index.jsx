@@ -16,7 +16,7 @@ const profileSchema = z.object({
 })
 
 const Profile = ({ isOpen, onClose }) => {
-  const { user, loading, error, fetchUser, updateUser } = useUserStore()
+  const { user, loading, fetchUser, updateUser } = useUserStore()
 
   // États locaux pour le formulaire
   const [formData, setFormData] = useState({
