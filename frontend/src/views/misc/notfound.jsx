@@ -4,9 +4,9 @@ const NotFound = () => {
     return (
         <>
             <div className="misc-wrapper">
-                <h2 className="mb-2 mx-2">Page Not Found :(</h2>
-                <p className="mb-4 mx-2">Oops! 😖 The requested URL was not found on this server.</p>
-                <Link aria-label='Go to Home Page' to="/" className="btn btn-primary">Back to home</Link>
+                <h2 className="mb-2 mx-2">Page introuvable :(</h2>
+                <p className="mb-4 mx-2">Oops! 😖 L`&apos;URL demandée n`&apos;a pas été trouvée sur ce serveur.</p>
+                <Link aria-label='Go to Home Page' to="/" className="btn btn-primary">Retour</Link>
                 <div className="mt-3">
                     <img
                         src="../assets/img/illustrations/page-misc-error-light.png"
