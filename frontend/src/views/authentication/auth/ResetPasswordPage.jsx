@@ -6,6 +6,7 @@ import { useState } from "react"
 import InputField from "../../../components/ui/form/InputField"
 import CustomButton from "../../../components/ui/CustomButton"
 import usePasswordResetStore from '../../../store/passwordResetStore'
+import axios from 'axios'
 
 function ResetPasswordPage({ onNavigate, otp }) {
   const [showPassword, setShowPassword] = useState(false)
@@ -16,8 +17,8 @@ function ResetPasswordPage({ onNavigate, otp }) {
     confirmPassword: "",
   })
 
-  // Utiliser le store pour la réinitialisation de mot de passe
-  const { resetPassword, loading, resetStore } = usePasswordResetStore()
+  // Récupérer email depuis le store Zustand
+  const { email } = usePasswordResetStore()
 
   const handleResetPasswordChange = (e) => {
     const { name, value } = e.target
@@ -35,16 +36,15 @@ function ResetPasswordPage({ onNavigate, otp }) {
     }
 
     try {
-      // Réinitialiser l'état du store
-      resetStore()
-      
-      // Appeler l'API de réinitialisation de mot de passe
-      await resetPassword( otp, resetPasswordData.newPassword)
-      
-      alert("Mot de passe réinitialisé avec succès!")
+      const response = await axios.post('http://127.0.0.1:8000/api/reset-password/', {
+        email: email,
+        code: otp,
+        new_password: resetPasswordData.newPassword
+      })
+      alert(response.data.message || "Mot de passe réinitialisé avec succès!")
       onNavigate("login")
     } catch (error) {
-      alert(error.message || "Erreur lors de la réinitialisation du mot de passe.")
+      alert(error.response?.data?.message || "Erreur lors de la réinitialisation du mot de passe.")
     }
   }
 

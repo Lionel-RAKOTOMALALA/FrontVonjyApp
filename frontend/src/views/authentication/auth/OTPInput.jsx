@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import "./otpinput-align.css";
 
 /**
  * Composant OTP (One-Time Password) réutilisable

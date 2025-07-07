@@ -59,9 +59,9 @@ function AnnuaireViews() {
                 }
               }
             }}>
-            <div style={{ cursor: 'pointer' }}>
+            <span style={{ cursor: 'pointer' }}>
               {truncatedText}
-            </div>
+            </span>
           </Tooltip>
         );
       }
@@ -102,13 +102,13 @@ function AnnuaireViews() {
               }
             }}
           >
-            <div
+            <span
               style={{
                 cursor: 'pointer',
               }}
             >
               {truncatedText}
-            </div>
+            </span>
           </Tooltip>
         );
       }

@@ -3,50 +3,52 @@ import Modal from '../../../components/ui/Modal';
 import InputField from '../../../components/ui/form/InputField';
 import UploadAvatar from '../../../components/upload/UploadAvatar';
 import { z } from "zod";
+import useSimpleUsersStore from '../../../store/simpleUsersStore';
+import { validateImageFile, getProfileImageUrl } from '../../../utils/imageUtils';
 
 // Schéma de validation Zod pour l'édition
 const userEditSchema = z.object({
-  nameFull: z.string().min(1, "Le nom complet est requis"),
+  namefull: z.string().min(1, "Le nom complet est requis"),
   email: z.string().min(1, "L'email est requis").email("Format d'email invalide"),
-  avatar: z.any().optional(),
+  photo_profil: z.any().optional(),
 });
 
-function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
+function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
+  // Utiliser le store
+  const { updateSimpleUser } = useSimpleUsersStore();
+
   // Fallback si `chauffeur` est null/undefined
   const validChauffeur = chauffeur || {
-    nameFull: '',
+    namefull: '',
     email: '',
-    avatar: null,
+    photo_profil: null,
   };
- 
-  // États pour la validation
+
+  // État local pour les données du formulaire
+  const [formData, setFormData] = useState(validChauffeur);
   const [formErrors, setFormErrors] = useState({});
   const [avatarError, setAvatarError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Validation personnalisée des fichiers image
-  const validateImageFile = (file) => {
-    const allowedTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-      'image/webp', 'image/bmp', 'image/svg+xml'
-    ];
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
-    if (!allowedTypes.includes(file.type)) {
-      return `Le type de fichier ${file.type} n'est pas autorisé. Seules les images sont acceptées.`;
+  // Mettre à jour les données du formulaire quand l'utilisateur change
+  useEffect(() => {
+    if (chauffeur) {
+      setFormData({
+        uid: chauffeur.uid,
+        namefull: chauffeur.namefull || '',
+        email: chauffeur.email || '',
+        photo_profil: chauffeur.photo_profil ? {
+          name: chauffeur.photo_profil.split('/').pop(), // Nom du fichier
+          preview: getProfileImageUrl(chauffeur.photo_profil), // URL de prévisualisation
+          isExisting: true // Marqueur pour indiquer que c'est une image existante
+        } : null,
+      });
     }
-    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    if (!allowedExtensions.includes(fileExtension)) {
-      return `L'extension ${fileExtension} n'est pas autorisée.`;
-    }
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return 'Le fichier est trop volumineux (5MB maximum).';
-    }
-    return null;
-  };
+  }, [chauffeur]);
 
   // Fonction de validation complète du formulaire
   const validateForm = () => {
-    const result = userEditSchema.safeParse(validChauffeur);
+    const result = userEditSchema.safeParse(formData);
     let hasErrors = false;
     const errors = {};
 
@@ -60,7 +62,7 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
 
     // Validation de l'avatar
     if (avatarError) {
-      errors.avatar = avatarError;
+      errors.photo_profil = avatarError;
       hasErrors = true;
     }
 
@@ -69,29 +71,63 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
   };
 
   // Gère la sauvegarde avec validation
-  const handleSave = () => {
+  const handleSave = async () => {
     // Validation uniquement à la soumission
     const isValid = validateForm();
     
-    if (!isValid) {
-      return; // Arrêter si le formulaire n'est pas valide
+    if (!isValid || isSubmitting) {
+      return; // Arrêter si le formulaire n'est pas valide ou si déjà en cours
     }
 
-    console.log('Données du user modifiées:', validChauffeur);
-    
-    // Appeler la fonction onSave du parent si elle existe
-    if (onSave) {
-      onSave(validChauffeur);
+    setIsSubmitting(true);
+
+    try {
+      // Préparer les données pour l'API selon la logique du backend
+      const userData = {
+        namefull: formData.namefull,
+        email: formData.email,
+      };
+
+      // Si une nouvelle photo est sélectionnée, l'ajouter aux données
+      if (formData.photo_profil && formData.photo_profil instanceof File) {
+        userData.photo_profil = formData.photo_profil;
+      }
+
+      console.log('Envoi des données de mise à jour:', userData);
+
+      const result = await updateSimpleUser(formData.uid, userData);
+      
+      if (result.success) {
+        console.log('Mise à jour réussie:', result.data);
+        // Appeler la fonction onSave du parent si elle existe
+        if (onSave) {
+          onSave(result.data);
+        }
+        handleClose();
+      } else {
+        console.error('Erreur de mise à jour:', result.error);
+        // Gérer les erreurs de l'API
+        setFormErrors({
+          submit: result.error || 'Erreur lors de la modification de l\'utilisateur'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la modification:', error);
+      setFormErrors({
+        submit: 'Erreur lors de la modification de l\'utilisateur'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Gère les changements pour les champs texte du formulaire
   const handleChange = (event) => {
     const { name, value } = event.target;
-    onChange({
-      ...validChauffeur,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
   // Gère le changement de fichier avatar avec validation
@@ -123,22 +159,24 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
         setAvatarError(validationError);
         return;
       }
-      onChange({
-        ...validChauffeur,
-        avatar: Object.assign(file, { preview: URL.createObjectURL(file) })
-      });
+      setFormData(prev => ({
+        ...prev,
+        photo_profil: Object.assign(file, { preview: URL.createObjectURL(file) })
+      }));
       setAvatarError(null);
     }
   };
 
   // Nettoyer l'URL de l'avatar à la fermeture et reset les erreurs
   const handleClose = () => {
-    if (validChauffeur.avatar && validChauffeur.avatar.preview) {
-      URL.revokeObjectURL(validChauffeur.avatar.preview);
+    // Nettoyer l'URL de prévisualisation si c'est un nouveau fichier
+    if (formData.photo_profil && formData.photo_profil.preview && !formData.photo_profil.isExisting) {
+      URL.revokeObjectURL(formData.photo_profil.preview);
     }
     onClose && onClose();
     setFormErrors({});
     setAvatarError(null);
+    setIsSubmitting(false);
   };
 
   // Reset des erreurs quand le modal s'ouvre avec de nouvelles données
@@ -146,24 +184,30 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
     if (isOpen) {
       setFormErrors({});
       setAvatarError(null);
+      setIsSubmitting(false);
     }
   }, [isOpen]);
-
-  // Destructuration pour faciliter l'accès aux champs
-  const { nameFull = '', email = '', avatar = null } = validChauffeur;
 
   return (
     <Modal
       title="Modifier un utilisateur"
-      btnLabel="Sauvegarder"
+      btnLabel={isSubmitting ? "Sauvegarde..." : "Sauvegarder"}
       isOpen={isOpen}
       onSave={handleSave}
       onClose={handleClose}
+      disabled={isSubmitting}
     >
+      {/* Affichage des erreurs de soumission */}
+      {formErrors.submit && (
+        <div className="alert alert-danger mb-3">
+          {formErrors.submit}
+        </div>
+      )}
+
       <div className="row">
         <div className="col mb-2 mt-2 text-center">
           <UploadAvatar
-            file={avatar}
+            file={formData.photo_profil}
             onDrop={handleAvatarDrop}
             accept={{
               'image/jpeg': ['.jpg', '.jpeg'],
@@ -180,7 +224,7 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
                 {avatarError}
               </div>
             )}
-            user={validChauffeur}
+            user={formData}
           />
         </div>
       </div>
@@ -190,11 +234,11 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
           <InputField
             required
             label="Nom complet"
-            name="nameFull"
-            value={nameFull}
+            name="namefull"
+            value={formData.namefull}
             onChange={handleChange}
-            error={!!formErrors.nameFull}
-            helperText={formErrors.nameFull}
+            error={!!formErrors.namefull}
+            helperText={formErrors.namefull}
           />
         </div>
       </div>
@@ -206,7 +250,7 @@ function UserEdit({ isOpen, chauffeur, onChange, onSave, onClose }) {
             label="Email"
             name="email"
             type="email"
-            value={email}
+            value={formData.email}
             onChange={handleChange}
             error={!!formErrors.email}
             helperText={formErrors.email}

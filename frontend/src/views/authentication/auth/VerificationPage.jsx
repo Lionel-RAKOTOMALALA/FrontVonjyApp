@@ -9,6 +9,7 @@ import usePasswordResetStore from "../../../store/passwordResetStore"
 
 function VerificationPage({ onNavigate }) {
   const [otp, setOtp] = useState("")
+  const [newPassword, setNewPassword] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
 
@@ -46,12 +47,11 @@ function VerificationPage({ onNavigate }) {
     }
 
 
-
     setIsSubmitting(true)
 
     try {
       // Appel de l'API de vérification
-      const response = await verifyCode(email, otp)
+      const response = await verifyCode(email, otp, newPassword)
 
       if (response.success) {
         // Si la vérification réussit, naviguer vers la page de succès ou login

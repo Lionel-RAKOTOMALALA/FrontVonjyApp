@@ -7,6 +7,7 @@ import useUserStore from "../store/userStore";
 import CustomButton from "../components/ui/CustomButton";
 import ProfileModal from "../views/account/profile";
 import SecuriteModal from "../views/account/security";
+import { getProfileImageUrl } from '../utils/imageUtils';
 
 // Constantes pour les styles
 const POPOVER_STYLES = {
@@ -96,11 +97,12 @@ const UserAvatar = ({ user, onOpenPopover }) => {
     user?.namefull?.charAt(0).toUpperCase() || "?",
     [user?.namefull]
   );
+  const avatarSrc = user?.photo_profil ? getProfileImageUrl(user.photo_profil) : null;
 
   return (
     <IconButton onClick={onOpenPopover} sx={AVATAR_BUTTON_STYLES}>
-      <Avatar sx={{ width: 1, height: 1, bgcolor: "#fbc02d" }}>
-        {userInitial}
+      <Avatar src={avatarSrc} sx={{ width: 1, height: 1, bgcolor: "#fbc02d" }}>
+        {!avatarSrc && userInitial}
       </Avatar>
       <ArrowDropDownIcon
         className="rounded-circle border"
