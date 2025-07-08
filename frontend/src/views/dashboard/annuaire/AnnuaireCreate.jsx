@@ -93,7 +93,6 @@ const AnnuaireCreate = ({ isOpen, onSave, onClose }) => {
     // Gère la sauvegarde des données du formulaire
     const handleSave = () => {
         if (validateForm()) {
-            console.log('Données de l\'annuaire:', annuaire);
             onSave(annuaire); // Appelle la fonction parent pour sauvegarder
         }
     };

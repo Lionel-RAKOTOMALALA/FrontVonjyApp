@@ -92,13 +92,11 @@ function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
       if (formData.photo_profil && formData.photo_profil instanceof File) {
         userData.photo_profil = formData.photo_profil;
       }
-
-      console.log('Envoi des données de mise à jour:', userData);
+ 
 
       const result = await updateSimpleUser(formData.uid, userData);
       
-      if (result.success) {
-        console.log('Mise à jour réussie:', result.data);
+      if (result.success) { 
         // Appeler la fonction onSave du parent si elle existe
         if (onSave) {
           onSave(result.data);

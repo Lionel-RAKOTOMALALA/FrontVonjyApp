@@ -87,8 +87,7 @@ function ResponsableViews() {
   };
 
   // Gère l'enregistrement d'un nouveau responsable
-  const handleSaveCreate = (responsable) => {
-    console.log("Created:", responsable);
+  const handleSaveCreate = () => { 
     setSnackbarMessage("Responsable créé avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);
@@ -102,8 +101,7 @@ function ResponsableViews() {
   };
 
   // Gère l'enregistrement des modifications d'un responsable
-  const handleSaveEdit = (updatedResponsable) => {
-    console.log("Edited:", updatedResponsable);
+  const handleSaveEdit = () => { 
     setSnackbarMessage("Responsable modifié avec succès!");
     setSnackbarSeverity("success");
     setOpenSnackbar(true);

@@ -24,7 +24,6 @@ const useCommuneStore = create((set) => ({
       }
       
       const data = await response.json();
-      console.log('Réponse API pour fetchDetailCommune:', data);
       set({ communedetail: data, loading: false });
     } catch (error) {
       console.error('fetchDetailCommune: Error fetching commune detail:', error);
@@ -56,17 +55,13 @@ const useCommuneStore = create((set) => ({
   },
 
   // Action pour créer une commune
-  createCommune: async (commune) => {
-    console.log("données dans store");
-    console.log(commune);
+  createCommune: async (commune) => { 
     
     if (!commune) {
       throw new Error('Les données de la commune sont manquantes ou invalides.');
     }
     
-    const token = localStorage.getItem('access_token');
-    console.log('Token utilisé:', token);
-    console.log('Payload envoyé:', JSON.stringify(commune));
+    const token = localStorage.getItem('access_token'); 
 
     const response = await fetch('http://localhost:8000/api/communes/', {
       method: 'POST',
@@ -86,7 +81,6 @@ const useCommuneStore = create((set) => ({
     }
 
     const newCommune = await response.json();
-    console.log('Réponse après l\'ajout :', newCommune);
 
     set((state) => ({ communes: [...state.communes, newCommune] }));
     return newCommune;
@@ -153,7 +147,6 @@ const useCommuneStore = create((set) => ({
       }
       
       const data = await response.json();
-      console.log('Réponse API pour fetchTotals:', data);
       set({ totals: data, loading: false });
     } catch (error) {
       console.error('fetchTotals: Error fetching totals:', error);

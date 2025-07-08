@@ -281,8 +281,7 @@ function AppHeader({ scrolled }) {
     // Ne fetch les informations utilisateur qu'une seule fois si elles ne sont pas déjà présentes
     if (!user) {
       fetchUser();
-    }
-    console.log("Informations de l'utilisateur connecté :", user);
+    } 
   }, [user, fetchUser]);
 
   return (

@@ -86,10 +86,7 @@ const Securite = ({ isOpen, onClose }) => {
           console.error('Erreur lors du décodage du token:', error)
         }
       }
-
-      console.log('User from store:', user)
-      console.log('UID found:', uid)
-      console.log('AccessToken exists:', !!accessToken)
+ 
 
       if (!accessToken) {
         setSnackbar({
@@ -113,8 +110,7 @@ const Securite = ({ isOpen, onClose }) => {
         current_password: form.currentPassword,
         new_password: form.newPassword
       }
-
-      console.log('Request body:', requestBody)
+ 
 
       // Appeler l'API update-profile pour changer le mot de passe
       const response = await fetch(`http://localhost:8000/api/auth/update-profile/${uid}/`, {
@@ -126,10 +122,7 @@ const Securite = ({ isOpen, onClose }) => {
         body: JSON.stringify(requestBody)
       })
 
-      const data = await response.json()
-      console.log('Response status:', response.status)
-      console.log('Response data:', data)
-
+      const data = await response.json() 
       if (!response.ok) {
         // Gérer l'erreur de mot de passe incorrect
         if (response.status === 400 || response.status === 401) {

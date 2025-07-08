@@ -22,9 +22,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return () => clearTimeout(timer);
   }, [user, accessToken, fetchUser]);
 
-  console.log('ROLE IN PROTECTED ROUTE');
-  console.log(user?.role);
-  console.log('====================================');
 
   // Affiche un écran de chargement pendant 5 minutes si l'utilisateur est encore en chargement
   if (loading || !isLoadingDelayed) {

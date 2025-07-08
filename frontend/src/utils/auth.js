@@ -62,7 +62,7 @@ export const checkAndRefreshToken = async () => {
         return false;
     }
 
-    const { isExpired, remainingTime } = isAccessTokenExpired(accessToken);
+    const { isExpired,} = isAccessTokenExpired(accessToken);
 
     if (isExpired) {
         try {
@@ -73,8 +73,7 @@ export const checkAndRefreshToken = async () => {
             console.error('Failed to refresh token:', error.response?.data || error.message);
             return false;
         }
-    } else {
-        console.log(`Access token is valid. Remaining time: ${remainingTime} seconds`);
+    } else { 
         setAuthUser(accessToken, refreshToken);
         return true;
     }
@@ -104,8 +103,7 @@ export const getRefreshToken = async () => {
     try {
         const response = await apiInstance.post('token/refresh/', {
             refresh: refresh_token,
-        });
-        console.log(refresh_token); 
+        }); 
         return response.data;
     } catch (error) {
         console.error('Failed to refresh token:', error.response?.data || error.message);
@@ -127,8 +125,7 @@ export const isAccessTokenExpired = (accessToken) => {
         } else {
             return { isExpired: false, remainingTime: Math.round(remainingTime) };
         }
-    } catch (err) {
-        console.log("Token is invalid or expired");
+    } catch (err) { 
         return { isExpired: true, remainingTime: 0 };
     }
 };

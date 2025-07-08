@@ -112,8 +112,7 @@ const ResponsableEdit = ({ isOpen, responsable, onSave, onClose }) => {
         ...localResponsable,
         formation_acquise: localResponsable.formation_acquise === 'true',
       };
-
-      console.log('Données envoyées pour la mise à jour :', payload);
+ 
 
       await updateResponsable(responsable.id, payload);
       if (onSave) onSave('Responsable modifié avec succès !');

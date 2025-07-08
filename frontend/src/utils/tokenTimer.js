@@ -36,27 +36,23 @@ function TokenTimer() {
     if (!isLoggedIn || !token) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        console.log("⛔ TokenTimer arrêté (déconnexion)");
+        intervalRef.current = null; 
       }
       setRemainingTime(null);
       return;
     }
 
     const expirationTime = getTokenExpiration(token);
-    if (!expirationTime) {
-      console.log("Expiration du token non trouvée");
+    if (!expirationTime) { 
       return;
     }
 
     const updateTime = () => {
       const now = Date.now();
       const remaining = expirationTime - now;
-      setRemainingTime(remaining);
-      // console.log(`Token expires in: ${Math.floor(remaining / 1000)} seconds`);
+      setRemainingTime(remaining); 
 
-      if (remaining <= 0) {
-        console.log("Token expired");
+      if (remaining <= 0) { 
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }

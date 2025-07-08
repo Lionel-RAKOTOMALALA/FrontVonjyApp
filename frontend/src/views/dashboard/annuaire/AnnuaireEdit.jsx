@@ -92,8 +92,7 @@ function AnnuaireEdit({ isOpen, annuaire, onChange, onSave, onClose }) {
 
   // Gère la sauvegarde des données du formulaire
   const handleSave = () => {
-    if (validateForm()) {
-      console.log('Données de l\'annuaire:', validAnnuaire);
+    if (validateForm()) { 
       onSave(validAnnuaire);
     }
   };

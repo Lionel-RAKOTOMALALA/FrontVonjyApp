@@ -16,8 +16,7 @@ const useDistrictStore = create((set) => ({
           'Content-Type': 'application/json',
         },
       });
-      const data = await response.json();
-      console.log('Réponse API pour fetchDistricts:', data);
+      const data = await response.json(); 
       set({ districts: data, loading: false });
     } catch (error) {
       console.error('fetchDistricts: erreur lors de la récupération des districts', error);

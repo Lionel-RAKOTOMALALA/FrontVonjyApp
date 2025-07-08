@@ -45,8 +45,7 @@ const useServiceStore = create((set) => ({
       throw new Error('Les données du service sont manquantes ou invalides.');
     }
     try {
-      const token = localStorage.getItem('access_token');
-      console.log('Payload envoyé:', JSON.stringify(service));
+      const token = localStorage.getItem('access_token'); 
 
       const response = await fetch('http://localhost:8000/api/services/', {
         method: 'POST',
@@ -65,8 +64,7 @@ const useServiceStore = create((set) => ({
         );
       }
 
-      const newService = await response.json();
-      console.log('Réponse après l\'ajout :', newService);
+      const newService = await response.json(); 
 
       set((state) => ({
         services: [...state.services, newService],
@@ -84,8 +82,7 @@ const useServiceStore = create((set) => ({
       throw new Error('ID ou données du service manquantes pour la mise à jour.');
     }
     try {
-      const token = localStorage.getItem('access_token');
-      console.log('Données envoyées pour la mise à jour :', updatedService);
+      const token = localStorage.getItem('access_token'); 
 
       const response = await fetch(`http://localhost:8000/api/services/${id}/`, {
         method: 'PUT',
@@ -104,9 +101,7 @@ const useServiceStore = create((set) => ({
         );
       }
 
-      const data = await response.json();
-      console.log('Réponse après mise à jour :', data);
-
+      const data = await response.json(); 
       set((state) => ({
         services: state.services.map((service) =>
           service.id === id ? data : service

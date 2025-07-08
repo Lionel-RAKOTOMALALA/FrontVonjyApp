@@ -44,8 +44,6 @@ const useChefServiceStore = create((set) => ({
     }
     try {
       const token = localStorage.getItem('access_token');
-      console.log('Payload envoyé:', JSON.stringify(chefService));
-
       const response = await fetch('http://localhost:8000/api/chefs/', {
         method: 'POST',
         headers: {
@@ -63,9 +61,7 @@ const useChefServiceStore = create((set) => ({
         );
       }
 
-      const newChefService = await response.json();
-      console.log('Réponse après l\'ajout :', newChefService);
-
+      const newChefService = await response.json(); 
       set((state) => ({
         chefServices: [...state.chefServices, newChefService],
       }));
@@ -82,9 +78,7 @@ const useChefServiceStore = create((set) => ({
       throw new Error('ID ou données du chef de service manquantes pour la mise à jour.');
     }
     try {
-      const token = localStorage.getItem('access_token');
-      console.log('Données envoyées pour la mise à jour :', updatedChefService);
-
+      const token = localStorage.getItem('access_token'); 
       const response = await fetch(`http://localhost:8000/api/chefs/${id}/`, {
         method: 'PUT',
         headers: {
@@ -102,8 +96,7 @@ const useChefServiceStore = create((set) => ({
         );
       }
 
-      const data = await response.json();
-      console.log('Réponse après mise à jour :', data);
+      const data = await response.json(); 
 
       set((state) => ({
         chefServices: state.chefServices.map((chefService) =>

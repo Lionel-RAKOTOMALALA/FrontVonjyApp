@@ -30,8 +30,6 @@ const useFokotanyStore = create((set) => ({
     }
     try {
       const token = localStorage.getItem('access_token');
-      console.log('Token utilisé:', token);
-      console.log('Payload envoyé:', JSON.stringify(fokotany));
 
       const response = await fetch('http://localhost:8000/api/fokotany/', {
         method: 'POST',
@@ -51,7 +49,6 @@ const useFokotanyStore = create((set) => ({
       }
 
       const newFokotany = await response.json();
-      console.log('Réponse après l\'ajout :', newFokotany);
 
       set((state) => ({ fokotanys: [...state.fokotanys, newFokotany] }));
       return newFokotany;
@@ -68,7 +65,6 @@ const useFokotanyStore = create((set) => ({
     }
     try {
       const token = localStorage.getItem('access_token');
-      console.log('Données envoyées pour la mise à jour :', updatedFokotany); // Debug
   
       const response = await fetch(`http://localhost:8000/api/fokotany/${id}/`, {
         method: 'PUT',
@@ -87,8 +83,7 @@ const useFokotanyStore = create((set) => ({
         );
       }
   
-      const data = await response.json();
-      console.log('Réponse après mise à jour :', data); // Debug
+      const data = await response.json(); 
   
       set((state) => ({
         fokotanys: state.fokotanys.map((fokotany) =>

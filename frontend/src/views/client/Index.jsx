@@ -31,9 +31,6 @@ function MapViews() {
 
     if (token) {
       const decoded = jwtDecode(token);
-      console.log(decoded);
-      console.log("Rôle :", decoded.role);
-    
       // Tu peux aussi gérer des conditions selon le rôle
       if (decoded.role === "admin") {
         // Afficher des éléments réservés à l'admin
@@ -79,8 +76,6 @@ function MapViews() {
     setIsAnimating(true)
     setResetView(false)
     fetchDetailCommune(communeId)
-    console.log("Fetching commune detail...")
-
     const communeData = AmpanihyData.features.find(
       (f) => f.properties.id === communeId
     )
@@ -101,8 +96,6 @@ function MapViews() {
   // Solution 1 : Retirer selectedCommune de la condition et utiliser une fonction de callback
   useEffect(() => {
     if (communedetail) {
-      console.log("Commune detail:", communedetail)
-
       setSelectedCommune(prev => {
         // Vérifier si prev existe avant de faire la mise à jour
         if (!prev) return null

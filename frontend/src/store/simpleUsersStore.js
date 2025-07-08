@@ -74,12 +74,7 @@ const useSimpleUsersStore = create((set, get) => ({
       if (userData.photo_profil && userData.photo_profil instanceof File) {
         formData.append('photo_profil', userData.photo_profil);
       }
-
-      console.log('Envoi des données:', {
-        namefull: userData.namefull,
-        email: userData.email,
-        hasPhoto: !!userData.photo_profil
-      });
+ 
 
       const response = await axios.post('http://localhost:8000/api/admin/users/', formData, {
         headers: {
@@ -87,10 +82,7 @@ const useSimpleUsersStore = create((set, get) => ({
           'Content-Type': 'multipart/form-data',
         },
       });
-      
-      console.log('Réponse du serveur:', response.data);
-      console.log('Status:', response.status);
-      
+       
       // Ajouter le nouvel utilisateur à la liste
       set((state) => ({
         users: [...state.users, response.data],
@@ -128,13 +120,7 @@ const useSimpleUsersStore = create((set, get) => ({
       if (userData.photo_profil && userData.photo_profil instanceof File) {
         formData.append('photo_profil', userData.photo_profil);
       }
-
-      console.log('Mise à jour utilisateur:', {
-        uid,
-        namefull: userData.namefull,
-        email: userData.email,
-        hasNewPhoto: userData.photo_profil instanceof File
-      });
+ 
 
       // Utiliser l'endpoint UpdateUserView qui gère les mises à jour
       const response = await axios.put(`http://localhost:8000/api/auth/update-profile/${uid}/`, formData, {
@@ -143,9 +129,7 @@ const useSimpleUsersStore = create((set, get) => ({
           'Content-Type': 'multipart/form-data',
         },
       });
-      
-      console.log('Réponse mise à jour:', response.data);
-      
+       
       // Extraire les données utilisateur de la réponse
       const updatedUserData = response.data.user || response.data;
       

@@ -124,8 +124,7 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
       }
 
       const result = await createSimpleUser(userData);
-      
-      console.log('Résultat de createSimpleUser:', result);
+       
       
       if (result.success) {
         // Appeler la fonction onSave du parent si elle existe
@@ -133,8 +132,7 @@ const UserCreate = ({ isOpen, onSave, onClose }) => {
           onSave(result.data);
         }
         handleClose();
-      } else {
-        console.log('Erreur détectée:', result.error);
+      } else { 
         // Gérer les erreurs de l'API
         setFormErrors({
           submit: result.error || 'Erreur lors de la création de l\'utilisateur'

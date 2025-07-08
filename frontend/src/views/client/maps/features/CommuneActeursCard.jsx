@@ -47,8 +47,7 @@ const columns = [
   },
 ];
 
-function CommuneActeurCard({ selectedCommune }) {
-  console.log('selectedCommune:', selectedCommune);
+function CommuneActeurCard({ selectedCommune }) { 
   
   const { acteurs, loading, error, fetchActeursById } = useActeursCommuneStore();
 

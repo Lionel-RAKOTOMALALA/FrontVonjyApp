@@ -39,8 +39,7 @@ const useResponsableStore = create((set) => ({
       throw new Error('Les données du responsable sont manquantes ou invalides.');
     }
     try {
-      const token = localStorage.getItem('access_token');
-      console.log('Payload envoyé:', JSON.stringify(responsable));
+      const token = localStorage.getItem('access_token'); 
 
       const response = await fetch('http://localhost:8000/api/responsables/', {
         method: 'POST',
@@ -59,9 +58,7 @@ const useResponsableStore = create((set) => ({
         );
       }
 
-      const newResponsable = await response.json();
-      console.log('Réponse après l\'ajout :', newResponsable);
-
+      const newResponsable = await response.json(); 
       set((state) => ({
         responsables: [...state.responsables, newResponsable],
       }));
@@ -78,8 +75,7 @@ const useResponsableStore = create((set) => ({
       throw new Error('ID ou données du responsable manquantes pour la mise à jour.');
     }
     try {
-      const token = localStorage.getItem('access_token');
-      console.log('Données envoyées pour la mise à jour :', updatedResponsable);
+      const token = localStorage.getItem('access_token'); 
 
       const response = await fetch(`http://localhost:8000/api/responsables/${id}/`, {
         method: 'PUT',
@@ -98,9 +94,7 @@ const useResponsableStore = create((set) => ({
         );
       }
 
-      const data = await response.json();
-      console.log('Réponse après mise à jour :', data);
-
+      const data = await response.json(); 
       set((state) => ({
         responsables: state.responsables.map((responsable) =>
           responsable.id === id ? data : responsable
