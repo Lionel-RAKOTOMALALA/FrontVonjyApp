@@ -147,7 +147,7 @@ function LoginForm({ onNavigate }) {
                 sx={{
                   color: "rgba(0,0,0,0.5)",
                   "&.Mui-checked": {
-                    color: "#1677FF",
+                    color: "rgba(254, 201, 31, 1)",
                   },
                 }}
               />
