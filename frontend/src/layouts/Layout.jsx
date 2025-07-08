@@ -40,7 +40,7 @@ const Layout = ({ children, user }) => {
 
   return (
     <div className="layout-wrapper layout-content-navbar">
-      <LoadingBar color="#696CFF" height={4} ref={loadingBarRef} />
+      <LoadingBar color="#FEE062" height={4} ref={loadingBarRef} />
       <div className="layout-container">
         {/* Afficher la Sidebar sauf sur /map */}
         {!isMapPage && <Sidebar />}

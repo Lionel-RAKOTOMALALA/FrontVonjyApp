@@ -121,27 +121,27 @@ function DistrictDetailCard() {
                   <Box 
                     sx={{
                       '& .MuiTableHead-root .MuiTableCell-root': {
-                        backgroundColor: '#fef3c7 !important',
+                        backgroundColor: '#FEF0C3 !important',
                         color: '#333 !important',
                         fontWeight: 'bold !important'
                       },
                       '& .MuiTableHead-root .MuiTableCell-head': {
-                        backgroundColor: '#fef3c7 !important',
+                        backgroundColor: '#FEF0C3 !important',
                         color: '#333 !important',
                         fontWeight: 'bold !important'
                       },
                       '& thead th': {
-                        backgroundColor: '#fef3c7 !important',
+                        backgroundColor: '#FEF0C3 !important',
                         color: '#333 !important',
                         fontWeight: 'bold !important'
                       },
                       '& .table-header': {
-                        backgroundColor: '#fef3c7 !important',
+                        backgroundColor: '#FEF0C3 !important',
                         color: '#333 !important',
                         fontWeight: 'bold !important'
                       },
                       '& .collapsible-table-header': {
-                        backgroundColor: '#fef3c7 !important',
+                        backgroundColor: '#FEF0C3 !important',
                         color: '#333 !important',
                         fontWeight: 'bold !important'
                       }
