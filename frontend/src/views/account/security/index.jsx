@@ -7,10 +7,15 @@ import SnackbarAlert from "../../../components/ui/SnackbarAlert"
 import InputField from "../../../components/ui/form/InputField"
 import useUserStore from "../../../store/userStore"
 import jwtDecode from "jwt-decode"
+import { Checkbox, FormControlLabel } from "@mui/material"
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Mot de passe actuel requis"),
-  newPassword: z.string().min(6, "6 caractères minimum"),
+  newPassword: z.string()
+    .min(6, "6 caractères minimum")
+    .regex(/[A-Za-z]/, "Au moins une lettre")
+    .regex(/[0-9]/, "Au moins un chiffre")
+    .regex(/[^A-Za-z0-9]/, "Au moins un caractère spécial"),
   confirmPassword: z.string()
 }).refine(data => data.newPassword === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
@@ -25,6 +30,7 @@ const Securite = ({ isOpen, onClose }) => {
   })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [showPasswords, setShowPasswords] = useState(false)
   const [snackbar, setSnackbar] = useState({
     open: false,
     severity: 'success',
@@ -40,6 +46,10 @@ const Securite = ({ isOpen, onClose }) => {
 
   const handleChange = (name, value) => {
     setForm(prev => ({ ...prev, [name]: value }))
+    // Effacer l'erreur du mot de passe actuel quand l'utilisateur tape
+    if (name === 'currentPassword' && errors.currentPassword) {
+      setErrors(prev => ({ ...prev, currentPassword: '' }))
+    }
   }
 
   const validate = () => {
@@ -61,13 +71,13 @@ const Securite = ({ isOpen, onClose }) => {
 
   const handleSave = async () => {
     if (!validate()) return
-    
+
     setLoading(true)
-    
+
     try {
       // Récupérer l'uid depuis le store utilisateur ou décoder le token
       let uid = user?.uid
-      
+
       if (!uid && accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken)
@@ -76,11 +86,11 @@ const Securite = ({ isOpen, onClose }) => {
           console.error('Erreur lors du décodage du token:', error)
         }
       }
-      
+
       console.log('User from store:', user)
       console.log('UID found:', uid)
       console.log('AccessToken exists:', !!accessToken)
-      
+
       if (!accessToken) {
         setSnackbar({
           open: true,
@@ -103,7 +113,7 @@ const Securite = ({ isOpen, onClose }) => {
         current_password: form.currentPassword,
         new_password: form.newPassword
       }
-      
+
       console.log('Request body:', requestBody)
 
       // Appeler l'API update-profile pour changer le mot de passe
@@ -121,9 +131,17 @@ const Securite = ({ isOpen, onClose }) => {
       console.log('Response data:', data)
 
       if (!response.ok) {
-        throw new Error(data.message || data.detail || 'Erreur lors du changement de mot de passe')
+        // Gérer l'erreur de mot de passe incorrect
+        if (response.status === 400 || response.status === 401) {
+          setErrors(prev => ({
+            ...prev,
+            currentPassword: 'Mot de passe actuel incorrect'
+          }))
+          return
+        }
+        throw new Error(data.message || data.detail || 'Une erreur est survenue')
       }
-      
+
       setSnackbar({
         open: true,
         severity: 'success',
@@ -131,22 +149,23 @@ const Securite = ({ isOpen, onClose }) => {
       })
       onClose()
       resetForm()
-      
+
     } catch (error) {
       console.error('Error in handleSave:', error)
       setSnackbar({
         open: true,
         severity: 'error',
-        message: error.message || 'Erreur lors du changement de mot de passe'
+        message: error.message || 'Une erreur est survenue'
       })
     } finally {
       setLoading(false)
     }
   }
 
-  const resetForm = () =>{
+  const resetForm = () => {
     setForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
-    setErrors({}) 
+    setErrors({})
+    setShowPasswords(false)
   }
 
   return (
@@ -166,7 +185,7 @@ const Securite = ({ isOpen, onClose }) => {
             <InputField
               label="Mot de passe actuel"
               name="currentPassword"
-              type="password"
+              type={showPasswords ? "text" : "password"}
               value={form.currentPassword}
               onChange={e => handleChange('currentPassword', e.target.value)}
               error={!!errors.currentPassword}
@@ -182,7 +201,7 @@ const Securite = ({ isOpen, onClose }) => {
             <InputField
               label="Nouveau mot de passe"
               name="newPassword"
-              type="password"
+              type={showPasswords ? "text" : "password"}
               value={form.newPassword}
               onChange={e => handleChange('newPassword', e.target.value)}
               error={!!errors.newPassword}
@@ -198,7 +217,7 @@ const Securite = ({ isOpen, onClose }) => {
             <InputField
               label="Confirmer le nouveau mot de passe"
               name="confirmPassword"
-              type="password"
+              type={showPasswords ? "text" : "password"}
               value={form.confirmPassword}
               onChange={e => handleChange('confirmPassword', e.target.value)}
               error={!!errors.confirmPassword}
@@ -206,7 +225,29 @@ const Securite = ({ isOpen, onClose }) => {
               required
               disabled={loading}
             />
+          </div>
+        </div>
 
+        <div className="row">
+          <div className="col mt-3 px-3">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id="showPasswords"
+                  checked={showPasswords}
+                  onChange={(e) => setShowPasswords(e.target.checked)}
+                  disabled={loading}
+                  size="small"
+                  sx={{
+                    color: "rgba(0,0,0,0.5)",
+                    "&.Mui-checked": {
+                      color: "rgba(254, 201, 31, 1)",
+                    },
+                  }}
+                />
+              }
+              label={<p style={{ fontSize: "0.75rem", color:"#616161" }}>Afficher les mots de passe</p>}
+            />
           </div>
         </div>
       </Modal>
