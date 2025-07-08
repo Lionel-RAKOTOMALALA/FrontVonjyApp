@@ -30,9 +30,9 @@ function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
   const [avatarError, setAvatarError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Mettre à jour les données du formulaire quand l'utilisateur change
+  // Mettre à jour les données du formulaire quand l'utilisateur change ou quand le modal s'ouvre
   useEffect(() => {
-    if (chauffeur) {
+    if (chauffeur && isOpen) {
       setFormData({
         uid: chauffeur.uid,
         namefull: chauffeur.namefull || '',
@@ -44,7 +44,7 @@ function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
         } : null,
       });
     }
-  }, [chauffeur]);
+  }, [chauffeur, isOpen]);
 
   // Fonction de validation complète du formulaire
   const validateForm = () => {
@@ -159,6 +159,7 @@ function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
         setAvatarError(validationError);
         return;
       }
+      
       setFormData(prev => ({
         ...prev,
         photo_profil: Object.assign(file, { preview: URL.createObjectURL(file) })
@@ -167,7 +168,7 @@ function UserEdit({ isOpen, chauffeur, onSave, onClose }) {
     }
   };
 
-  // Nettoyer l'URL de l'avatar à la fermeture et reset les erreurs
+  // Nettoyer les URLs de prévisualisation et reset les erreurs
   const handleClose = () => {
     // Nettoyer l'URL de prévisualisation si c'est un nouveau fichier
     if (formData.photo_profil && formData.photo_profil.preview && !formData.photo_profil.isExisting) {

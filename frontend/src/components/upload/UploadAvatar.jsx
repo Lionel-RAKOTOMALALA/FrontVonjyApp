@@ -31,9 +31,10 @@ const DropZoneStyle = styled('div')({
   position: 'relative',
   alignItems: 'center',
   justifyContent: 'center',
+  cursor: 'pointer', // Forcer le cursor pointer
   '& > *': { width: '100%', height: '100%' },
   '&:hover': {
-    cursor: 'pointer',
+    cursor: 'pointer !important', // Forcer avec !important
     '& .placeholder': {
       zIndex: 9,
     },
@@ -48,12 +49,26 @@ const PlaceholderStyle = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   color: theme.palette.text.secondary,
   backgroundColor: theme.palette.background.neutral,
+  cursor: 'pointer', // Ajouter cursor pointer
   transition: theme.transitions.create('opacity', {
     easing: theme.transitions.easing.easeInOut,
     duration: theme.transitions.duration.shorter,
   }),
-  '&:hover': { opacity: 0.72 },
+  '&:hover': { 
+    opacity: 0.72,
+    cursor: 'pointer !important', // Forcer avec !important
+  },
 }));
+
+// Style pour l'image pour éviter le cursor loading
+const ImageWrapper = styled('div')({
+  width: '100%',
+  height: '100%',
+  cursor: 'pointer',
+  '& img': {
+    cursor: 'pointer !important',
+  },
+});
 
 // ----------------------------------------------------------------------
 
@@ -133,20 +148,42 @@ export default function UploadAvatar({ error, file, helperText, sx, user, ...oth
           }),
           ...sx,
           border: "1px dashed rgba(145, 158, 171, 0.20)",
+          cursor: 'pointer', // Ajouter cursor pointer au root
         }}
       >
         <DropZoneStyle
           {...getRootProps()}
           sx={{
             ...(isDragActive && { opacity: 0.72 }),
+            cursor: 'pointer !important', // Forcer le cursor pointer
           }}
         >
           <input {...getInputProps()} />
 
           {file ? (
-            <Image alt="avatar" src={isString(file) ? file : file.preview} sx={{ zIndex: 8 }} />
+            <ImageWrapper>
+              <Image 
+                alt="avatar" 
+                src={isString(file) ? file : file.preview} 
+                sx={{ 
+                  zIndex: 8,
+                  cursor: 'pointer !important',
+                  '& img': {
+                    cursor: 'pointer !important',
+                  }
+                }} 
+              />
+            </ImageWrapper>
           ) : (
-            <Avatar sx={{ width: 1, borderRadius: '20px', height: 1, bgcolor: "#fbc02d", zIndex: 8, fontSize: 48 }}>
+            <Avatar sx={{ 
+              width: 1, 
+              borderRadius: '20px', 
+              height: 1, 
+              bgcolor: "#fbc02d", 
+              zIndex: 8, 
+              fontSize: 48,
+              cursor: 'pointer !important',
+            }}>
               {userInitial}
             </Avatar>
           )}
@@ -163,10 +200,13 @@ export default function UploadAvatar({ error, file, helperText, sx, user, ...oth
               ...((isDragReject || error) && {
                 bgcolor: 'error.lighter',
               }),
+              cursor: 'pointer !important',
             }}
           >
             <Iconify icon={'ic:round-add-a-photo'} sx={{ width: 24, height: 24, mb: 1 }} />
-            <Typography variant="caption">{file ? 'Met à jour l\'image' : 'Insérer une image'}</Typography>
+            <Typography variant="caption" sx={{ cursor: 'pointer' }}>
+              {file ? 'Met à jour l\'image' : 'Insérer une image'}
+            </Typography>
           </PlaceholderStyle>
         </DropZoneStyle>
       </RootStyle>
